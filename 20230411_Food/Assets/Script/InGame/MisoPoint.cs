@@ -10,14 +10,14 @@ namespace FoodPoint
 
         public MisoPoint(int amount)
         {
-            //’l‚Ì‰Šú’l
+            //å€¤ã®åˆæœŸå€¤
             misoPointAmount = amount;
         }
 
-        //’l‚ð‘‚â‚·ƒƒ\ƒbƒh
+        //å€¤ã‚’å¢—ã‚„ã™ãƒ¡ã‚½ãƒƒãƒ‰
         public MisoPoint Add(MisoPoint addAmount)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
             return new MisoPoint(misoPointAmount + addAmount.misoPointAmount);
         }
     }

@@ -10,14 +10,14 @@ namespace FoodPoint
 
         public SaltPoint(int amount)
         {
-            //’l‚Ì‰Šú’l
+            //å€¤ã®åˆæœŸå€¤
             saltPointAmount = amount;
         }
 
-        //’l‚ð‘‚â‚·ƒƒ\ƒbƒh
+        //å€¤ã‚’å¢—ã‚„ã™ãƒ¡ã‚½ãƒƒãƒ‰
         public SaltPoint Add(SaltPoint addAmount)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
             return new SaltPoint(saltPointAmount + addAmount.saltPointAmount);
         }
     }
