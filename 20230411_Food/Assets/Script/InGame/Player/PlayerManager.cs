@@ -5,7 +5,7 @@ using ObjectInterface;
 
 namespace player
 {
-    public class BasePlayer : AdjustPlayer, IActor
+    public class PlayerManager : BasePlayer, IActor
     {
         public void Initialization()
         {
@@ -18,7 +18,7 @@ namespace player
         }
     }
 
-    public class GetPlayerObject : AdjustPlayer
+    public class GetPlayerObject : BasePlayer
     {
         public void Instance()
         {

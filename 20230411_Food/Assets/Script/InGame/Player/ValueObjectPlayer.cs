@@ -12,7 +12,7 @@ namespace player
     // プレイヤーオブジェクトそのもののクラス
     public class PlayerObject
     {
-        private GameObject identity;
+        public GameObject identity{get; private set;}
 
         // コンストラクタ
         public PlayerObject(GameObject player)
@@ -20,18 +20,12 @@ namespace player
             // 初期化
             identity = player;
         }
-
-        // プレイヤーを獲得するメソッド
-        public GameObject GetPlayerObject()
-        {
-            return this.identity;
-        }
     }
 
     // プレイヤー生成座標クラス
     public class PlayerInstancePos
     {
-        private Vector3 pos;
+        public Vector3 pos{get; private set;}
 
         // コンストラクタ
         public PlayerInstancePos(Vector3 playerPos)

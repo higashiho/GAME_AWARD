@@ -5,7 +5,7 @@ using FoodPoint;
 
 namespace player
 {
-    public class AdjustPlayer
+    public class BasePlayer
     {
         // プレイヤーオブジェクト
         public GameObject PlayerObject;
