@@ -6,18 +6,18 @@ namespace FoodPoint
 {
     public class FoodPoint
     {
-        public MeatPoint Mep;//“÷ƒ|ƒCƒ“ƒg
-        public FishPoint Fp;//‹›ƒ|ƒCƒ“ƒg
-        public VegPoint Vep;//–ìØƒ|ƒCƒ“ƒg
-        public SugarPoint Sup;//»“œƒ|ƒCƒ“ƒg
-        public SaltPoint Sap;//‰–ƒ|ƒCƒ“ƒg
-        public VinePoint Vip;//|ƒ|ƒCƒ“ƒg
-        public SoyPoint Sop;//İ–ûƒ|ƒCƒ“ƒg
-        public MisoPoint Mip;//–¡‘Xƒ|ƒCƒ“ƒg
+        public MeatPoint Mep;//è‚‰ãƒã‚¤ãƒ³ãƒˆ
+        public FishPoint Fp;//é­šãƒã‚¤ãƒ³ãƒˆ
+        public VegPoint Vep;//é‡èœãƒã‚¤ãƒ³ãƒˆ
+        public SugarPoint Sup;//ç ‚ç³–ãƒã‚¤ãƒ³ãƒˆ
+        public SaltPoint Sap;//å¡©ãƒã‚¤ãƒ³ãƒˆ
+        public VinePoint Vip;//é…¢ãƒã‚¤ãƒ³ãƒˆ
+        public SoyPoint Sop;//é†¤æ²¹ãƒã‚¤ãƒ³ãƒˆ
+        public MisoPoint Mip;//å‘³å™Œãƒã‚¤ãƒ³ãƒˆ
 
         public FoodPoint()
         {
-            //ƒ|ƒCƒ“ƒg‰Šú’l
+            //ãƒã‚¤ãƒ³ãƒˆåˆæœŸå€¤
             Mep = new MeatPoint(0);
             Fp = new FishPoint(0);
             Vep = new VegPoint(0);
