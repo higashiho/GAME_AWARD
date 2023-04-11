@@ -15,7 +15,7 @@ namespace Title
         /// <summary>
         /// 入力イベントインスタンス
         /// </summary>
-        public TitleInputEvent inputEvent{get;private set;}
+        private TitleInputEvent inputEvent;
 
         // Scene転移が可能かどうか
         private bool OnSceneMoveFlag = true;
@@ -93,7 +93,7 @@ namespace Title
         // プレイヤー
         private static PlayerManager player;
         public static PlayerManager Player{
-            get{return Player;} 
+            get{return player;} 
             set{player = value; Debug.LogWarning("Assigned to player.");}
         }
     }
