@@ -10,14 +10,14 @@ namespace FoodPoint
 
         public SugarPoint(int amount)
         {
-            //’l‚Ì‰Šú’l
+            //å€¤ã®åˆæœŸå€¤
             sugarPointAmount = amount;
         }
 
-        //’l‚ð‘‚â‚·ƒƒ\ƒbƒh
+        //å€¤ã‚’å¢—ã‚„ã™ãƒ¡ã‚½ãƒƒãƒ‰
         public SugarPoint Add(SugarPoint addAmount)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
             return new SugarPoint(sugarPointAmount + addAmount.sugarPointAmount);
         }
     }

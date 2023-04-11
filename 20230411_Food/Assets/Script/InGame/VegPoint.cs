@@ -10,14 +10,14 @@ namespace FoodPoint
 
         public VegPoint(int amount)
         {
-            //’l‚Ì‰Šú’l
+            //å€¤ã®åˆæœŸå€¤
             vegPointAmount = amount;
         }
 
-        //’l‚ð‘‚â‚·ƒƒ\ƒbƒh
+        //å€¤ã‚’å¢—ã‚„ã™ãƒ¡ã‚½ãƒƒãƒ‰
         public VegPoint Add(VegPoint addAmount)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
             return new VegPoint(vegPointAmount + addAmount.vegPointAmount);
         }
     }

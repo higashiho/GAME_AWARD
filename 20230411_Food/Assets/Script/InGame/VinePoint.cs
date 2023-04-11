@@ -10,14 +10,14 @@ namespace FoodPoint
 
         public VinePoint(int amount)
         {
-            //’l‚Ì‰Šú’l
+            //å€¤ã®åˆæœŸå€¤
             vinePointAmount = amount;
         }
 
-        //’l‚ð‘‚â‚·ƒƒ\ƒbƒh
+        //å€¤ã‚’å¢—ã‚„ã™ãƒ¡ã‚½ãƒƒãƒ‰
         public VinePoint Add(VinePoint addAmount)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
             return new VinePoint(vinePointAmount + addAmount.vinePointAmount);
         }
     }
