@@ -24,6 +24,7 @@ namespace Title
         {
             // インスタンス化
             inputEvent  = new TitleInputEvent(this.gameObject);
+            ObjectManager.Player = new PlayerManager();
 
             // タイトル入力確認ループ
             this.UpdateAsObservable()
@@ -84,6 +85,16 @@ namespace Title
             gameStart.Value = Input.GetKeyDown(KeyCode.Return);
 
             // ===========================================================
+        }
+    }
+
+    public abstract class ObjectManager
+    {
+        // プレイヤー
+        private static PlayerManager player;
+        public static PlayerManager Player{
+            get{return Player;} 
+            set{player = value; Debug.LogWarning("Assigned to player.");}
         }
     }
 }
