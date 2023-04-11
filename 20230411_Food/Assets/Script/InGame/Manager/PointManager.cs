@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FoodPoint
 {
-    public class FoodPointManager 
+    public class PointManager 
     {
         // プレイヤー１のFoodPoint取得用
         private FoodPoint sumPlayer1FoodPoint;
