@@ -40,9 +40,23 @@ namespace player
             pos = playerPos;
         }
 
+        // 座標を取得
         public Vector3 GetInitPos()
         {
             return this.pos;
+        }
+    }
+
+    // プレイヤーの速度クラス
+    public class MoveSpeed
+    {
+        private float moveSpeed;
+
+        // コンストラクタ
+        public MoveSpeed(float speed)
+        {
+            // 初期化
+            moveSpeed = speed;
         }
     }
 }
