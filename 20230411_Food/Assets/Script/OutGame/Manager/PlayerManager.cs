@@ -176,7 +176,7 @@ namespace Title
         }
     }
 
-    public class PlayerMove
+    public sealed class PlayerMove
     {
         /// <summary>
         /// 左移動処理
@@ -267,7 +267,7 @@ namespace Title
         }
     }
 
-    public class PlayerRayProcessing
+    public sealed class PlayerRayProcessing
     {
         
         /// <summary>

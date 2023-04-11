@@ -31,7 +31,7 @@ namespace Title
         {
             
             // ゲームスタートイベント
-            TitleManager.InputEvent.GameStart
+            ObjectManager.TitleScene.InputEvent.GameStart
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
@@ -45,11 +45,12 @@ namespace Title
                     // フラグを折る
                     OnSceneMoveFlag = false;
                     // シーン転移
+                    ObjectManager.TitleScene.Move.Movements();
                     Debug.Log("SceneMove");
                 });
 
             // 食材相性UI表示イベント
-            TitleManager.InputEvent.FoodNicknames
+            ObjectManager.TitleScene.InputEvent.FoodNicknames
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
@@ -67,7 +68,7 @@ namespace Title
                 });
 
             // 食材一覧表示イベント
-            TitleManager.InputEvent.DisplayIngredientsList
+            ObjectManager.TitleScene.InputEvent.DisplayIngredientsList
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか

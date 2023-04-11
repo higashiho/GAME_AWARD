@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UniRx.Triggers;
 using UniRx;
+using DG.Tweening;
 
 
 namespace Title
@@ -12,14 +14,25 @@ namespace Title
     /// </summary>
     public class TitleManager : MonoBehaviour
     {
+        [SerializeField, Header("Main Camera")]
+        private GameObject mainCamera;
+        public GameObject MainCamera{get{return mainCamera;}}
        
         /// <summary>
-        /// 入力イベントインスタンス
+        /// 入力イベントインスタンス化
         /// </summary>
-        public static TitleInputEvent InputEvent{get; private set;}
+        public TitleInputEvent InputEvent{get; private set;}
 
+        /// <summary>
+        /// イベント管理クラスインスタンス化
+        /// </summary>
         private EventManager eventSetting;
 
+        /// <summary>
+        /// シーン挙動クラスインスタンス化
+        /// </summary>
+        /// <value></value>
+        public SceneMove Move{get; private set;}
         
         void Awake()
         {
@@ -27,6 +40,8 @@ namespace Title
             InputEvent  = new TitleInputEvent(this.gameObject);
             ObjectManager.Player = new PlayerManager();
             eventSetting = new EventManager();
+            Move = new SceneMove();
+            ObjectManager.TitleScene = this;
 
             // タイトル入力確認ループ
             this.UpdateAsObservable()
@@ -37,6 +52,10 @@ namespace Title
             eventSetting.SetInputEvents();
         }
 
+        private void OnDestroy() 
+        {
+            DOTween.KillAll();
+        }
     }
     /// <summary>
     /// タイトル入力イベント管理クラス
@@ -85,6 +104,64 @@ namespace Title
         public static PlayerManager Player{
             get{return player;} 
             set{player = value; Debug.LogWarning("Assigned to player.");}
+        }
+
+        // タイトルマネージャー
+        private static TitleManager titleScene;
+        public static TitleManager TitleScene{
+            get{return titleScene;} 
+            set{titleScene = value; Debug.LogWarning("Assigned to titleScene.");} 
+            }
+    }
+
+    /// <summary>
+    /// シーン挙動クラス
+    /// </summary>
+    public sealed class SceneMove
+    {
+        private SceneMoveTime moveTime = new SceneMoveTime(4);
+        /// <summary>
+        /// シーン挙動
+        /// </summary>
+        public void Movements()
+        {
+            //Sequenceのインスタンスを作成
+            var sequence = DOTween.Sequence();
+
+            //Appendで動作を追加
+            sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
+                ObjectManager.Player.HitObject.transform.position,
+                moveTime.MoveTimeAmount
+            ).SetEase(Ease.Linear)
+            .OnComplete(() => SceneManager.LoadScene("InGameScene")));
+
+            //Appendで動作を追加
+            sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(
+                Vector3.forward * 360,
+                // 移動終了までに４回転させるために回転させる数で割る
+                moveTime.MoveTimeAmount / 4,
+                RotateMode.LocalAxisAdd
+            ).SetEase(Ease.Linear)
+            .SetLoops(-1,LoopType.Restart));
+
+            //Playで実行
+            sequence.Play();
+        }
+
+    }
+
+    /// <summary>
+    /// シーン挙動までにかかる時間設定クラス
+    /// </summary>
+    public sealed class SceneMoveTime
+    {
+        /// <summary>
+        /// シーン挙動までにかかる時間
+        /// </summary>
+        public float MoveTimeAmount{get; private set;}
+        public SceneMoveTime(float tmpAmount)
+        {
+            MoveTimeAmount = tmpAmount;
         }
     }
 }
