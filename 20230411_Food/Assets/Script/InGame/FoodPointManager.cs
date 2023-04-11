@@ -6,8 +6,14 @@ namespace FoodPoint
 {
     public class FoodPointManager 
     {
+        // プレイヤー１のFoodPoint取得用
         private FoodPoint sumPlayer1FoodPoint;
+
+        // プレイヤー２のFoodPoint取得用
         private FoodPoint sumPlayer2FoodPoint;
+
+        // 指定された料理のパラメータ取得用変数
+        
 
 
         // FoodPointの多いプレイヤーを取得するメソッド
