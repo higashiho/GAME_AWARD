@@ -22,7 +22,13 @@ namespace Title
         /// <summary>
         /// 挙動管理クラス
         /// </summary>
-        private PlayerMove move;
+        public PlayerMove Move;
+
+        /// <summary>
+        /// イベント管理クラス
+        /// </summary>
+        public EventManager Events{get{return events;}}
+        private EventManager events;
 
         /// <summary>
         /// プレイヤーオブジェクト
@@ -41,15 +47,23 @@ namespace Title
         public Animator MoveAnimator{get;private set;}
 
         /// <summary>
-        /// 当たった対象のオブジェクト
+        /// rayが当たった対象オブジェクト
         /// </summary>
-        private GameObject hitObject = null;
+        /// <value></value>
         public GameObject HitObject{get{return hitObject;} set{hitObject = value;}}
+        private GameObject hitObject = null;
         /// <summary>
         /// オブジェクトにRayが当たった時のプレイヤーの向き
         /// </summary>
         /// <value></value>
-        public Vector3? HitDistance{get; private set;} = null;
+        public Vector3? HitDistance{get{return hitDistance;} set{hitDistance = value;}}
+        private Vector3? hitDistance = null;
+
+        /// <summary>
+        /// ray処理
+        /// </summary>
+        private PlayerRayProcessing rayProcessing;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -82,7 +96,9 @@ namespace Title
         
             // 入力イベントインスタンス化
             inputEvent = new PlayerInputEvent(Object);
-            move = new PlayerMove();
+            Move = new PlayerMove();
+            events = new EventManager();
+            rayProcessing = new PlayerRayProcessing();
         }
 
         /// <summary>
@@ -95,28 +111,10 @@ namespace Title
             await UniTask.WaitWhile(() => inputEvent == null);
 
 
-            // TODO : Reyを飛ばして1つ隣のオブジェクトを判断
-            // オブジェクトに対して格納されたオブジェクトが指定のものの場合指定ごとの処理
+            // Ray用ループ
             Object.UpdateAsObservable()
                 .Subscribe(_ => {
-                    var forwardRay = new Ray(Object.transform.position, Object.transform.forward);
-                    Debug.DrawRay(Object.transform.position, Object.transform.forward * 1, Color.blue);
-                
-                    RaycastHit hit;
-                    // rayの当たり判定を確認
-                    if(Physics.Raycast(forwardRay, out hit, 1))
-                    {
-                        // 当たっていたら向き格納
-                        HitDistance = Object.transform.eulerAngles;
-                        // 当たっていたらオブジェクト格納
-                        HitObject = hit.collider.gameObject;
-                    }
-                    else 
-                    {
-                        // 当たっていなかったらnullに変換
-                        HitDistance = null;
-                        HitObject = null;
-                    }
+                    rayProcessing.Processing();
                 })
                 .AddTo(Object);
 
@@ -128,66 +126,18 @@ namespace Title
             
             // イベント処理生成
             //setInputEvent();
-            setMovementLoops();
+            events.SetMovementLoops();
         }   
 
-        /// <summary>
-        /// 移動更新ループ設定関数
-        /// </summary>
-        private void setMovementLoops()
-        {
-            // 前方移動
-            Object.UpdateAsObservable()
-                .Where(_ => Input.GetKey(KeyCode.W))
-                .Where(_ => Vector3.zero != HitDistance)
-                .Subscribe(_ => move.ForwardMovement())
-                .AddTo(Object);
-
-            // 左移動
-            Object.UpdateAsObservable()
-                .Where(_ => Input.GetKey(KeyCode.A))
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_LEFT  != HitDistance)
-                .Subscribe(_ => move.LeftMovement())
-                .AddTo(Object);
-
-            // 後方移動
-            Object.UpdateAsObservable()
-                .Where(_ => Input.GetKey(KeyCode.S))
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_BACK != HitDistance)
-                .Subscribe(_ => move.BackMovement())
-                .AddTo(Object);
-
-            // 右移動
-            Object.UpdateAsObservable()
-                .Where(_ => Input.GetKey(KeyCode.D))
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_RIGHT != HitDistance)
-                .Subscribe(_ => move.RightMovement())
-                .AddTo(Object);
-
-            // アニメーション停止
-            Object.UpdateAsObservable()
-                // どの移動ボタンも押されていないとき
-                .Where(_ => !Input.GetKey(KeyCode.W)&& 
-                            !Input.GetKey(KeyCode.A)&&
-                            !Input.GetKey(KeyCode.S)&&
-                            !Input.GetKey(KeyCode.D))
-                .Subscribe(_ => move.ResetAnim())
-                .AddTo(Object);
-
-        }
-
+        
         /// <summary>
         /// 入力イベント処理代入関数
         /// </summary>
         private void setInputEvent()
         {
-            // 以下移動入力イベント処理=========================
-           
-            // ===============================================
         }
     }
 
-    
 
     /// <summary>
     /// タイトル入力イベント管理クラス
@@ -233,7 +183,9 @@ namespace Title
         /// </summary>
         public void LeftMovement()
         {
-
+            // どの向きに歩いているか設定
+            ObjectManager.Player.Events.PlayerMoveDis = Vector3.left;
+            
             // 移動アニメーション再生
             ObjectManager.Player.MoveAnimator.SetBool("Move", true);
 
@@ -248,6 +200,9 @@ namespace Title
         /// </summary>
         public void RightMovement()
         {
+            // どの向きに歩いているか設定
+            ObjectManager.Player.Events.PlayerMoveDis = Vector3.right;
+            
             // 移動アニメーション再生
             ObjectManager.Player.MoveAnimator.SetBool("Move", true);
 
@@ -263,6 +218,9 @@ namespace Title
         /// </summary>
         public void ForwardMovement()
         {
+            // どの向きに歩いているか設定
+            ObjectManager.Player.Events.PlayerMoveDis = Vector3.forward;
+            
             // 移動アニメーション再生
             ObjectManager.Player.MoveAnimator.SetBool("Move", true);
 
@@ -277,6 +235,9 @@ namespace Title
         /// </summary>
         public void BackMovement()
         {
+            // どの向きに歩いているか設定
+            ObjectManager.Player.Events.PlayerMoveDis = Vector3.back;
+
             // 移動アニメーション再生
             ObjectManager.Player.MoveAnimator.SetBool("Move", true);
 
@@ -286,10 +247,57 @@ namespace Title
             // 移動
             ObjectManager.Player.Object.transform.position += Vector3.back * Time.deltaTime;
         }
-
+        
+        /// <summary>
+        /// アニメーションリセット関数
+        /// </summary>
         public void ResetAnim()
         {
+            // 初期化
             ObjectManager.Player.MoveAnimator.SetBool("Move", false);
+        }
+
+        /// <summary>
+        /// 挙動リセット関数
+        /// </summary>
+        public void ResetMovement()
+        {
+            // 初期化
+            ObjectManager.Player.Events.PlayerMoveDis = Vector3.zero;
+        }
+    }
+
+    public class PlayerRayProcessing
+    {
+        
+        /// <summary>
+        /// PlayerのRayの長さ
+        /// </summary>
+        private RayDistance rayDistance = new RayDistance(OutGameConstants.PLAYER_RAY_DISTANCE);
+
+        /// <summary>
+        /// Ray処理
+        /// </summary>
+        public void Processing()
+        {
+            var forwardRay = new Ray(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward);
+            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward * rayDistance.DistanceAmount, Color.blue);
+        
+            RaycastHit hit;
+            // rayの当たり判定を確認
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.DistanceAmount))
+            {
+                // 当たっていたら向き格納
+                ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
+                // 当たっていたらオブジェクト格納
+                ObjectManager.Player.HitObject = hit.collider.gameObject;
+            }
+            else 
+            {
+                // 当たっていなかったらnullに変換
+                ObjectManager.Player.HitDistance = null;
+                ObjectManager.Player.HitObject = null;
+            }
         }
     }
 }
