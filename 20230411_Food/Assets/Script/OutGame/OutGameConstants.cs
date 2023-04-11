@@ -7,7 +7,7 @@ namespace Constants
     /// <summary>
     /// アウトゲーム定数クラス
     /// </summary>
-    public class OutGameConstants
+    public abstract class OutGameConstants
     {
         
     }
