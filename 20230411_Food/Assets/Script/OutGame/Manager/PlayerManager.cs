@@ -179,14 +179,22 @@ namespace Title
         /// </summary>
         public void LeftMovement()
         {
-            ObjectManager.Player.Object.transform.position += Vector3.left * Time.deltaTime;
+            // ９０度左を向く
+            ObjectManager.Player.Object.transform.eulerAngles = Vector3.left * 90;
+
+            // 移動
+            ObjectManager.Player.Object.transform.position += ObjectManager.Player.Object.transform.forward * Time.deltaTime;
         }
         /// <summary>
         /// 右移動処理
         /// </summary>
         public void RightMovement()
         {
-            ObjectManager.Player.Object.transform.position += Vector3.right * Time.deltaTime;
+            // ９０度右を向く
+            ObjectManager.Player.Object.transform.eulerAngles = Vector3.right * 90;
+
+            // 移動
+            ObjectManager.Player.Object.transform.position += ObjectManager.Player.Object.transform.forward * Time.deltaTime;
             
         }
         /// <summary>
@@ -194,14 +202,22 @@ namespace Title
         /// </summary>
         public void ForwardMovement()
         {
-            ObjectManager.Player.Object.transform.position += Vector3.forward * Time.deltaTime;
+            // 前を向く
+            ObjectManager.Player.Object.transform.eulerAngles = Vector3.zero;
+
+            // 移動
+            ObjectManager.Player.Object.transform.position += ObjectManager.Player.Object.transform.forward * Time.deltaTime;
         }
         /// <summary>
         /// 後ろ移動処理
         /// </summary>
         public void BackMovement()
         {
-            ObjectManager.Player.Object.transform.position += Vector3.back * Time.deltaTime;
+            // ９０度後ろを向く
+            ObjectManager.Player.Object.transform.eulerAngles = Vector3.back * 90;
+
+            // 移動
+            ObjectManager.Player.Object.transform.position += ObjectManager.Player.Object.transform.forward * Time.deltaTime;
         }
     }
 }
