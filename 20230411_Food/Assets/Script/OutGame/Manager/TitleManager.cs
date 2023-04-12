@@ -201,14 +201,14 @@ namespace Title
             // Tween目標座標座標
             var targetCoordinates = new Vector3(
                 ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2),
+                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2.5f),
                 ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z * 2)
             );
 
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount
+                moveTime.MoveTimeAmount / 2
             ).SetEase(Ease.Linear)
             .OnComplete(() => Debug.Log("OpenRefrugerator")));
 
