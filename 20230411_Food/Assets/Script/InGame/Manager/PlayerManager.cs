@@ -7,17 +7,31 @@ namespace player
 {
     public class PlayerManager : BasePlayer, IActor
     {
+        // コンストラクタ
+        public PlayerManager()
+        {
+            // 初期化
+            Initialization();
+
+            // 更新
+            Update();
+        }
+
         public void Initialization()
         {
             Data = new DataPlayer();
             PlayerInstance = new PlayerInstance();
+            PlayerMove = new PlayerMove();
 
             PlayerInstance.Instance();
         }
 
         public void Update()
         {
-            
+            PlayerMove.ForwardMove();
+            PlayerMove.BackMove();
+            PlayerMove.RightMove();
+            PlayerMove.LeftMove();
         }
     }
 
@@ -38,14 +52,53 @@ namespace player
         }
     }
 
-    public class PlayerMove
+    public class PlayerMove : BasePlayer
     {
         /// <summary>
         /// プレイヤーを移動させる
         /// </summary>
-        public void Move()
+        public void ForwardMove()
         {
-            
+            if(Input.GetKey("W"))
+            {
+                PlayerObject.transform.position += PlayerObject.transform.forward * Speed.moveSpeed * Time.deltaTime;
+            }
+        }
+
+        public void BackMove()
+        {
+            if(Input.GetKey("S"))
+            {
+                PlayerObject.transform.position += -PlayerObject.transform.forward * Speed.moveSpeed * Time.deltaTime;
+            }
+        }
+
+        public void RightMove()
+        {
+            if(Input.GetKey("D"))
+            {
+                PlayerObject.transform.position += PlayerObject.transform.right * Speed.moveSpeed * Time.deltaTime;
+            }
+        }
+
+        public void LeftMove()
+        {
+            if(Input.GetKey("A"))
+            {
+                PlayerObject.transform.position += -PlayerObject.transform.right * Speed.moveSpeed * Time.deltaTime;
+            }
+        }
+    }
+
+    public class PlayerTakeFood : BasePlayer
+    {
+        // 目の前にある食べ物
+        RaycastHit RayHitFood;
+
+        // 食べ物を手に取る
+        public void TakeFood()
+        {
+            //if()
         }
     }
 }

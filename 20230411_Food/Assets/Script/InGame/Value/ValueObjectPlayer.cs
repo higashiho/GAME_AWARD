@@ -59,5 +59,27 @@ namespace player
             moveSpeed = speed;
         }
     }
+
+    // プレイヤーの前に食べ物があるか判定するためのRayの座標
+    public sealed class PlayerRay : BasePlayer
+    {
+        public Vector3 RayStartPos{get; private set;}
+
+        // コンストラクタ
+        public PlayerRay(Vector3 ray)
+        {
+            if(RayStartPos == null)
+            {
+                Debug.LogError("Rayの座標がnullです");
+            }
+
+            RayStartPos = ray;
+        }
+
+        public PlayerRay Move()
+        {
+            return new PlayerRay(PlayerObject.transform.position);
+        }
+    }
 }
 
