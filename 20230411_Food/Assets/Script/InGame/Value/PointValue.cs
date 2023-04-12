@@ -4,154 +4,150 @@ using UnityEngine;
 
 namespace FoodPoint
 {
-    public class MeatPoint //肉ポイント
+    public class MeatPoint : BaseFoodPoint
     {
-        private int meatPointAmount;
-
-        public MeatPoint(int amount)
+        public MeatPoint(int tmpAmount)
         {
             //値の初期値
-            meatPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.MEAT;
         }
 
         //値を増やすメソッド
         public MeatPoint Add(MeatPoint addAmount)
         {
             //インスタンス生成
-            return new MeatPoint(meatPointAmount + addAmount.meatPointAmount);
+            return new MeatPoint(Amount + addAmount.Amount);
         }
+
+        
     }
 
 
-    public class FishPoint //魚ポイント
+    public class FishPoint : BaseFoodPoint
     {
-        private int fishPointAmount;
 
-        public FishPoint(int amount)
+        public FishPoint(int tmpAmount)
         {
             //値の初期値
-            fishPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.FISH;
         }
 
         //値を増やすメソッド
         public FishPoint Add(FishPoint addAmount)
         {
             //インスタンス生成
-            return new FishPoint(fishPointAmount + addAmount.fishPointAmount);
+            return new FishPoint(Amount + addAmount.Amount);
         }
     }
 
 
-        public class VegPoint //野菜ポイント
+    public class VegPoint : BaseFoodPoint
     {
-        private int vegPointAmount;
-
-        public VegPoint(int amount)
+        public VegPoint(int tmpAmount)
         {
             //値の初期値
-            vegPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.VEG;
         }
 
         //値を増やすメソッド
         public VegPoint Add(VegPoint addAmount)
         {
             //インスタンス生成
-            return new VegPoint(vegPointAmount + addAmount.vegPointAmount);
+            return new VegPoint(Amount + addAmount.Amount);
         }
     }
 
 
-    public class SugarPoint //砂糖ポイント
+    public class SugarPoint : BaseFoodPoint
     {
-        private int sugarPointAmount;
 
-        public SugarPoint(int amount)
+        public SugarPoint(int tmpAmount)
         {
             //値の初期値
-            sugarPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.SUGAR;
         }
 
         //値を増やすメソッド
         public SugarPoint Add(SugarPoint addAmount)
         {
             //インスタンス生成
-            return new SugarPoint(sugarPointAmount + addAmount.sugarPointAmount);
+            return new SugarPoint(Amount + addAmount.Amount);
         }
     }
 
 
-    public class SaltPoint //塩ポイント
+    public class SaltPoint : BaseFoodPoint
     {
-        private int saltPointAmount;
-
-        public SaltPoint(int amount)
+        public SaltPoint(int tmpAmount)
         {
             //値の初期値
-            saltPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.SALT;
         }
 
         //値を増やすメソッド
         public SaltPoint Add(SaltPoint addAmount)
         {
             //インスタンス生成
-            return new SaltPoint(saltPointAmount + addAmount.saltPointAmount);
+            return new SaltPoint(Amount + addAmount.Amount);
         }
     }
 
 
-    public class VinePoint //酢ポイント
+    public class VinePoint : BaseFoodPoint
     {
-        private int vinePointAmount;
-
-        public VinePoint(int amount)
+        public VinePoint(int tmpAmount)
         {
             //値の初期値
-            vinePointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.VINE;
         }
 
         //値を増やすメソッド
         public VinePoint Add(VinePoint addAmount)
         {
             //インスタンス生成
-            return new VinePoint(vinePointAmount + addAmount.vinePointAmount);
+            return new VinePoint(Amount + addAmount.Amount);
         }
     }
 
 
-    public class SoyPoint //醤油ポイント
+    public class SoyPoint : BaseFoodPoint
     {
-        private int soyPointAmount;
-
-        public SoyPoint(int amount)
+        public SoyPoint(int tmpAmount)
         {
             //値の初期値
-            soyPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.SOY;
         }
 
         //値を増やすメソッド
         public SoyPoint Add(SoyPoint addAmount)
         {
             //インスタンス生成
-            return new SoyPoint(soyPointAmount + addAmount.soyPointAmount);
+            return new SoyPoint(Amount + addAmount.Amount);
         }
     }
 
 
-        public class MisoPoint //味噌ポイント
+    public class MisoPoint : BaseFoodPoint
     {
-        private int misoPointAmount;
-
-        public MisoPoint(int amount)
+        public MisoPoint(int tmpAmount)
         {
             //値の初期値
-            misoPointAmount = amount;
+            Amount = tmpAmount;
+            PointName = FoodPointName.MISO;
         }
 
         //値を増やすメソッド
         public MisoPoint Add(MisoPoint addAmount)
         {
             //インスタンス生成
-            return new MisoPoint(misoPointAmount + addAmount.misoPointAmount);
+            return new MisoPoint(Amount + addAmount.Amount);
         }
     }
 }
