@@ -775,7 +775,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 624819375}
   m_LocalRotation: {x: 0.17364816, y: -0, z: -0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 4.133, z: -14.312}
+  m_LocalPosition: {x: 0, y: 4, z: -14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -947,6 +947,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 624819375}
   fadePanel: {fileID: 203519950}
+  cameraData: {fileID: 11400000, guid: 924540591eafcc34da90b46a3672b745, type: 2}
 --- !u!4 &1444457466
 Transform:
   m_ObjectHideFlags: 0

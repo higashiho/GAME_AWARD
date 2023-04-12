@@ -295,7 +295,8 @@ namespace Title
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
                 // 当たっていたらオブジェクト格納
-                ObjectManager.Player.HitObject = hit.collider.gameObject;
+                if(ObjectManager.Player.HitObject != hit.collider.gameObject)
+                    ObjectManager.Player.HitObject = hit.collider.gameObject;
             }
             else 
             {

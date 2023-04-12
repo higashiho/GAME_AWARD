@@ -41,8 +41,11 @@ namespace Title
         /// <summary>
         /// シーン挙動クラスインスタンス化
         /// </summary>
-        /// <value></value>
         public MakeTweenMovengs Move{get; private set;}
+
+        /// <summary> 何かのイベントが処理されているか </summary>
+        public bool NowPlayeEvents{get{return nowPlayEvents;} set{nowPlayEvents = value;}}
+        private bool nowPlayEvents = false;
         
         void Awake()
         {
@@ -76,7 +79,7 @@ namespace Title
         public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
         public IReadOnlyReactiveProperty<bool> FoodNicknames => keyReturnInput;
         public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
-        public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyReturnInput;
+        public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyBackInput;
 
         // =================================================================
 
@@ -84,6 +87,7 @@ namespace Title
         
         // 以下入力イベント実装===============================================
         private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
+        private readonly ReactiveProperty<bool> keyBackInput = new BoolReactiveProperty();
         // =================================================================
 
         /// <summary>
@@ -94,6 +98,7 @@ namespace Title
         {
             // 以下指定オブジェクトDestroy時にイベント破棄設定=========
             keyReturnInput.AddTo(tmpObj);
+            keyBackInput.AddTo(tmpObj);
             // =====================================================
         }
 
@@ -104,6 +109,7 @@ namespace Title
         {
             // 以下各種入力をReactivePropertyに反映=========================
             keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
+            keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
             // ===========================================================
         }
     }
