@@ -31,6 +31,9 @@ namespace player
 
         private PlayerInstance playerInstance;
         public PlayerInstance PlayerInstance{get{return playerInstance;}protected set{playerInstance = value;}}
+
+        private PlayerMove playerMove;
+        public PlayerMove PlayerMove{get{return playerMove;}protected set{playerMove = value;}}
     }
 }
 
