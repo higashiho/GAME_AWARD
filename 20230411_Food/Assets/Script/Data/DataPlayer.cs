@@ -15,5 +15,9 @@ namespace player
         [SerializeField, Header("プレイヤー移動速度")]
         private float moveSpeed;
         public float MoveSpeed{get{return moveSpeed;}}
+
+        [SerializeField, Header("プレイヤーオブジェクト")]
+        private GameObject playerPrefab;
+        public GameObject PlayerPrefab{get{return playerPrefab;}}
     }
 }

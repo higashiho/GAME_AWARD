@@ -10,51 +10,51 @@ namespace player
     }
 
     // プレイヤーオブジェクトそのもののクラス
-    public class PlayerObject
+    public sealed class PlayerObject
     {
-        private GameObject identity;
+        public GameObject identity{get; private set;}
 
         // コンストラクタ
         public PlayerObject(GameObject player)
         {
+            if(identity == null)
+            {
+                Debug.LogError("プレイヤーがNULLだよ");
+            }
             // 初期化
             identity = player;
-        }
-
-        // プレイヤーを獲得するメソッド
-        public GameObject GetPlayerObject()
-        {
-            return this.identity;
         }
     }
 
     // プレイヤー生成座標クラス
-    public class PlayerInstancePos
+    public sealed class PlayerInstancePos
     {
-        private Vector3 pos;
+        public Vector3 pos{get; private set;}
 
         // コンストラクタ
         public PlayerInstancePos(Vector3 playerPos)
         {
+            if(pos == null)
+            {
+                Debug.LogError("プレイヤーの初期位置がNULLだよ");
+            }
             // 初期化
             pos = playerPos;
-        }
-
-        // 座標を取得
-        public Vector3 GetInitPos()
-        {
-            return this.pos;
         }
     }
 
     // プレイヤーの速度クラス
-    public class MoveSpeed
+    public sealed class MoveSpeed
     {
-        private float moveSpeed;
+        public float moveSpeed{get; private set;}
 
         // コンストラクタ
         public MoveSpeed(float speed)
         {
+            if(moveSpeed <= 0)
+            {
+                Debug.LogError("プレイヤーの移動速度がマイナスだよ");
+            }
             // 初期化
             moveSpeed = speed;
         }

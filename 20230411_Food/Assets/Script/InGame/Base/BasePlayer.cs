@@ -5,13 +5,10 @@ using FoodPoint;
 
 namespace player
 {
-    public class AdjustPlayer
+    public class BasePlayer
     {
         // プレイヤーオブジェクト
         public GameObject PlayerObject;
-
-        // プレイヤーのプレハブ
-        public GameObject PlayerPref;
 
         // プレイヤーの生成座標
         public PlayerInstancePos InstancePosOne;
@@ -32,7 +29,8 @@ namespace player
         private DataPlayer data;
         public DataPlayer Data{get{return data;}protected set{data = value;}}
 
-        
+        private PlayerInstance playerInstance;
+        public PlayerInstance PlayerInstance{get{return playerInstance;}protected set{playerInstance = value;}}
     }
 }
 
