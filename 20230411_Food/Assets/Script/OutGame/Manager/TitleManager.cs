@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UniRx.Triggers;
 using UniRx;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 
 namespace Title
@@ -22,6 +23,10 @@ namespace Title
         [SerializeField, Header("Fade Panel")]
         private Image fadePanel;
         public Image FadePanel{get{return fadePanel;}}
+
+        [SerializeField, Header("Title Camera Data")]
+        private TitleCameraData cameraData;
+        public TitleCameraData CameraData{get{return cameraData;}}
        
         /// <summary>
         /// 入力イベントインスタンス化
@@ -71,6 +76,7 @@ namespace Title
         public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
         public IReadOnlyReactiveProperty<bool> FoodNicknames => keyReturnInput;
         public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
+        public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyReturnInput;
 
         // =================================================================
 
@@ -130,6 +136,10 @@ namespace Title
         /// </summary>
         public void GameStartMovement()
         {
+            
+            // カメラのTweenを削除
+            DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
+
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
 
@@ -160,8 +170,12 @@ namespace Title
         /// <summary>
         /// レシピ本開ける動作
         /// </summary>
-        public void OpenRecipeBook()
+        public async UniTask OpenRecipeBook()
         {
+            
+            // カメラのTweenを削除
+            DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
+
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
 
@@ -187,13 +201,17 @@ namespace Title
             
             // Playで実行
             sequence.Play();
+            // 終了するまで待つ
+            await sequence.AsyncWaitForCompletion();
         }
 
         /// <summary>
         /// 冷蔵庫開ける動作
         /// </summary>
-        public void OpenRefrugerator()
+        public async UniTask OpenRefrugerator()
         {
+            // カメラのTweenを削除
+            DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
@@ -215,6 +233,38 @@ namespace Title
             
             // Playで実行
             sequence.Play();
+            // 完了するまで待つ
+            await sequence.AsyncWaitForCompletion();
+        }
+
+        /// <summary>
+        /// 初期位置に戻る
+        /// </summary>
+        public async UniTask ResetCamera()
+        {
+            // カメラのTweenを削除
+            DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
+
+            // Sequenceのインスタンスを作成
+            var sequence = DOTween.Sequence();
+
+
+            // Appendで動作を追加
+            sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
+                ObjectManager.TitleScene.CameraData.StartPos,
+                moveTime.MoveTimeAmount / 2
+            ).SetEase(Ease.Linear)
+            .OnComplete(() => Debug.Log("ResetCamera")));
+
+            sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(
+                ObjectManager.TitleScene.CameraData.StartAngle,
+                moveTime.MoveTimeAmount / 2
+            ).SetEase(Ease.Linear));
+
+            // Playで実行
+            sequence.Play();
+            // 完了するまで待つ
+            await sequence.AsyncWaitForCompletion();
         }
     }
 

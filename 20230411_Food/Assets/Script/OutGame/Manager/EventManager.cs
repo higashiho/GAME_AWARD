@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx.Triggers;
@@ -18,6 +19,9 @@ namespace Title
         // 冷蔵庫が開いているか
         private bool nowOpenRefrugerator = false;
 
+        // カメラ移動時間
+        private SceneMoveTime moveTime = new SceneMoveTime(2);
+
         /// <summary>
         /// プレイヤーが動いている向き
         /// </summary>
@@ -27,7 +31,7 @@ namespace Title
         /// <summary>
         /// タイトル入力イベント設定関数
         /// </summary>
-        public void SetInputEvents()
+        public  void SetInputEvents()
         {
             
             // ゲームスタートイベント
@@ -58,13 +62,17 @@ namespace Title
                 ObjectManager.Player.HitObject.name == "RecipeBook")
                 // レシピ本が開いているか
                 .Where(_ => !nowOpenRecipeBook)
+                // 押されて指定秒経っていたら
+                // レシピ本は挙動が二つある為２倍する
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount * 2))
                 // 実施
-                .Subscribe(_ =>
+                .Subscribe(async _ =>
                 {
+                    // UI表示
+                    await ObjectManager.TitleScene.Move.OpenRecipeBook();
+                    
                     // フラグを立てる
                     nowOpenRecipeBook = true;
-                    // UI表示
-                    ObjectManager.TitleScene.Move.OpenRecipeBook();
                 });
 
             // 食材一覧表示イベント
@@ -74,15 +82,35 @@ namespace Title
                 // playerのRayにスタート用のオブジェクトが入っているか
                 .Where(_ => ObjectManager.Player.HitObject != null &&
                 ObjectManager.Player.HitObject.name == "Refrugerator")
-                // レシピ本が開いているか
+                // 冷蔵庫が開いているか
                 .Where(_ => !nowOpenRefrugerator)
+                // 押されて指定秒経っていたら
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount))
                 // 実施
-                .Subscribe(_ =>
+                .Subscribe(async _ =>
                 {
+                    // UI表示
+                    await ObjectManager.TitleScene.Move.OpenRefrugerator();
+               
                     // フラグを立てる
                     nowOpenRefrugerator = true;
-                    // UI表示
-                    ObjectManager.TitleScene.Move.OpenRefrugerator();
+                });
+
+            ObjectManager.TitleScene.InputEvent.ResetCameraToStart
+                // どれかのフラグがたっているか
+                .Where(_ => nowOpenRecipeBook ||
+                            nowOpenRefrugerator)
+                // イベント指定した入力がされているか
+                .Where(x => x)
+                // 押されて指定秒経っていたら
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount))
+                // 実施
+                .Subscribe(async _ =>
+                {
+                    await ObjectManager.TitleScene.Move.ResetCamera();
+                    
+                    nowOpenRefrugerator = false;
+                    nowOpenRecipeBook = false;
                 });
         } 
     
