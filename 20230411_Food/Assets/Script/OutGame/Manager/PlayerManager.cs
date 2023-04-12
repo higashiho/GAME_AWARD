@@ -17,6 +17,15 @@ namespace Title
     /// </summary>
     public class PlayerManager : IActor
     {
+        /// <summary>
+        /// playerが1pか2pか判断ステート
+        /// </summary>
+        public enum PlayerState
+        {
+            MAIN, SUB
+        }
+        public PlayerState JudgeState;
+
         // 入力イベント
         private PlayerInputEvent inputEvent;
 
@@ -66,15 +75,19 @@ namespace Title
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PlayerManager()
+        public PlayerManager(PlayerState tmpState)
         {
-
+            JudgeState = tmpState;
             // 初期化
             Initialization();
-
-
+            
+            
             // 更新ループ設定
-            Update();
+            if(JudgeState == PlayerState.MAIN)
+                Update();
+            // 更新ループ設定
+            else if(JudgeState == PlayerState.SUB)
+                SubUpdate();
        }
 
         /// <summary>
@@ -89,7 +102,19 @@ namespace Title
             // プレイヤー生成
             // ゲームオブジェクト型にcastし生成
             var tmpObj = (GameObject)Handle.Result;
-            Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+            // 自身がどっちなのか判断して生成
+            if(JudgeState == PlayerState.MAIN)
+                Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+            else if(JudgeState == PlayerState.SUB)
+            {
+                // Playerと反対に生成するためx座標のみ反転
+                var instancePos = new Vector3(
+                    -tmpObj.transform.position.x,
+                    tmpObj.transform.position.y,
+                    tmpObj.transform.position.z
+                );
+                Object = MonoBehaviour.Instantiate(tmpObj, instancePos, Quaternion.identity);
+            }
 
             MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
         
@@ -127,6 +152,34 @@ namespace Title
             //setInputEvent();
             events.SetMovementLoops();
         }   
+
+        /// <summary>
+        /// 2P用更新設定関数
+        /// </summary>
+        /// <returns></returns>
+        public async void SubUpdate()
+        {
+            
+            // インプットイベントが代入されるまで一旦待つ
+            await UniTask.WaitWhile(() => inputEvent == null);
+
+            // Ray用ループ
+            Object.UpdateAsObservable()
+                .Subscribe(_ => {
+                    rayProcessing.Processing();
+                })
+                .AddTo(Object);
+
+            // タイトルPlayer入力確認ループ
+            Object.UpdateAsObservable()
+                .Subscribe(_ => inputEvent.Update())
+                .AddTo(Object);
+
+            
+            // イベント処理生成
+            //setInputEvent();
+            events.SetSubPlayerMovementLoops();
+        }
 
         
         /// <summary>
@@ -183,89 +236,89 @@ namespace Title
         /// <summary>
         /// 左移動処理
         /// </summary>
-        public void LeftMovement()
+        public void LeftMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.left;
+            tmpPlayer.Events.PlayerMoveDis = Vector3.left;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度左を向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.left * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.left * Time.deltaTime;
         }
         /// <summary>
         /// 右移動処理
         /// </summary>
-        public void RightMovement()
+        public void RightMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.right;
+            tmpPlayer.Events.PlayerMoveDis = Vector3.right;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度右を向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.right * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.right * Time.deltaTime;
             
         }
         /// <summary>
         /// 前移動処理
         /// </summary>
-        public void ForwardMovement()
+        public void ForwardMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.forward;
+            tmpPlayer.Events.PlayerMoveDis = Vector3.forward;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 前を向く
-            ObjectManager.Player.Object.transform.eulerAngles = Vector3.zero;
+            tmpPlayer.Object.transform.eulerAngles = Vector3.zero;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.forward * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.forward * Time.deltaTime;
         }
         /// <summary>
         /// 後ろ移動処理
         /// </summary>
-        public void BackMovement()
+        public void BackMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.back;
+            tmpPlayer.Events.PlayerMoveDis = Vector3.back;
 
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 後ろを向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.back * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.back * Time.deltaTime;
         }
         
         /// <summary>
         /// アニメーションリセット関数
         /// </summary>
-        public void ResetAnim()
+        public void ResetAnim(PlayerManager tmpPlayer)
         {
             // 初期化
-            ObjectManager.Player.MoveAnimator.SetBool("Move", false);
+            tmpPlayer.MoveAnimator.SetBool("Move", false);
         }
 
         /// <summary>
         /// 挙動リセット関数
         /// </summary>
-        public void ResetMovement()
+        public void ResetMovement(PlayerManager tmpPlayer)
         {
             // 初期化
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.zero;
+            tmpPlayer.Events.PlayerMoveDis = Vector3.zero;
         }
     }
 

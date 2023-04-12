@@ -51,7 +51,8 @@ namespace Title
         {
             // インスタンス化
             InputEvent  = new TitleInputEvent(this.gameObject);
-            ObjectManager.Player = new PlayerManager();
+            ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
+            ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
             eventSetting = new EventManager();
             Move = new MakeTweenMovengs();
             ObjectManager.TitleScene = this;
@@ -121,6 +122,12 @@ namespace Title
         public static PlayerManager Player{
             get{return player;} 
             set{player = value; Debug.LogWarning("Assigned to player.");}
+        }
+        // サブプレイヤー
+        private static PlayerManager subPlayer;
+        public static PlayerManager SubPlayer{
+            get{return subPlayer;}
+            set{subPlayer = value; Debug.LogWarning("Assigned to subPlayer");}
         }
 
         // タイトルマネージャー
