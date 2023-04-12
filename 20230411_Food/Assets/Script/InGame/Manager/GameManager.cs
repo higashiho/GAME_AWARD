@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FoodPoint;
 
 namespace GameManager
     {
@@ -20,7 +21,8 @@ namespace GameManager
         // ゲームステート管理変数
         private gameState phase;
 
-
+        private PointManager pointManager;
+        
         void Update()
         {
             switch(phase)
@@ -35,6 +37,9 @@ namespace GameManager
                     break;
                 
                 case gameState.COOKING:
+
+                    // プレイヤーが集めたポイント達を配列に入れていく
+                    
                     break;
                 
                 case gameState.END:
