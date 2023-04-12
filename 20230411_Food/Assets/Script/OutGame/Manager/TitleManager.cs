@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UniRx.Triggers;
 using UniRx;
@@ -17,6 +18,10 @@ namespace Title
         [SerializeField, Header("Main Camera")]
         private GameObject mainCamera;
         public GameObject MainCamera{get{return mainCamera;}}
+
+        [SerializeField, Header("Fade Panel")]
+        private Image fadePanel;
+        public Image FadePanel{get{return fadePanel;}}
        
         /// <summary>
         /// 入力イベントインスタンス化
@@ -32,7 +37,7 @@ namespace Title
         /// シーン挙動クラスインスタンス化
         /// </summary>
         /// <value></value>
-        public SceneMove Move{get; private set;}
+        public MakeTweenMovengs Move{get; private set;}
         
         void Awake()
         {
@@ -40,7 +45,7 @@ namespace Title
             InputEvent  = new TitleInputEvent(this.gameObject);
             ObjectManager.Player = new PlayerManager();
             eventSetting = new EventManager();
-            Move = new SceneMove();
+            Move = new MakeTweenMovengs();
             ObjectManager.TitleScene = this;
 
             // タイトル入力確認ループ
@@ -115,54 +120,103 @@ namespace Title
     }
 
     /// <summary>
-    /// シーン挙動クラス
+    /// Tween挙動作成クラス
     /// </summary>
-    public sealed class SceneMove
+    public sealed class MakeTweenMovengs
     {
         private SceneMoveTime moveTime = new SceneMoveTime(4);
         /// <summary>
         /// シーン挙動
         /// </summary>
-        public void Movements()
+        public void GameStartMovement()
         {
-            //Sequenceのインスタンスを作成
+            // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
 
-            //Appendで動作を追加
+            // Tween目標座標座標
+            var targetCoordinates = new Vector3(
+                ObjectManager.Player.HitObject.transform.position.x,
+                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2),
+                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z / 2)
+            );
+
+            // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
-                ObjectManager.Player.HitObject.transform.position,
+                targetCoordinates,
                 moveTime.MoveTimeAmount
             ).SetEase(Ease.Linear)
             .OnComplete(() => SceneManager.LoadScene("InGameScene")));
 
-            //Appendで動作を追加
-            sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(
-                Vector3.forward * 360,
-                // 移動終了までに４回転させるために回転させる数で割る
-                moveTime.MoveTimeAmount / 4,
-                RotateMode.LocalAxisAdd
-            ).SetEase(Ease.Linear)
-            .SetLoops(-1,LoopType.Restart));
+            // Appendで動作を追加
+            sequence.Join(ObjectManager.TitleScene.FadePanel.rectTransform.DOScale(
+                Vector3.zero,
+                moveTime.MoveTimeAmount
+            ).SetEase(Ease.InCirc));
 
-            //Playで実行
+            // Playで実行
             sequence.Play();
         }
 
-    }
-
-    /// <summary>
-    /// シーン挙動までにかかる時間設定クラス
-    /// </summary>
-    public sealed class SceneMoveTime
-    {
         /// <summary>
-        /// シーン挙動までにかかる時間
+        /// レシピ本開ける動作
         /// </summary>
-        public float MoveTimeAmount{get; private set;}
-        public SceneMoveTime(float tmpAmount)
+        public void OpenRecipeBook()
         {
-            MoveTimeAmount = tmpAmount;
+            // Sequenceのインスタンスを作成
+            var sequence = DOTween.Sequence();
+
+            // Tween目標座標座標
+            var targetCoordinates = new Vector3(
+                ObjectManager.Player.HitObject.transform.position.x,
+                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y * 2),
+                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z)
+            );
+
+            // Appendで動作を追加
+            sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
+                targetCoordinates,
+                moveTime.MoveTimeAmount / 2
+            ).SetEase(Ease.Linear));
+            
+            sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DORotate(
+                Vector3.right * 45,
+                moveTime.MoveTimeAmount / 2
+            ).SetEase(Ease.Linear)
+            .OnComplete(() => Debug.Log("OpenRecipeBook")));
+
+            
+            // Playで実行
+            sequence.Play();
+        }
+
+        /// <summary>
+        /// 冷蔵庫開ける動作
+        /// </summary>
+        public void OpenRefrugerator()
+        {
+
+            // Sequenceのインスタンスを作成
+            var sequence = DOTween.Sequence();
+
+            // Tween目標座標座標
+            var targetCoordinates = new Vector3(
+                ObjectManager.Player.HitObject.transform.position.x,
+                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2),
+                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z * 2)
+            );
+
+            // Appendで動作を追加
+            sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
+                targetCoordinates,
+                moveTime.MoveTimeAmount
+            ).SetEase(Ease.Linear)
+            .OnComplete(() => Debug.Log("OpenRefrugerator")));
+
+            
+            // Playで実行
+            sequence.Play();
         }
     }
+
 }
 

@@ -45,7 +45,7 @@ namespace Title
                     // フラグを折る
                     OnSceneMoveFlag = false;
                     // シーン転移
-                    ObjectManager.TitleScene.Move.Movements();
+                    ObjectManager.TitleScene.Move.GameStartMovement();
                     Debug.Log("SceneMove");
                 });
 
@@ -64,7 +64,7 @@ namespace Title
                     // フラグを立てる
                     nowOpenRecipeBook = true;
                     // UI表示
-                    Debug.Log("OpenRecipeBook");
+                    ObjectManager.TitleScene.Move.OpenRecipeBook();
                 });
 
             // 食材一覧表示イベント
@@ -82,7 +82,7 @@ namespace Title
                     // フラグを立てる
                     nowOpenRefrugerator = true;
                     // UI表示
-                    Debug.Log("OpenRefrugerator");
+                    ObjectManager.TitleScene.Move.OpenRefrugerator();
                 });
         } 
     

@@ -12,11 +12,12 @@ using Constants;
 
 namespace Title
 {
+    /// <summary>
+    /// player管理クラス
+    /// </summary>
     public class PlayerManager : IActor
     {
-        /// <summary>
-        /// 入力イベント
-        /// </summary>
+        // 入力イベント
         private PlayerInputEvent inputEvent;
 
         /// <summary>
@@ -59,9 +60,7 @@ namespace Title
         public Vector3? HitDistance{get{return hitDistance;} set{hitDistance = value;}}
         private Vector3? hitDistance = null;
 
-        /// <summary>
         /// ray処理
-        /// </summary>
         private PlayerRayProcessing rayProcessing;
 
         /// <summary>
@@ -140,7 +139,7 @@ namespace Title
 
 
     /// <summary>
-    /// タイトル入力イベント管理クラス
+    /// タイトルPlayer入力イベント管理クラス
     /// </summary>
     public sealed class PlayerInputEvent
     {
@@ -176,6 +175,9 @@ namespace Title
         }
     }
 
+    /// <summary>
+    /// Player挙動管理クラス
+    /// </summary>
     public sealed class PlayerMove
     {
         /// <summary>
@@ -267,6 +269,9 @@ namespace Title
         }
     }
 
+    /// <summary>
+    /// PlayerRay管理クラス
+    /// </summary>
     public sealed class PlayerRayProcessing
     {
         
