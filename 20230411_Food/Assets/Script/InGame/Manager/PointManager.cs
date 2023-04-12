@@ -21,14 +21,29 @@ namespace FoodPoint
     /// </summary>
     public class PointManager 
     {
+        /// <summary>
+        /// プレイヤー１のポイントを保管しておく配列
+        /// </summary>
+        public static FoodPoint[] Player1FoodPoints;
 
-        //private BaseFoodPoint[,] pointArr;
+        /// <summary>
+        /// プレイヤー２のポイントを保管しておく配列
+        /// </summary>
+        public static FoodPoint[] Player2FoodPoints;    
+
+        /// <summary>
+        /// 指定された料理のポイントを保管しておく配列
+        /// </summary>
+        private FoodPoint[] specifiedFoodPoints;      
         
-        private BaseFoodPoint[,] pointArr = new BaseFoodPoint[8,2];
         public PointManager(BasePlayer player1, BasePlayer player2)
         {
             
-            
+            for(int i = 0; i < 8; i++)
+            {
+                // Player1FoodPoints = CalcFoodPoint(player1.PointArr, 指定された料理のポイント配列);
+                // Player2Foodpoints = CalcFoodPoint(player2.PointArr, 指定された料理のポイント配列);
+            }
             
             
         }
@@ -56,18 +71,26 @@ namespace FoodPoint
         /// <returns>各パラメータポイントをFoodPointに変換した数値</returns>
        public FoodPoint CalcFoodPoint(BaseFoodPoint tmpPoint, BaseFoodPoint perfectPoint)
        {
-            int resultRate;
+            // 指定された料理のポイントが０だった場合
+            if(perfectPoint.Amount == 0)
+            {
+                return new FoodPoint(0);
+            }
+            
+            // 取得したポイントの名前に相違がある場合
             if(tmpPoint.PointName != perfectPoint.PointName)
             {
                 Debug.LogError("渡されたポイントと指定された料理のポイントの型が一致していません");
                 return new FoodPoint(0);
             }
+
+            float resultRate;
             // ポイント取得
             int rate = tmpPoint.Amount / perfectPoint.Amount;
 
             if(rate > 1)
             {
-                resultRate = rate - 1;
+                resultRate = rate % 1;
             }
             else
             {

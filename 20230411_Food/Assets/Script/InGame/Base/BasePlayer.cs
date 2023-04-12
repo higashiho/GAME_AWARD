@@ -17,7 +17,7 @@ namespace player
         public MoveSpeed Speed;
 
         // プレイヤーが取得したポイントを保管しておく配列
-        public Dictionary<BaseFoodPoint, int> pointArr;
+        public Dictionary<BaseFoodPoint, int> PointArr;
 
         // 取得ポイント
         public MeatPoint MeatPoint;
