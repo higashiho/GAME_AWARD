@@ -27,14 +27,17 @@ namespace GameManager
         private DishData dishData;
         
 
-        void Start()
+        async void Start()
         {
             
             getData = new GetData();
-            dishData = new DishData();
-            dishData.LoadData(getData);
+            dishData = new DishData(ref getData);
+            await dishData.LoadData();
+
             dishData.GetDishData(getData);
-            pointManager.GetDishData(1);
+
+            pointManager = new PointManager(ref dishData, 3);
+            
 
         }
         

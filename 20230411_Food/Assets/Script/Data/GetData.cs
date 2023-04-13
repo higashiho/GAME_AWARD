@@ -27,10 +27,14 @@ public class GetData
     /// </summary>
     /// <param name="dataName">ロードするデータの名前</param>
     /// <returns></returns>
-    public async UniTask LoadAsset(string dataName, TextAsset data)
+    public async UniTask<TextAsset> LoadAsset(string dataName)
     {
         csvDataHandle = Addressables.LoadAssetAsync<TextAsset>(dataName);
-        data = await csvDataHandle.Task;
+        await csvDataHandle.Task;
+
+        
+        return csvDataHandle.Result;
+
     }
 
     /// <summary>
@@ -51,9 +55,10 @@ public class GetData
         while(reader.Peek() != -1)
         {
             // 一行ずつ読み込み
+            maxY++;
             line = reader.ReadLine();
             dataArr.Add(line.Split(','));
-            maxY++;
+            
         }
         maxX = CountChar(line, ',');
         

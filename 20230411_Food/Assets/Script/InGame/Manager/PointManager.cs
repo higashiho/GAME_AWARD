@@ -33,6 +33,8 @@ namespace FoodPoint
         /// プレイヤー２のポイントを保管しておく配列
         /// </summary>
         // private static FoodPoint[] Player2FoodPoints;  
+
+
         private DishData dishData;
   
 
@@ -40,10 +42,11 @@ namespace FoodPoint
         /// 指定された料理のポイントを保管しておく配列
         /// </summary>
         private FoodPoint[] specifiedFoodPoints; 
-
+        [SerializeField]
+        private string[] getData = new string[16];
          
         
-        public PointManager(DishData data, int dishId)
+        public PointManager(ref DishData data, int dishId)
         {
             dishData = data;
             GetDishData(dishId);
@@ -59,11 +62,11 @@ namespace FoodPoint
         /// </summary>
         public void GetDishData(int dishId)
         {
-            string[] data = dishData.DishPointData[dishId];
-            for(int i = 1; i < data.Length; i++)
+            getData = dishData.DishPointData[dishId];
+            for(int i = 0; i < getData.Length; i++)
             {
-                specifiedFoodPoints[i] = new FoodPoint(int.Parse(data[i]));
-                Debug.Log(specifiedFoodPoints[i]);
+                Debug.Log(getData[i]);
+                //specifiedFoodPoints[i] = new FoodPoint(int.Parse(getData[i]));
             }
         }
 
