@@ -37,8 +37,8 @@ namespace Title
         /// <summary>
         /// イベント管理クラス
         /// </summary>
-        public EventManager Events{get{return events;}}
-        private EventManager events;
+        public InputMovementEventManager Events{get{return events;}}
+        private InputMovementEventManager events;
 
         /// <summary>
         /// プレイヤーオブジェクト
@@ -121,7 +121,7 @@ namespace Title
             // 入力イベントインスタンス化
             inputEvent = new PlayerInputEvent(Object);
             Move = new PlayerMove();
-            events = new EventManager();
+            events = new InputMovementEventManager();
             rayProcessing = new PlayerRayProcessing();
         }
 
@@ -156,7 +156,6 @@ namespace Title
         /// <summary>
         /// 2P用更新設定関数
         /// </summary>
-        /// <returns></returns>
         public async void SubUpdate()
         {
             
@@ -166,7 +165,7 @@ namespace Title
             // Ray用ループ
             Object.UpdateAsObservable()
                 .Subscribe(_ => {
-                    rayProcessing.Processing();
+                    rayProcessing.SubProcessing();
                 })
                 .AddTo(Object);
 
@@ -331,7 +330,7 @@ namespace Title
         /// <summary>
         /// PlayerのRayの長さ
         /// </summary>
-        private RayDistance rayDistance = new RayDistance(OutGameConstants.PLAYER_RAY_DISTANCE);
+        private RayDistance rayDistance = new RayDistance(1);
 
         /// <summary>
         /// Ray処理
@@ -356,6 +355,32 @@ namespace Title
                 // 当たっていなかったらnullに変換
                 ObjectManager.Player.HitDistance = null;
                 ObjectManager.Player.HitObject = null;
+            }
+        }
+
+        /// <summary>
+        /// サブプレイヤー用Ray処理
+        /// </summary>
+        public void SubProcessing()
+        {
+            var forwardRay = new Ray(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward);
+            Debug.DrawRay(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward * rayDistance.DistanceAmount, Color.blue);
+        
+            RaycastHit hit;
+            // rayの当たり判定を確認
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.DistanceAmount))
+            {
+                // 当たっていたら向き格納
+                ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
+                // 当たっていたらオブジェクト格納
+                if(ObjectManager.SubPlayer.HitObject != hit.collider.gameObject)
+                    ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
+            }
+            else 
+            {
+                // 当たっていなかったらnullに変換
+                ObjectManager.SubPlayer.HitDistance = null;
+                ObjectManager.SubPlayer.HitObject = null;
             }
         }
     }

@@ -16,45 +16,47 @@ namespace Title
     /// </summary>
     public class TitleManager : MonoBehaviour
     {
-        [SerializeField, Header("Main Camera")]
+        [SerializeField, Header("メインカメラ")]
         private GameObject mainCamera;
         public GameObject MainCamera{get{return mainCamera;}}
 
-        [SerializeField, Header("Fade Panel")]
+        [SerializeField, Header("フェイドパネルイメージ")]
         private Image fadePanel;
         public Image FadePanel{get{return fadePanel;}}
 
-        [SerializeField, Header("Title Camera Data")]
+        [SerializeField, Header("タイトルカメラのデータ")]
         private TitleCameraData cameraData;
         public TitleCameraData CameraData{get{return cameraData;}}
+
+        [SerializeField, Header("テキストイメージ保持キャンバス")]
+        private Canvas textImageCanvas;
+        public Canvas TextImageCanvas{get{return textImageCanvas;}}
        
-        /// <summary>
-        /// 入力イベントインスタンス化
-        /// </summary>
+        /// <summary>入力イベントインスタンス化</summary>
         public TitleInputEvent InputEvent{get; private set;}
 
+        /// <summary>イベント管理クラスインスタンス化</summary>
+        private InputEventManager eventSetting;
         /// <summary>
-        /// イベント管理クラスインスタンス化
+        /// テキスト接近イベント
         /// </summary>
-        private EventManager eventSetting;
+        private TextApproachEventManager textApproachEvent;
 
-        /// <summary>
-        /// シーン挙動クラスインスタンス化
-        /// </summary>
+        /// <summary>シーン挙動クラスインスタンス化</summary>
         public MakeTweenMovengs Move{get; private set;}
 
-        /// <summary> 何かのイベントが処理されているか </summary>
+        /// <summary>何かのイベントが処理されているか</summary>
         public bool NowPlayeEvents{get{return nowPlayEvents;} set{nowPlayEvents = value;}}
         private bool nowPlayEvents = false;
-        
         void Awake()
         {
             // インスタンス化
             InputEvent  = new TitleInputEvent(this.gameObject);
             ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
             ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
-            eventSetting = new EventManager();
+            eventSetting = new InputEventManager();
             Move = new MakeTweenMovengs();
+            textApproachEvent = new TextApproachEventManager();
             ObjectManager.TitleScene = this;
 
             // タイトル入力確認ループ
@@ -64,6 +66,9 @@ namespace Title
 
             // 入力イベント設定
             eventSetting.SetInputEvents();
+
+            // テキストイベント設定
+            textApproachEvent.TextApproachEvents();
         }
 
         private void OnDestroy() 
@@ -77,10 +82,20 @@ namespace Title
     public sealed class TitleInputEvent
     {
         // 以下入力イベント==================================================
+        // ゲームスタートイベント
         public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
+        // 食材一覧表示イベント
         public IReadOnlyReactiveProperty<bool> FoodNicknames => keyReturnInput;
+        // 食材相性表示イベント
         public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
+        // カメラリセットイベント
         public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyBackInput;
+        // 食材一覧表示テキスト接近イベント
+        public IReadOnlyReactiveProperty<bool> FoodNicknamesTextApproach => foodNicknamesTextApproach;
+        // 食材相性表示テキスト接近イベント
+        public IReadOnlyReactiveProperty<bool> DisplayIngredientsListTextApproach => displayIngredientsListTextApproach;
+        // ゲームスタートテキスト接近イベント
+        public IReadOnlyReactiveProperty<bool> GameStartTextApproach => gameStartTextApproach;
 
         // =================================================================
 
@@ -89,6 +104,9 @@ namespace Title
         // 以下入力イベント実装===============================================
         private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
         private readonly ReactiveProperty<bool> keyBackInput = new BoolReactiveProperty();
+        private readonly ReactiveProperty<bool> foodNicknamesTextApproach = new BoolReactiveProperty();
+        private readonly ReactiveProperty<bool> displayIngredientsListTextApproach = new BoolReactiveProperty();
+        private readonly ReactiveProperty<bool> gameStartTextApproach = new BoolReactiveProperty();
         // =================================================================
 
         /// <summary>
@@ -100,6 +118,9 @@ namespace Title
             // 以下指定オブジェクトDestroy時にイベント破棄設定=========
             keyReturnInput.AddTo(tmpObj);
             keyBackInput.AddTo(tmpObj);
+            foodNicknamesTextApproach.AddTo(tmpObj);
+            displayIngredientsListTextApproach.AddTo(tmpObj);
+            gameStartTextApproach.AddTo(tmpObj);
             // =====================================================
         }
 
@@ -111,6 +132,12 @@ namespace Title
             // 以下各種入力をReactivePropertyに反映=========================
             keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
             keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
+            foodNicknamesTextApproach.Value = ObjectManager.Player.HitObject?.name == ("Refrugerator") ||
+                                              ObjectManager.SubPlayer.HitObject?.name == ("Refrugerator");
+            displayIngredientsListTextApproach.Value = ObjectManager.Player.HitObject?.name == ("RecipeBook") ||
+                                              ObjectManager.SubPlayer.HitObject?.name == ("RecipeBook");
+            gameStartTextApproach.Value = ObjectManager.Player.HitObject?.name == ("GasBurner") ||
+                                          ObjectManager.SubPlayer.HitObject?.name == ("GasBurner");
             // ===========================================================
         }
     }
@@ -191,13 +218,23 @@ namespace Title
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
-
             // Tween目標座標座標
-            var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y * 2),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z)
-            );
+            var targetCoordinates = Vector3.zero;
+
+            if(ObjectManager.Player.HitObject)
+                // Tween目標座標座標
+                targetCoordinates = new Vector3(
+                    ObjectManager.Player.HitObject.transform.position.x,
+                    ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y * 2),
+                    ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z)
+                );
+            else if(ObjectManager.SubPlayer.HitObject)
+                // Tween目標座標座標
+                targetCoordinates = new Vector3(
+                    ObjectManager.SubPlayer.HitObject.transform.position.x,
+                    ObjectManager.SubPlayer.HitObject.transform.position.y + (ObjectManager.SubPlayer.HitObject.transform.localScale.y * 2),
+                    ObjectManager.SubPlayer.HitObject.transform.position.z - (ObjectManager.SubPlayer.HitObject.transform.localScale.z)
+                );
 
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(

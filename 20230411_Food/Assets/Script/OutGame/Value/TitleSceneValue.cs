@@ -29,5 +29,35 @@ namespace Title
             MoveTimeAmount = tmpAmount;
         }
     }
+
+    /// <summary>
+    /// テキストY座標接近加算距離設定クラス
+    /// </summary>
+    public sealed class TextApproachValue
+    {
+        /// <summary>
+        /// テキストY座標接近加算距離
+        /// </summary>
+        public float TextApproachAmount{get; private set;}
+        public TextApproachValue(float tmpAmount)
+        {
+            TextApproachAmount = tmpAmount;
+        }
+    }
+
+    /// <summary>
+    /// テキストY座標接近時間設定クラス
+    /// </summary>
+    public sealed class TextApproachMovementTime
+    {
+        /// <summary>
+        /// テキストY座標接近時間
+        /// </summary>
+        public float TextApproachMovementTimeAmount{get; private set;}
+        public TextApproachMovementTime(float tmpAmount)
+        {
+            TextApproachMovementTimeAmount = tmpAmount;
+        }
+    }
 }
 
