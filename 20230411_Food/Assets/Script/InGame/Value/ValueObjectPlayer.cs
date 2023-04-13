@@ -1,29 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameManager;
 
 namespace player
 {
     public class ValueObjectPlayer
     {
         
-    }
-
-    // プレイヤーオブジェクトそのもののクラス
-    public sealed class PlayerObject
-    {
-        public GameObject identity{get; private set;}
-
-        // コンストラクタ
-        public PlayerObject(GameObject player)
-        {
-            if(identity == null)
-            {
-                Debug.LogError("プレイヤーがNULLだよ");
-            }
-            // 初期化
-            identity = player;
-        }
     }
 
     // プレイヤー生成座標クラス
@@ -44,19 +28,37 @@ namespace player
     }
 
     // プレイヤーの速度クラス
-    public sealed class MoveSpeed
+    public sealed class PlayerMoveSpeed
     {
         public float moveSpeed{get; private set;}
 
         // コンストラクタ
-        public MoveSpeed(float speed)
+        public PlayerMoveSpeed()
         {
             if(moveSpeed <= 0)
             {
                 Debug.LogError("プレイヤーの移動速度がマイナスだよ");
             }
             // 初期化
-            moveSpeed = speed;
+            moveSpeed = ObjectManager.Player.DataPlayer.MoveSpeed;
+        }
+    }
+
+
+    // プレイヤー回転座標クラス
+    public sealed class PlayerRotatePos
+    {
+        public Vector3 Rotate{get; private set;}
+
+        // コンストラクタ
+        public PlayerRotatePos()
+        {
+            if(Rotate == null)
+            {
+                Debug.LogError("プレイヤーの回転座標がNULLだよ");
+            }
+
+            Rotate = ObjectManager.Player.DataPlayer.RotatePos;
         }
     }
 }

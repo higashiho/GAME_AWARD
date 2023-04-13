@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
+using player;
 
 namespace GameManager
     {
@@ -62,6 +63,18 @@ namespace GameManager
                     break;
 
             }
+        }
+    }
+
+    public abstract class ObjectManager
+    {
+        // プレイヤー
+        private static PlayerManager player;
+
+        public static PlayerManager Player
+        {
+            get{return player;}
+            set{player = value; Debug.LogWarning("Get PlayerObject");}
         }
     }
 }
