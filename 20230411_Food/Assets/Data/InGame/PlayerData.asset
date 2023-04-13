@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   firstPlayerCreatePos: {x: 0, y: 0, z: 0}
-  moveSpeed: 0
-  playerPrefab: {fileID: 4941854658261786464, guid: c2e1dc2341fb9584ebfce617585f63f8, type: 3}
+  moveSpeed: 3
+  rotatePos: {x: 0, y: 90, z: 0}

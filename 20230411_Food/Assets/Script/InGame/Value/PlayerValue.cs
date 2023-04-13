@@ -57,5 +57,17 @@ namespace player
             Rotate = ObjectManager.Player.DataPlayer.RotatePos;
         }
     }
+
+    // プレイヤーから出るRayの長さの最大値のクラス
+    public sealed class PlayerRayDirection
+    {
+        public float RayDirection{get; private set;}
+
+        // コンストラクタ
+        public PlayerRayDirection()
+        {
+            RayDirection = ObjectManager.Player.DataPlayer.RayDirection;
+        }
+    }
 }
 

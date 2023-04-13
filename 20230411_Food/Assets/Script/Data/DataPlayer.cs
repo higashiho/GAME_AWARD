@@ -19,5 +19,9 @@ namespace player
         [SerializeField, Header("プレイヤーの回転座標")]
         private Vector3 rotatePos;
         public Vector3 RotatePos{get{return rotatePos;}}
+
+        [SerializeField, Header("プレイヤーから出るRayの最大の長さ")]
+        private float rayDirection;
+        public float RayDirection{get{return rayDirection;}}
     }
 }

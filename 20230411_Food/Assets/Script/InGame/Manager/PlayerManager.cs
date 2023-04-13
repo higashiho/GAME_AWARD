@@ -28,14 +28,34 @@ namespace player
         /// <summary>
         /// プレイヤー移動クラス
         /// </summary>
-        /// <value></value>
         public PlayerMove PlayerMove{get; private set;}
 
         /// <summary>
         /// プレイヤー回転クラス
         /// </summary>
-        /// <value></value>
         public PlayerRotate PlayerRotate{get; private set;}
+
+        /// <summary>
+        /// ベースクラス
+        /// </summary>
+        public BasePlayer BasePlayer{get; private set;}
+
+        /// <summary>
+        /// 食べ物を取ってポイントを獲得するクラス
+        /// </summary>
+        public TakeFood TakeFood{get; private set;}
+
+        /// <summary>
+        /// Rayが当たったオブジェクト
+        /// </summary>
+        public GameObject RayHitObject{get{return rayHitObject;} set{rayHitObject = value;}}
+        private GameObject rayHitObject;
+
+        /// <summary>
+        /// Rayを操作するクラス
+        /// </summary>
+        /// <value></value>
+        public RayController RayController{get; private set;}
 
         // コンストラクタ
         public PlayerManager()
@@ -71,6 +91,9 @@ namespace player
             
             PlayerMove = new PlayerMove();
             PlayerRotate = new PlayerRotate();
+            BasePlayer = new BasePlayer();
+            TakeFood = new TakeFood();
+            RayController = new RayController();
         }
 
         public void Update()
@@ -83,6 +106,12 @@ namespace player
 
             // 回転メソッド
             PlayerRotate.Rotate();
+
+            // 食べ物を獲得してポイントゲット
+            TakeFood.AddPoint();
+
+            // Rayで当たり判定を得る
+            RayController.RayCast();
         }
     }
 
@@ -164,6 +193,68 @@ namespace player
             if(Input.GetKey(KeyCode.A))
             {
                 ObjectManager.Player.Object.transform.eulerAngles = -PlayerRotatePos.Rotate * Time.deltaTime;
+            }
+        }
+    }
+
+    // 食べ物を取得して得点に変換するクラス
+    public class TakeFood
+    {
+
+        public BasePlayer BasePlayer{get; private set;}
+
+        // コンストラクタ
+        public TakeFood()
+        {
+            BasePlayer = new BasePlayer();
+        }
+
+        // ポイント獲得メソッド
+        public void AddPoint()
+        {
+            // XXX:NULL-RayHitObject
+            if(ObjectManager.Player.RayHitObject.tag == ("Food"))
+            {
+                BasePlayer.PointArr.Add(BasePlayer.MeatPoint, 1);
+                Debug.Log(BasePlayer.PointArr[BasePlayer.MeatPoint]);
+            }
+            else if(ObjectManager.Player.RayHitObject == null)
+            {
+                return;
+            }
+        }
+    }
+
+
+    // Rayで当たり判定を得ているクラス
+    public class RayController
+    {
+        public PlayerRayDirection PlayerRayDirection{get; private set;}
+
+        // コンストラクタ
+        public RayController()
+        {
+            PlayerRayDirection = new PlayerRayDirection();
+        }
+
+        public void RayCast()
+        {
+            // プレイヤーから出るRayの設定
+            var checkFoodRay = new Ray(ObjectManager.Player.Object.transform.position,
+                                       ObjectManager.Player.Object.transform.forward);
+            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward, Color.red);
+
+            RaycastHit hit;
+
+            // Rayが当たったら
+            if(Physics.Raycast(checkFoodRay, out hit, PlayerRayDirection.RayDirection))
+            {
+                // Rayが当たったオブジェクトを格納
+                ObjectManager.Player.RayHitObject = hit.collider.gameObject;
+            }
+            else
+            {
+                ObjectManager.Player.RayHitObject = null;
             }
         }
     }
