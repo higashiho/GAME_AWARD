@@ -23,7 +23,7 @@ namespace player
         /// <summary>
         /// プレイヤーのデータ
         /// </summary>
-        public DataPlayer DataPlayer{get; private set;} = null;
+        public DataPlayer DataPlayer{get; private set;}
 
         /// <summary>
         /// プレイヤー移動クラス
@@ -42,13 +42,11 @@ namespace player
         {
             // 初期化
             Initialization();
-
-            // 更新
-            Update();
         }
 
         public async void Initialization()
         {
+
             // プレイヤーデータ取得
             DataHandle = Addressables.LoadAssetAsync<DataPlayer>("nGame/PlayerData.assetyerData.asset");
             // プレイヤーデータハンドルを非同期にする
@@ -69,6 +67,10 @@ namespace player
             Object = MonoBehaviour.Instantiate(tmpObj
             , InstancePosOne.pos
             , Quaternion.identity);
+
+            
+            PlayerMove = new PlayerMove();
+            PlayerRotate = new PlayerRotate();
         }
 
         public void Update()
@@ -92,12 +94,18 @@ namespace player
         
         public PlayerMoveSpeed MoveSpeed{get; private set;}
 
+        // コンストラクタ
+        public PlayerMove()
+        {
+            MoveSpeed = new PlayerMoveSpeed();
+        }
+
         /// <summary>
         /// プレイヤーを移動させる
         /// </summary>
         public void ForwardMove()
         {
-            if(Input.GetKey("W"))
+            if(Input.GetKey(KeyCode.W))
             {
                 ObjectManager.Player.Object.transform.position +=
                 ObjectManager.Player.Object.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
@@ -106,7 +114,7 @@ namespace player
 
         public void BackMove()
         {
-            if(Input.GetKey("S"))
+            if(Input.GetKey(KeyCode.S))
             {
                 ObjectManager.Player.Object.transform.position +=
                 -ObjectManager.Player.Object.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
@@ -115,7 +123,7 @@ namespace player
 
         public void RightMove()
         {
-            if(Input.GetKey("D"))
+            if(Input.GetKey(KeyCode.D))
             {
                 ObjectManager.Player.Object.transform.position +=
                 ObjectManager.Player.Object.transform.right * MoveSpeed.moveSpeed * Time.deltaTime;
@@ -124,7 +132,7 @@ namespace player
 
         public void LeftMove()
         {
-            if(Input.GetKey("A"))
+            if(Input.GetKey(KeyCode.A))
             {
                 ObjectManager.Player.Object.transform.position +=
                 -ObjectManager.Player.Object.transform.right * MoveSpeed.moveSpeed * Time.deltaTime;
@@ -139,15 +147,21 @@ namespace player
     {
         public PlayerRotatePos PlayerRotatePos{get; private set;}
 
+        // コンストラクタ
+        public PlayerRotate()
+        {
+            PlayerRotatePos = new PlayerRotatePos();
+        }
+
         // 回転させる
         public void Rotate()
         {
-            if(Input.GetKey("D"))
+            if(Input.GetKey(KeyCode.D))
             {
                 ObjectManager.Player.Object.transform.eulerAngles = PlayerRotatePos.Rotate * Time.deltaTime;
             }
 
-            if(Input.GetKey("A"))
+            if(Input.GetKey(KeyCode.A))
             {
                 ObjectManager.Player.Object.transform.eulerAngles = -PlayerRotatePos.Rotate * Time.deltaTime;
             }
