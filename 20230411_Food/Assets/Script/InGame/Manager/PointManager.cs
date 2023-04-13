@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+
+
 using player;
 
 namespace FoodPoint
@@ -8,7 +11,7 @@ namespace FoodPoint
     // プレイヤーの取得したポイントをゲームシーン中に
     // staticな配列に入れておく
 
-
+    // 料理IDを作る
     // 指定された料理のポイントを把握しておく => Dataを取得
     // コンストラクタでプレイヤーのポイントを取得
     // 計算メソッドを呼んで割合を計算しておく
@@ -24,42 +27,44 @@ namespace FoodPoint
         /// <summary>
         /// プレイヤー１のポイントを保管しておく配列
         /// </summary>
-        public static FoodPoint[] Player1FoodPoints;
+        // private static FoodPoint[] Player1FoodPoints;
 
         /// <summary>
         /// プレイヤー２のポイントを保管しておく配列
         /// </summary>
-        public static FoodPoint[] Player2FoodPoints;    
+        // private static FoodPoint[] Player2FoodPoints;  
+        private DishData dishData;
+  
 
         /// <summary>
         /// 指定された料理のポイントを保管しておく配列
         /// </summary>
-        private FoodPoint[] specifiedFoodPoints;      
+        private FoodPoint[] specifiedFoodPoints; 
+
+         
         
-        public PointManager(BasePlayer player1, BasePlayer player2)
+        public PointManager(DishData data, int dishId)
         {
-            
-            for(int i = 0; i < 8; i++)
-            {
-                // Player1FoodPoints = CalcFoodPoint(player1.PointArr, 指定された料理のポイント配列);
-                // Player2Foodpoints = CalcFoodPoint(player2.PointArr, 指定された料理のポイント配列);
-            }
-            
-            
+            dishData = data;
+            GetDishData(dishId);
+            // for(int i = 0; i < 8; i++)
+            // {
+            //     // Player1FoodPoints = CalcFoodPoint(player1.PointArr, 指定された料理のポイント配列);
+            //     // Player2Foodpoints = CalcFoodPoint(player2.PointArr, 指定された料理のポイント配列);
+            // }
         }
 
-        
-  
-
-        
-
         /// <summary>
-        /// 指定された料理のデータを取得するメソッド
-        /// ここでポイントデータ達を取得
+        /// int型の値を渡すとその数値に応じたインデックスの料理データを取得するメソッド
         /// </summary>
-        public void GetFoodData()
+        public void GetDishData(int dishId)
         {
-
+            string[] data = dishData.DishPointData[dishId];
+            for(int i = 1; i < data.Length; i++)
+            {
+                specifiedFoodPoints[i] = new FoodPoint(int.Parse(data[i]));
+                Debug.Log(specifiedFoodPoints[i]);
+            }
         }
 
         /// <summary>
@@ -109,3 +114,6 @@ namespace FoodPoint
     }
 }
 
+
+// ポイントデータを取得
+// スクリプタブルオブジェクトに流し込む

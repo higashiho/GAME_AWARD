@@ -22,6 +22,20 @@ namespace GameManager
         private gameState phase;
 
         private PointManager pointManager;
+        private GetData getData;
+        private DishData dishData;
+        
+
+        void Start()
+        {
+            
+            getData = new GetData();
+            dishData = new DishData();
+            dishData.LoadData(getData);
+            dishData.GetDishData(getData);
+            pointManager.GetDishData(1);
+
+        }
         
         void Update()
         {
