@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
+using player;
 
 namespace GameManager
     {
@@ -9,6 +10,7 @@ namespace GameManager
     {
 
         // ステート
+        [SerializeField]
         private enum gameState
         {
             OPENING,    // 開幕演出
@@ -19,9 +21,18 @@ namespace GameManager
         }
 
         // ゲームステート管理変数
+        [SerializeField]
         private gameState phase;
 
         private PointManager pointManager;
+
+        private ObjectManager objectManager;
+
+        void Start()
+        {
+            objectManager = new ObjectManager();
+            ObjectManager.Player = new PlayerManager();
+        }
         
         void Update()
         {
@@ -34,6 +45,7 @@ namespace GameManager
                     break;
 
                 case gameState.GAME:
+                    objectManager.Update();
                     break;
                 
                 case gameState.COOKING:
@@ -48,6 +60,24 @@ namespace GameManager
                     break;
 
             }
+        }
+    }
+
+    public class ObjectManager
+    {
+        // プレイヤー
+        private static PlayerManager player;
+
+        public static PlayerManager Player
+        {
+            get{return player;}
+            set{player = value;}
+        }
+
+        // インゲーム全体統括メソッド
+        public void Update()
+        {
+            Player.Update();
         }
     }
 }

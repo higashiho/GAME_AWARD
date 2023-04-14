@@ -16,8 +16,12 @@ namespace player
         private float moveSpeed;
         public float MoveSpeed{get{return moveSpeed;}}
 
-        [SerializeField, Header("プレイヤーオブジェクト")]
-        private GameObject playerPrefab;
-        public GameObject PlayerPrefab{get{return playerPrefab;}}
+        [SerializeField, Header("プレイヤーの回転座標")]
+        private Vector3 rotatePos;
+        public Vector3 RotatePos{get{return rotatePos;}}
+
+        [SerializeField, Header("プレイヤーから出るRayの最大の長さ")]
+        private float rayDirection;
+        public float RayDirection{get{return rayDirection;}}
     }
 }
