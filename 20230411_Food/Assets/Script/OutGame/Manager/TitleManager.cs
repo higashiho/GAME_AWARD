@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,9 +30,9 @@ namespace Title
         private TitleCameraData cameraData;
         public TitleCameraData CameraData{get{return cameraData;}}
 
-        [SerializeField, Header("テキストイメージ保持キャンバス")]
-        private Canvas textImageCanvas;
-        public Canvas TextImageCanvas{get{return textImageCanvas;}}
+        [SerializeField, Header("テキストイメージ")]
+        private Image[] textImageCanvas = new Image[3];
+        public Image[] TextImageCanvas{get{return textImageCanvas;}}
        
         /// <summary>入力イベントインスタンス化</summary>
         public TitleInputEvent InputEvent{get; private set;}
@@ -49,6 +50,8 @@ namespace Title
         /// <summary>何かのイベントが処理されているか</summary>
         public bool NowPlayeEvents{get{return nowPlayEvents;} set{nowPlayEvents = value;}}
         private bool nowPlayEvents = false;
+
+        public CancellationTokenSource Cts{get; private set;} = new CancellationTokenSource();
         void Awake()
         {
             // インスタンス化
@@ -75,6 +78,32 @@ namespace Title
         private void OnDestroy() 
         {
             DOTween.KillAll();
+            Cts.Cancel();
+        }
+
+        /// <summary>
+        /// 描画関数
+        /// </summary>
+        void OnDrawGizmos()
+        {
+            // Ray描画
+            //　Cubeのレイを疑似的に視覚化
+            for(int i = 0; i < TextImageCanvas.Length; i++)
+            {    
+                var drawRayScale = new Vector3(
+                    TextImageCanvas[i].transform.localScale.x * 3,
+                    TextImageCanvas[i].transform.localScale.y * 2,
+                    TextImageCanvas[i].transform.localScale.z * 0.5f
+                );
+                var drawRayPos = new Vector3(
+                    TextImageCanvas[i].transform.position.x,
+                    // 中央に表示しないように少し下げる
+                    TextImageCanvas[i].transform.position.y * 0.9f,
+                    TextImageCanvas[i].transform.position.z
+                );
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireCube(drawRayPos + TextImageCanvas[i].transform.forward, drawRayScale);
+            }        
         }
     }
     /// <summary>
@@ -165,6 +194,13 @@ namespace Title
             get{return titleScene;} 
             set{titleScene = value; Debug.LogWarning("Assigned to titleScene.");} 
             }
+
+        // テキストマネージャー
+        private static TextManager text;
+        public static TextManager Text{
+            get{return text;}
+            set{text = value; Debug.LogWarning("Assigned to text");}
+        }
     }
 
     /// <summary>

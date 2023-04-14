@@ -18,9 +18,9 @@ namespace Constants
         /// <summary>プレイヤーのrayの長さ</summary>
         public const float PLAYER_RAY_DISTANCE = 1.0f;
         /// <summary>テキストイメージ接近目標座標</summary>
-        public const float TEXT_IMAGE_APPROACH_POS_Y = -95;
+        public const float TEXT_IMAGE_APPROACH_POS_Y = -95f;
         /// <summary>テキストイメージ離反目標座標</summary>
-        public const float TEXT_IMAGE_LEAVE_POS_Y = -95;
+        public const float TEXT_IMAGE_LEAVE_POS_Y = -235f;
     }
 }
 

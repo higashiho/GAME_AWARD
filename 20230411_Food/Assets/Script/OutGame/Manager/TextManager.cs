@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 using Constants;
 
@@ -13,6 +14,12 @@ namespace Title
     public class TextManager
     {
         public TextMove Move{get; private set;}
+
+        /// <summary>
+        /// テキストイメージオブジェクトのRay
+        /// </summary>
+        public RaycastHit[] HitPlayerRay{get{return hitPlayerRay;} set{hitPlayerRay = value;}}
+        private RaycastHit[] hitPlayerRay = new RaycastHit[3];
 
         // コンストラクタ
         public TextManager()
@@ -39,9 +46,9 @@ namespace Title
         /// <param name="distination">テキストイメージ目標座標</param>
         public void FoodNicknamesTextMovement(float distination)
         {
-            textImageObject = ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(0);
+            textImageObject = ObjectManager.TitleScene.TextImageCanvas[0].transform;
             // ImageのTweenを削除
-            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(0));
+            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[0].transform);
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
@@ -50,9 +57,17 @@ namespace Title
                 distination,
                 approachMovementTime.Amount
             ).SetEase(Ease.Linear).OnComplete(() => 
-            ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y));
+            {
+                // 座標更新
+                var tmpPos = textImageObject.localPosition;
+                tmpPos.y = OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y;
+                textImageObject.localPosition = tmpPos;
+            });
 
             sequence.Play();
+            
+            //　座標目標値設定
+            ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
         }
 
         /// <summary>
@@ -61,10 +76,10 @@ namespace Title
         /// <param name="distination">テキストイメージ目標座標</param>
         public void DisplayIngredientsListTextMovement(float distination)
         {
-            textImageObject = ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(1);
+            textImageObject = ObjectManager.TitleScene.TextImageCanvas[1].transform;
             Debug.Log("Play");
             // ImageのTweenを削除
-            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(1));
+            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[1].transform);
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
@@ -73,9 +88,17 @@ namespace Title
                 distination,
                 approachMovementTime.Amount
             ).SetEase(Ease.Linear).OnComplete(() => 
-            ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y));
+            {
+                // 座標更新
+                var tmpPos = textImageObject.localPosition;
+                tmpPos.y = OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y;
+                textImageObject.localPosition = tmpPos;
+            });
 
             sequence.Play();
+            
+            //　座標目標値設定
+            ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
         }
 
         /// <summary>
@@ -84,10 +107,10 @@ namespace Title
         /// <param name="distination">テキストイメージ目標座標</param>
         public void GameStartTextMovement(float distination)
         {
-            textImageObject = ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(2);
+            textImageObject = ObjectManager.TitleScene.TextImageCanvas[2].transform;
 
             // ImageのTweenを削除
-            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas.transform.GetChild(2));
+            DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[2].transform);
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
@@ -96,17 +119,39 @@ namespace Title
                 distination,
                 approachMovementTime.Amount
             ).SetEase(Ease.Linear).OnComplete(() => 
-            ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y));
+            {
+                // 座標更新
+                var tmpPos = textImageObject.localPosition;
+                tmpPos.y = OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y;
+                textImageObject.localPosition = tmpPos;
+            });
 
             sequence.Play();
+            
+            //　座標目標値設定
+            ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
         }
         /// <summary>
         /// テキストイメージ初期化挙動処理
         /// </summary>
-        /// <param name="distination">テキストイメージ目標座標</param>
-        public void ResetTextMovement(float distination)
+        /// <param name="resetImage">テキストイメージ</param>
+        public void ResetTextMovement(Image resetImage)
         {
             // TODO : 引数オブジェクトの座標で元に戻すテキストイメージを判断して実行
+            // Posが指定の座標と同じじゃなければ移動処理
+            if(resetImage.transform.localPosition.y != OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y)
+            {
+                // 挙動
+                resetImage.transform.DOLocalMoveY(
+                    OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y,
+                    approachMovementTime.Amount
+                ).SetEase(Ease.Linear).OnStart(() => Debug.Log("ResetTextMovement")).OnComplete(() => {
+                    // 座標調整
+                    var tmpPos = resetImage.transform.localPosition;
+                    tmpPos.y = OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y;
+                    resetImage.transform.localPosition = tmpPos;
+                });
+            }
             // 目標座標更新
             ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
         }

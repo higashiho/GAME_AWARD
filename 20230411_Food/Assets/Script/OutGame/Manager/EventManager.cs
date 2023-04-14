@@ -1,6 +1,8 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniRx.Triggers;
 using UniRx;
@@ -371,10 +373,14 @@ namespace Title
 
     public class TextApproachEventManager
     {
-        private TextManager text;
+        
+        /// <summary>
+        /// Rayの長さ
+        /// </summary>
+        private RayDistance rayDistance = new RayDistance(1);
         public TextApproachEventManager()
         {
-            text = new TextManager();
+            ObjectManager.Text = new TextManager();
         }
 
         /// <summary>
@@ -390,7 +396,7 @@ namespace Title
                 // 目標座標が接近座標の場合
                 .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
-                .Subscribe(x => text.Move.FoodNicknamesTextMovement(x))
+                .Subscribe(x => ObjectManager.Text.Move.FoodNicknamesTextMovement(x))
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
@@ -408,7 +414,7 @@ namespace Title
                 // 目標座標が接近座標の場合
                 .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
-                .Subscribe(x => text.Move.DisplayIngredientsListTextMovement(x))
+                .Subscribe(x => ObjectManager.Text.Move.DisplayIngredientsListTextMovement(x))
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
@@ -426,7 +432,7 @@ namespace Title
                 // 目標座標が接近座標の場合
                 .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
-                .Subscribe(x => text.Move.GameStartTextMovement(x))
+                .Subscribe(x => ObjectManager.Text.Move.GameStartTextMovement(x))
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
@@ -434,9 +440,52 @@ namespace Title
         /// <summary>
         /// テキストイメージリセットイベント
         /// </summary>
-        private void resetTextImageEvents()
+        private async UniTaskVoid resetTextImageEvents()
         {
-            
+            while(!ObjectManager.TitleScene.Cts.Token.IsCancellationRequested)
+            {
+                // テキストイメージが全て初期位置にいた場合
+                if(ObjectManager.TitleScene.TextImageCanvas[0].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y &&
+                ObjectManager.TitleScene.TextImageCanvas[1].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y &&
+                ObjectManager.TitleScene.TextImageCanvas[2].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y)
+                {
+                    await UniTask.Yield();
+                    return;
+                }
+
+
+                
+                for(int i = 0; i < ObjectManager.TitleScene.TextImageCanvas.Length; i++)
+                {
+                    // 判定サイズ設定
+                    var drawRayScale = new Vector3(
+                    ObjectManager.TitleScene.TextImageCanvas[i].transform.localScale.x * 3,
+                    ObjectManager.TitleScene.TextImageCanvas[i].transform.localScale.y * 2,
+                    ObjectManager.TitleScene.TextImageCanvas[i].transform.localScale.z * 0.5f
+                    );
+                    // 判定座標設定
+                    var drawRayPos = new Vector3(
+                        ObjectManager.TitleScene.TextImageCanvas[i].transform.position.x,
+                        // 中央に表示しないように少し下げる
+                        ObjectManager.TitleScene.TextImageCanvas[i].transform.position.y * 0.9f,
+                        ObjectManager.TitleScene.TextImageCanvas[i].transform.position.z
+                    );
+                    // 当たっているか
+                    if(!Physics.BoxCast(
+                        drawRayPos, 
+                        drawRayScale * 0.5f, 
+                        ObjectManager.TitleScene.TextImageCanvas[i].transform.forward, 
+                        out ObjectManager.Text.HitPlayerRay[i], Quaternion.identity, 
+                        rayDistance.Amount))
+                        {
+                            // イメージリセット関数呼び出し
+                            ObjectManager.Text.Move.ResetTextMovement(ObjectManager.TitleScene.TextImageCanvas[i]);
+                            Debug.Log("OutPlayer");
+                        }
+                }
+                await UniTask.Yield();
+
+            }
         }
 
         /// <summary>
@@ -454,7 +503,7 @@ namespace Title
             gameStartTextApproachEvents();
 
             // リセットイベントループ
-            resetTextImageEvents();
+            resetTextImageEvents().Forget();
         }
     }
 }
