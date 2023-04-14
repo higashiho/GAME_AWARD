@@ -6,11 +6,11 @@ namespace Title
 {
     public sealed class RayDistance
     {
-        public float DistanceAmount{get; private set;}
+        public float Amount{get; private set;}
         
         public RayDistance(float tmpAmount)
         {
-            DistanceAmount = tmpAmount;
+            Amount = tmpAmount;
         }
     }
 
@@ -23,10 +23,10 @@ namespace Title
         /// <summary>
         /// シーン挙動までにかかる時間
         /// </summary>
-        public float MoveTimeAmount{get; private set;}
+        public float Amount{get; private set;}
         public SceneMoveTime(float tmpAmount)
         {
-            MoveTimeAmount = tmpAmount;
+            Amount = tmpAmount;
         }
     }
 
@@ -38,10 +38,10 @@ namespace Title
         /// <summary>
         /// テキストY座標接近加算距離
         /// </summary>
-        public float TextApproachAmount{get; private set;}
+        public float Amount{get; private set;}
         public TextApproachValue(float tmpAmount)
         {
-            TextApproachAmount = tmpAmount;
+            Amount = tmpAmount;
         }
     }
 
@@ -53,10 +53,10 @@ namespace Title
         /// <summary>
         /// テキストY座標接近時間
         /// </summary>
-        public float TextApproachMovementTimeAmount{get; private set;}
+        public float Amount{get; private set;}
         public TextApproachMovementTime(float tmpAmount)
         {
-            TextApproachMovementTimeAmount = tmpAmount;
+            Amount = tmpAmount;
         }
     }
 }

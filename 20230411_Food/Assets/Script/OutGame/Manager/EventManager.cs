@@ -71,7 +71,7 @@ namespace Title
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // 押されて指定秒経っていたら
                 // レシピ本は挙動が二つある為２倍する
-                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount * 2))
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount * 2))
                 // 実施
                 .Subscribe(async _ =>
                 {
@@ -101,7 +101,7 @@ namespace Title
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // 押されて指定秒経っていたら
-                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount))
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
                 .Subscribe(async _ =>
                 {
@@ -129,7 +129,7 @@ namespace Title
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // 押されて指定秒経っていたら
-                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.MoveTimeAmount))
+                .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
                 .Subscribe(async _ =>
                 {
@@ -194,6 +194,7 @@ namespace Title
                             PlayerMoveDis == Vector3.left)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.LeftMovement(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
 
         }
@@ -218,6 +219,7 @@ namespace Title
                             PlayerMoveDis == Vector3.right)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.RightMovement(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
 
         }
@@ -242,6 +244,7 @@ namespace Title
                             PlayerMoveDis == Vector3.forward)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.ForwardMovement(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
 
         }
@@ -266,6 +269,7 @@ namespace Title
                             PlayerMoveDis == Vector3.back)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.BackMovement(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
 
         }
@@ -289,6 +293,7 @@ namespace Title
                             !Input.GetKey(rightKey))
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.ResetAnim(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
         }
 
@@ -311,6 +316,7 @@ namespace Title
                             Input.GetKeyUp(rightKey))
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.ResetMovement(tmpPlayer))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(tmpPlayer.Object);
         }
 
@@ -376,9 +382,16 @@ namespace Title
         /// </summary>
         private void foodNicknamesTextApproachEvents()
         {
-            ObjectManager.TitleScene.InputEvent.FoodNicknamesTextApproach
-                .Where(x => x)
-                .Subscribe(_ => text.Move.FoodNicknamesTextMovement())
+            // 食材一覧表示テキスト接近処理イベント設定
+            ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint
+                // どちらかの取得オブジェクトが冷蔵庫の場合
+                .Where(_ => ObjectManager.Player.HitObject?.name == ("Refrugerator") ||
+                            ObjectManager.SubPlayer.HitObject?.name == ("Refrugerator"))
+                // 目標座標が接近座標の場合
+                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                // 実施
+                .Subscribe(x => text.Move.FoodNicknamesTextMovement(x))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
 
@@ -387,9 +400,16 @@ namespace Title
         /// </summary>
         private void displayIngredientsListTextApproachEvents()
         {
-            ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextApproach
-                .Where(x => x)
-                .Subscribe(_ => text.Move.DisplayIngredientsListTextMovement())
+            // 食材相性表示テキスト接近処理イベント設定
+            ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint
+                // どちらかの取得オブジェクトがレシピブックの場合
+                .Where(_ => ObjectManager.Player.HitObject?.name == ("RecipeBook") ||
+                            ObjectManager.SubPlayer.HitObject?.name == ("RecipeBook"))
+                // 目標座標が接近座標の場合
+                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                // 実施
+                .Subscribe(x => text.Move.DisplayIngredientsListTextMovement(x))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
 
@@ -398,28 +418,25 @@ namespace Title
         /// </summary>
         private void gameStartTextApproachEvents()
         {
-            ObjectManager.TitleScene.InputEvent.GameStartTextApproach
-                .Where(x => x)
-                .Subscribe(_ => text.Move.GameStartTextMovement())
+            // ゲームスタートテキスト接近処理イベント設定
+            ObjectManager.TitleScene.InputEvent.GameStartTextPoint
+                // どちらかの取得オブジェクトがガスバーナーの場合
+                .Where(_ => ObjectManager.Player.HitObject?.name == ("GasBurner") ||
+                            ObjectManager.SubPlayer.HitObject?.name == ("GasBurner"))
+                // 目標座標が接近座標の場合
+                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                // 実施
+                .Subscribe(x => text.Move.GameStartTextMovement(x))
+                // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
         }
 
         /// <summary>
-        /// テキスト接近処理イベント
+        /// テキストイメージリセットイベント
         /// </summary>
-        private void resetTextApproachEvents()
+        private void resetTextImageEvents()
         {
-            // Player１用Textリセットイベント
-            ObjectManager.TitleScene.UpdateAsObservable()
-                .Where(_ => !ObjectManager.Player.HitObject)
-                .Subscribe(_ => text.Move.ResetTextMovement(ObjectManager.Player.Object))
-                .AddTo(ObjectManager.TitleScene);
-
-            // Player２用Textリセットイベント
-            ObjectManager.TitleScene.UpdateAsObservable()
-                .Where(_ => !ObjectManager.SubPlayer.HitObject)
-                .Subscribe(_ => text.Move.ResetTextMovement(ObjectManager.Player.Object))
-                .AddTo(ObjectManager.TitleScene);
+            
         }
 
         /// <summary>
@@ -436,8 +453,8 @@ namespace Title
             // ゲームスタートテキスト接近処理イベント
             gameStartTextApproachEvents();
 
-            // 食材一覧表示テキスト接近処理イベント
-            resetTextApproachEvents();
+            // リセットイベントループ
+            resetTextImageEvents();
         }
     }
 }

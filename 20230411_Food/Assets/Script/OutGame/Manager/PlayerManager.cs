@@ -338,11 +338,11 @@ namespace Title
         public void Processing()
         {
             var forwardRay = new Ray(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward);
-            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward * rayDistance.DistanceAmount, Color.blue);
+            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward * rayDistance.Amount, Color.blue);
         
             RaycastHit hit;
             // rayの当たり判定を確認
-            if(Physics.Raycast(forwardRay, out hit, rayDistance.DistanceAmount))
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
@@ -364,11 +364,11 @@ namespace Title
         public void SubProcessing()
         {
             var forwardRay = new Ray(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward);
-            Debug.DrawRay(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward * rayDistance.DistanceAmount, Color.blue);
+            Debug.DrawRay(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward * rayDistance.Amount, Color.blue);
         
             RaycastHit hit;
             // rayの当たり判定を確認
-            if(Physics.Raycast(forwardRay, out hit, rayDistance.DistanceAmount))
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
                 // 当たっていたら向き格納
                 ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;

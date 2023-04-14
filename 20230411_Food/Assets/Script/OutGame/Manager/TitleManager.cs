@@ -7,6 +7,7 @@ using UniRx.Triggers;
 using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Constants;
 
 
 namespace Title
@@ -81,7 +82,7 @@ namespace Title
     /// </summary>
     public sealed class TitleInputEvent
     {
-        // 以下入力イベント==================================================
+        // 以下入力イベント取得用変数==================================================
         // ゲームスタートイベント
         public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
         // 食材一覧表示イベント
@@ -90,12 +91,6 @@ namespace Title
         public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
         // カメラリセットイベント
         public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyBackInput;
-        // 食材一覧表示テキスト接近イベント
-        public IReadOnlyReactiveProperty<bool> FoodNicknamesTextApproach => foodNicknamesTextApproach;
-        // 食材相性表示テキスト接近イベント
-        public IReadOnlyReactiveProperty<bool> DisplayIngredientsListTextApproach => displayIngredientsListTextApproach;
-        // ゲームスタートテキスト接近イベント
-        public IReadOnlyReactiveProperty<bool> GameStartTextApproach => gameStartTextApproach;
 
         // =================================================================
 
@@ -104,9 +99,16 @@ namespace Title
         // 以下入力イベント実装===============================================
         private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
         private readonly ReactiveProperty<bool> keyBackInput = new BoolReactiveProperty();
-        private readonly ReactiveProperty<bool> foodNicknamesTextApproach = new BoolReactiveProperty();
-        private readonly ReactiveProperty<bool> displayIngredientsListTextApproach = new BoolReactiveProperty();
-        private readonly ReactiveProperty<bool> gameStartTextApproach = new BoolReactiveProperty();
+
+        private Subject<float> foodNicknamesTextPoint = new Subject<float>();
+        public Subject<float> FoodNicknamesTextPoint
+        {get{return foodNicknamesTextPoint;} set{foodNicknamesTextPoint = value;}}
+        private Subject<float> displayIngredientsListTextPoint = new Subject<float>();
+        public Subject<float> DisplayIngredientsListTextPoint
+        {get{return displayIngredientsListTextPoint;} set{displayIngredientsListTextPoint = value;}}
+        private Subject<float> gameStartTextPoint = new Subject<float>();
+        public Subject<float> GameStartTextPoint
+        {get{return gameStartTextPoint;} set{gameStartTextPoint = value;}}
         // =================================================================
 
         /// <summary>
@@ -118,9 +120,9 @@ namespace Title
             // 以下指定オブジェクトDestroy時にイベント破棄設定=========
             keyReturnInput.AddTo(tmpObj);
             keyBackInput.AddTo(tmpObj);
-            foodNicknamesTextApproach.AddTo(tmpObj);
-            displayIngredientsListTextApproach.AddTo(tmpObj);
-            gameStartTextApproach.AddTo(tmpObj);
+            FoodNicknamesTextPoint.AddTo(tmpObj);
+            DisplayIngredientsListTextPoint.AddTo(tmpObj);
+            GameStartTextPoint.AddTo(tmpObj);
             // =====================================================
         }
 
@@ -132,16 +134,16 @@ namespace Title
             // 以下各種入力をReactivePropertyに反映=========================
             keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
             keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
-            foodNicknamesTextApproach.Value = ObjectManager.Player.HitObject?.name == ("Refrugerator") ||
-                                              ObjectManager.SubPlayer.HitObject?.name == ("Refrugerator");
-            displayIngredientsListTextApproach.Value = ObjectManager.Player.HitObject?.name == ("RecipeBook") ||
-                                              ObjectManager.SubPlayer.HitObject?.name == ("RecipeBook");
-            gameStartTextApproach.Value = ObjectManager.Player.HitObject?.name == ("GasBurner") ||
-                                          ObjectManager.SubPlayer.HitObject?.name == ("GasBurner");
+            FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+            DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+            GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             // ===========================================================
         }
     }
 
+    /// <summary>
+    /// オブジェクト管理クラス
+    /// </summary>
     public abstract class ObjectManager
     {
         // プレイヤー
@@ -193,14 +195,14 @@ namespace Title
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount
+                moveTime.Amount
             ).SetEase(Ease.Linear)
             .OnComplete(() => SceneManager.LoadScene("InGameScene")));
 
             // Appendで動作を追加
             sequence.Join(ObjectManager.TitleScene.FadePanel.rectTransform.DOScale(
                 Vector3.zero,
-                moveTime.MoveTimeAmount
+                moveTime.Amount
             ).SetEase(Ease.InCirc));
 
             // Playで実行
@@ -239,12 +241,12 @@ namespace Title
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear));
             
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DORotate(
                 Vector3.right * 45,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear)
             .OnComplete(() => Debug.Log("OpenRecipeBook")));
 
@@ -276,7 +278,7 @@ namespace Title
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear)
             .OnComplete(() => Debug.Log("OpenRefrugerator")));
 
@@ -302,13 +304,13 @@ namespace Title
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 ObjectManager.TitleScene.CameraData.StartPos,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear)
             .OnComplete(() => Debug.Log("ResetCamera")));
 
             sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(
                 ObjectManager.TitleScene.CameraData.StartAngle,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear));
 
             // Playで実行

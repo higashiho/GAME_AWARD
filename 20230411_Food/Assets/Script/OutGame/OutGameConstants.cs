@@ -17,6 +17,10 @@ namespace Constants
         public static readonly Vector3 PLAYER_DIRECTION_BACK = new Vector3(0, 180, 0);
         /// <summary>プレイヤーのrayの長さ</summary>
         public const float PLAYER_RAY_DISTANCE = 1.0f;
+        /// <summary>テキストイメージ接近目標座標</summary>
+        public const float TEXT_IMAGE_APPROACH_POS_Y = -95;
+        /// <summary>テキストイメージ離反目標座標</summary>
+        public const float TEXT_IMAGE_LEAVE_POS_Y = -95;
     }
 }
 
