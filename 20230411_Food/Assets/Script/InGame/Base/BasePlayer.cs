@@ -11,7 +11,7 @@ namespace player
         public PlayerInstancePos InstancePosOne{get; protected set;}
 
         // プレイヤーが取得したポイントを保管しておく配列
-        public Dictionary<BaseFoodPoint, int> PointArr;
+        public Dictionary<BaseFoodPoint, int> PointArr = new Dictionary<BaseFoodPoint, int>();
 
         /// <summary>
         /// 取得ポイント

@@ -88,7 +88,6 @@ namespace player
             , InstancePosOne.pos
             , Quaternion.identity);
 
-            
             PlayerMove = new PlayerMove();
             PlayerRotate = new PlayerRotate();
             BasePlayer = new BasePlayer();
@@ -106,12 +105,13 @@ namespace player
 
             // 回転メソッド
             PlayerRotate.Rotate();
+            
+            // Rayで当たり判定を得る
+            RayController.RayCast();
 
             // 食べ物を獲得してポイントゲット
             TakeFood.AddPoint();
 
-            // Rayで当たり判定を得る
-            RayController.RayCast();
         }
     }
 
@@ -200,7 +200,6 @@ namespace player
     // 食べ物を取得して得点に変換するクラス
     public class TakeFood
     {
-
         public BasePlayer BasePlayer{get; private set;}
 
         // コンストラクタ
@@ -215,8 +214,9 @@ namespace player
             // XXX:NULL-RayHitObject
             if(ObjectManager.Player.RayHitObject.tag == ("Food"))
             {
-                BasePlayer.PointArr.Add(BasePlayer.MeatPoint, 1);
-                Debug.Log(BasePlayer.PointArr[BasePlayer.MeatPoint]);
+                // TODO:RayHitObjectの持っている値を入れる
+                //BasePlayer.PointArr.Add(ObjectManager.Player.RayHitObject., 1);
+                //Debug.Log(BasePlayer.PointArr[BasePlayer.MeatPoint]);
             }
             else if(ObjectManager.Player.RayHitObject == null)
             {
@@ -241,8 +241,10 @@ namespace player
         {
             // プレイヤーから出るRayの設定
             var checkFoodRay = new Ray(ObjectManager.Player.Object.transform.position,
-                                       ObjectManager.Player.Object.transform.forward);
-            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward, Color.red);
+                                       ObjectManager.Player.Object.transform.forward * PlayerRayDirection.RayDirection);
+            // 色がついていない
+            Debug.DrawRay(ObjectManager.Player.Object.transform.position,
+            ObjectManager.Player.Object.transform.forward * PlayerRayDirection.RayDirection, Color.red);
 
             RaycastHit hit;
 

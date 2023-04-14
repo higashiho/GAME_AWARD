@@ -15,3 +15,4 @@ MonoBehaviour:
   firstPlayerCreatePos: {x: 0, y: 0, z: 0}
   moveSpeed: 3
   rotatePos: {x: 0, y: 90, z: 0}
+  rayDirection: 5
