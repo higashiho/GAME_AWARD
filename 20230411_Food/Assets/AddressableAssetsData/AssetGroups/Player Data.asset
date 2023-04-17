@@ -10,16 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Player Data
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
+  m_GroupName: Player Data
   m_Data:
     m_SerializedData: []
-  m_GUID: 10f3208f1c9b03d4bb5349b9ede3b596
-  m_SerializeEntries: []
+  m_GUID: 467976c66b78c8f418b1c23c75241a13
+  m_SerializeEntries:
+  - m_GUID: 31ddbd76133a72042a8b2ee6eeda6e63
+    m_Address: nGame/PlayerData.assetyerData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Data
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 02583f9aefa71434a8880737bfb7f5ae, type: 2}
-    - {fileID: 11400000, guid: cd57eb440cd9100438fffee0e5c2395b, type: 2}
+    - {fileID: 11400000, guid: f33d47db202515248abb88e27cdf13c9, type: 2}
+    - {fileID: 11400000, guid: e5c1bc70fd19e5c44af70b1301cd976c, type: 2}

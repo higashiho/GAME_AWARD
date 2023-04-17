@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2764b7e5736de4b45a7d32fe1133e1b0, type: 3}
-  m_Name: PlayerData
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: Player Data_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  firstPlayerCreatePos: {x: 0, y: 0, z: 0}
-  moveSpeed: 3
-  rotatePos: {x: 0, y: 90, z: 0}
-  rayDirection: 5
+  m_Group: {fileID: 11400000, guid: 004a5efc2884987479618d155e863b07, type: 2}
+  m_StaticContent: 0
