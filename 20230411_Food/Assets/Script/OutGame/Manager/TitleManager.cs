@@ -55,13 +55,13 @@ namespace Title
         void Awake()
         {
             // インスタンス化
+            ObjectManager.TitleScene = this;
             InputEvent  = new TitleInputEvent(this.gameObject);
             ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
             ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
             eventSetting = new InputEventManager();
             Move = new MakeTweenMovengs();
             textApproachEvent = new TextApproachEventManager();
-            ObjectManager.TitleScene = this;
 
             // タイトル入力確認ループ
             this.UpdateAsObservable()
@@ -163,9 +163,6 @@ namespace Title
             // 以下各種入力をReactivePropertyに反映=========================
             keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
             keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
-            FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
-            DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
-            GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             // ===========================================================
         }
     }

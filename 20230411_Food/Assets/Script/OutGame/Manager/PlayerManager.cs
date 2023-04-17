@@ -26,8 +26,6 @@ namespace Title
         }
         public PlayerState JudgeState;
 
-        // 入力イベント
-        private PlayerInputEvent inputEvent;
 
         /// <summary>
         /// 挙動管理クラス
@@ -118,8 +116,7 @@ namespace Title
 
             MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
         
-            // 入力イベントインスタンス化
-            inputEvent = new PlayerInputEvent(Object);
+            // インスタンス化
             Move = new PlayerMove();
             events = new InputMovementEventManager();
             rayProcessing = new PlayerRayProcessing();
@@ -130,10 +127,9 @@ namespace Title
         /// </summary>
         public async void Update()
         {
-            
-            // インプットイベントが代入されるまで一旦待つ
-            await UniTask.WaitWhile(() => inputEvent == null);
 
+            // イベントが代入されるまで一旦待つ
+            await UniTask.WaitWhile(() => events == null);
 
             // Ray用ループ
             Object.UpdateAsObservable()
@@ -142,10 +138,6 @@ namespace Title
                 })
                 .AddTo(Object);
 
-            // タイトルPlayer入力確認ループ
-            Object.UpdateAsObservable()
-                .Subscribe(_ => inputEvent.Update())
-                .AddTo(Object);
 
             
             // イベント処理生成
@@ -159,8 +151,8 @@ namespace Title
         public async void SubUpdate()
         {
             
-            // インプットイベントが代入されるまで一旦待つ
-            await UniTask.WaitWhile(() => inputEvent == null);
+            // イベントが代入されるまで一旦待つ
+            await UniTask.WaitWhile(() => events == null);
 
             // Ray用ループ
             Object.UpdateAsObservable()
@@ -168,12 +160,6 @@ namespace Title
                     rayProcessing.SubProcessing();
                 })
                 .AddTo(Object);
-
-            // タイトルPlayer入力確認ループ
-            Object.UpdateAsObservable()
-                .Subscribe(_ => inputEvent.Update())
-                .AddTo(Object);
-
             
             // イベント処理生成
             //setInputEvent();
@@ -186,44 +172,6 @@ namespace Title
         /// </summary>
         private void setInputEvent()
         {
-        }
-    }
-
-
-    /// <summary>
-    /// タイトルPlayer入力イベント管理クラス
-    /// </summary>
-    public sealed class PlayerInputEvent
-    {
-        // 以下入力イベント==================================================
-        
-        // =================================================================
-
-
-        
-        // 以下入力イベント実装===============================================
-       
-        // =================================================================
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="tmpObj">イベント対象オブジェクト</param>
-        public PlayerInputEvent(GameObject tmpObj)
-        {
-            // 以下指定オブジェクトDestroy時にイベント破棄設定=========
-           
-            // =====================================================
-        }
-
-        /// <summary>
-        /// 入力更新関数
-        /// </summary>
-        public void Update()
-        {
-            // 以下各種入力をReactivePropertyに反映=========================
-            
-            // ===========================================================
         }
     }
 
@@ -344,11 +292,22 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // オブジェクトが変わっていなかったら処理中断
+                if(ObjectManager.Player.HitObject == hit.collider.gameObject) return;
+
+                
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
-                // 当たっていたらオブジェクト格納
-                if(ObjectManager.Player.HitObject != hit.collider.gameObject)
-                    ObjectManager.Player.HitObject = hit.collider.gameObject;
+                // オブジェクト格納
+                ObjectManager.Player.HitObject = hit.collider.gameObject;
+
+                // サブジェクトに代入
+                if(ObjectManager.Player.HitObject.name == "Refrugerator")
+                    ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.Player.HitObject.name == "RecipeBook")
+                    ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.Player.HitObject.name == "GasBurner")
+                    ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
@@ -370,11 +329,24 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // オブジェクトが変わっていなかったら処理中断
+                if(ObjectManager.SubPlayer.HitObject == hit.collider.gameObject) return;
+
+
+               
                 // 当たっていたら向き格納
                 ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
                 // 当たっていたらオブジェクト格納
-                if(ObjectManager.SubPlayer.HitObject != hit.collider.gameObject)
-                    ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
+                ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
+
+                // サブジェクトに代入
+                if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
+                    ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
+                    ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
+                    ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+
             }
             else 
             {
