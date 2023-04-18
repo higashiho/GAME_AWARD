@@ -46,6 +46,7 @@ namespace FoodPoint
         {
             getData = dishData.DishPointData[dishId];
             
+            // ここちょっと考える
             specifiedFoodPoints[0] = new MeatPoint(int.Parse(getData[2]));
             specifiedFoodPoints[1] = new FishPoint(int.Parse(getData[3]));
             specifiedFoodPoints[2] = new VegPoint(int.Parse(getData[4]));
