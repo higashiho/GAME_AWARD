@@ -42,7 +42,7 @@ namespace Player
         /// <summary>
         /// 食べ物を取ってポイントを獲得するクラス
         /// </summary>
-        private FoodPoint foodPoint;
+        public FoodPoint FoodPoint{get;} = new FoodPoint();
 
         /// <summary>
         /// Rayが当たったオブジェクト
@@ -95,7 +95,7 @@ namespace Player
 
             Move = new PlayerMove();
             Rotate = new PlayerRotate();
-            foodPoint = new FoodPoint();
+            
             RayController = new RayController();
         }
 
@@ -111,7 +111,7 @@ namespace Player
             RayController.RayCast();
 
             // 食べ物を獲得してポイントゲット
-            foodPoint.AddPoint();
+            FoodPoint.AddPoint();
 
         }
     }

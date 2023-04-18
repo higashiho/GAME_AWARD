@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Player;
+using GameManager;
 
 namespace Item
 {
@@ -13,22 +14,23 @@ namespace Item
     {   
         private ItemFactory itemFactory;
         private PlayerManager playerManager;
+        
 
         // 取得されたアイテムの座標を一時的に保管しておくQueue
         private Queue<Vector3> emptyItemPos = new Queue<Vector3>(8);
         
         // コンストラクタ
-        public ItemManager(PlayerManager tmpPlayerManager)
+        public ItemManager()
         {
             
             itemFactory = new ItemFactory();
-            playerManager = tmpPlayerManager;
+            
         }
 
         public void Update()
         {
             // イベントがうまくいってないため、一時的にコメントアウト
-            //playerManager.TakeFood.ReturnPresentItemPos += ReturnEmptyItemPos;
+            //ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
         }
         /// <summary>
         /// アイテムが取得された時にそのアイテムの座標を保管Queueに返すメソッド

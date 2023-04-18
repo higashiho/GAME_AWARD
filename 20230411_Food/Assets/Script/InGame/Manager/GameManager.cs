@@ -48,7 +48,7 @@ namespace GameManager
             objectManager = new ObjectManager();
             ObjectManager.Player = new PlayerManager();
 
-            itemManager = new ItemManager(ObjectManager.Player);
+            itemManager = new ItemManager();
         }
 
 
