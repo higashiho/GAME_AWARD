@@ -5,11 +5,12 @@ using FoodPoint;
 using player;
 
 namespace GameManager
-    {
+{
     public class GameManager : MonoBehaviour
     {
 
         // ステート
+        [SerializeField]
         private enum gameState
         {
             OPENING,    // 開幕演出
@@ -20,9 +21,11 @@ namespace GameManager
         }
 
         // ゲームステート管理変数
+        [SerializeField]
         private gameState phase;
 
         private PointManager pointManager;
+
         private GetData getData;
         private DishData dishData;
         
@@ -36,10 +39,16 @@ namespace GameManager
 
             dishData.GetDishData(getData);
 
-            pointManager = new PointManager(ref dishData, 3);
+            pointManager = new PointManager(ref dishData, 1);
             
-
+            objectManager = new ObjectManager();
+            ObjectManager.Player = new PlayerManager();
         }
+
+
+        private ObjectManager objectManager;
+
+       
         
         void Update()
         {
@@ -52,6 +61,7 @@ namespace GameManager
                     break;
 
                 case gameState.GAME:
+                    objectManager.Update();
                     break;
                 
                 case gameState.COOKING:
@@ -69,7 +79,7 @@ namespace GameManager
         }
     }
 
-    public abstract class ObjectManager
+    public class ObjectManager
     {
         // プレイヤー
         private static PlayerManager player;
@@ -77,7 +87,13 @@ namespace GameManager
         public static PlayerManager Player
         {
             get{return player;}
-            set{player = value; Debug.LogWarning("Get PlayerObject");}
+            set{player = value;}
+        }
+
+        // インゲーム全体統括メソッド
+        public void Update()
+        {
+            Player.Update();
         }
     }
 }

@@ -2,59 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 
 
 using player;
 
 namespace FoodPoint
 {
-    // プレイヤーの取得したポイントをゲームシーン中に
-    // staticな配列に入れておく
-
-    // 料理IDを作る
-    // 指定された料理のポイントを把握しておく => Dataを取得
-    // コンストラクタでプレイヤーのポイントを取得
-    // 計算メソッドを呼んで割合を計算しておく
-    // 得点に換算
-    // ポイント毎に得点を配列に保存
-    // => リザルトシーンで表示
+    // プレイヤー => MeatPoint, FishPoint, VegetablePoint => 三点の比を計算する      =>５割
+    //           => 調味料ポイントを計算する                                         =>４割
+    //           => 量の割合を計算する                                               =>１割
 
     /// <summary>
     /// プレイヤーが取得したポイントを管理するクラス
     /// </summary>
     public class PointManager 
     {
-        /// <summary>
-        /// プレイヤー１のポイントを保管しておく配列
-        /// </summary>
-        // private static FoodPoint[] Player1FoodPoints;
-
-        /// <summary>
-        /// プレイヤー２のポイントを保管しておく配列
-        /// </summary>
-        // private static FoodPoint[] Player2FoodPoints;  
-
-
+        // 料理データ
         private DishData dishData;
-  
+
+    
 
         /// <summary>
         /// 指定された料理のポイントを保管しておく配列
+        /// Meatpoint, FishPoint, VegPoint, LevelOfSatietyPoint 
         /// </summary>
-        private FoodPoint[] specifiedFoodPoints; 
-        [SerializeField]
+        private BaseFoodPoint[] specifiedFoodPoints = new BaseFoodPoint[4];
         private string[] getData = new string[16];
          
         
         public PointManager(ref DishData data, int dishId)
         {
             dishData = data;
+            
             GetDishData(dishId);
-            // for(int i = 0; i < 8; i++)
-            // {
-            //     // Player1FoodPoints = CalcFoodPoint(player1.PointArr, 指定された料理のポイント配列);
-            //     // Player2Foodpoints = CalcFoodPoint(player2.PointArr, 指定された料理のポイント配列);
-            // }
+            
         }
 
         /// <summary>
@@ -63,11 +45,28 @@ namespace FoodPoint
         public void GetDishData(int dishId)
         {
             getData = dishData.DishPointData[dishId];
-            for(int i = 0; i < getData.Length; i++)
-            {
-                Debug.Log(getData[i]);
-                //specifiedFoodPoints[i] = new FoodPoint(int.Parse(getData[i]));
-            }
+            
+            specifiedFoodPoints[0] = new MeatPoint(int.Parse(getData[2]));
+            specifiedFoodPoints[1] = new FishPoint(int.Parse(getData[3]));
+            specifiedFoodPoints[2] = new VegPoint(int.Parse(getData[4]));
+            specifiedFoodPoints[3] = new LebelOfSatiety(int.Parse(getData[5]));
+
+            // for(int i = 0; i < specifiedFoodPoints.Length; i++)
+            // {
+            //     Debug.Log(specifiedFoodPoints[i]);
+            // }
+            
+        }
+
+        /// <summary>
+        /// 調味料ポイントを計算するメソッド
+        /// プレイヤーが取得した調味料ポイントを計算して
+        /// 得点化する
+        /// 10点中何点みたいな。。。
+        /// </summary>
+        public void CalcSeasoningPoint()
+        {
+
         }
 
         /// <summary>
@@ -117,6 +116,3 @@ namespace FoodPoint
     }
 }
 
-
-// ポイントデータを取得
-// スクリプタブルオブジェクトに流し込む

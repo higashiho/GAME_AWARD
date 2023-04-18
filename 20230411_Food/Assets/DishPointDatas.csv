@@ -1,6 +1,2 @@
-﻿DishName,Meat,Fish,Veg,Sugar,Salt,Vine,Soy,Miso
-東保,1,2,3,4,5,6,7,8
-かける,3,6,2,9,0,10,7,9
-たかぽん,7,9,5,4,3,7,8,9
-まゆみ,1,5,9,0,17,4,7,9
-やよい,5,7,12,9,6,9,4,5
+﻿DishName ,Text,Meat,Fish,Veg,Amount,,,,
+,,0,3,2,50,,,,　 

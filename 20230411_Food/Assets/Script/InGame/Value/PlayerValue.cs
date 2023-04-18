@@ -5,7 +5,7 @@ using GameManager;
 
 namespace player
 {
-    public class ValueObjectPlayer
+    public class PlayerValue
     {
         
     }
@@ -35,10 +35,6 @@ namespace player
         // コンストラクタ
         public PlayerMoveSpeed()
         {
-            if(moveSpeed <= 0)
-            {
-                Debug.LogError("プレイヤーの移動速度がマイナスだよ");
-            }
             // 初期化
             moveSpeed = ObjectManager.Player.DataPlayer.MoveSpeed;
         }
@@ -57,7 +53,7 @@ namespace player
             {
                 Debug.LogError("プレイヤーの回転座標がNULLだよ");
             }
-
+            // 初期化
             Rotate = ObjectManager.Player.DataPlayer.RotatePos;
         }
     }
