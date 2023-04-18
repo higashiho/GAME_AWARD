@@ -42,7 +42,7 @@ namespace GameManager
 
             dishData.GetDishData(getData);
 
-            pointManager = new PointManager(ref dishData, 1);
+            pointManager = new PointManager(dishData, 1);
             
             
             objectManager = new ObjectManager();
