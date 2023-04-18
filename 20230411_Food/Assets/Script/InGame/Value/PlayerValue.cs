@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameManager;
 
-namespace player
+namespace Player
 {
     public class PlayerValue
     {
@@ -13,39 +13,39 @@ namespace player
     // 1Pプレイヤー生成座標クラス
     public sealed class FirstPlayerInstancePos
     {
-        public Vector3 onePos{get; private set;}
+        public Vector3 MainPos{get; private set;}
 
         // コンストラクタ
-        public FirstPlayerInstancePos()
+        public FirstPlayerInstancePos(Vector3 tmpPos)
         {
             // 初期化
-            onePos = ObjectManager.Player.DataPlayer.FirstPlayerCreatePos;
+            MainPos = tmpPos;
         }
     }
 
     // 2Pプレイヤー生成座標クラス
     public sealed class SecondPlayerInstancePos
     {
-        public Vector3 twoPos{get; private set;}
+        public Vector3 SubPos{get; private set;}
 
         // コンストラクタ
-        public SecondPlayerInstancePos()
+        public SecondPlayerInstancePos(Vector3 tmpPos)
         {
             // 初期化
-            twoPos = ObjectManager.Player.DataPlayer.SecondPlayerCreatePos;
+            SubPos = tmpPos;
         }
     }
 
     // プレイヤーの速度クラス
     public sealed class PlayerMoveSpeed
     {
-        public float moveSpeed{get; private set;}
+        public float Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerMoveSpeed()
+        public PlayerMoveSpeed(float tmpSpeed)
         {
             // 初期化
-            moveSpeed = ObjectManager.Player.DataPlayer.MoveSpeed;
+            Amount = tmpSpeed;
         }
     }
 
@@ -53,51 +53,51 @@ namespace player
     // プレイヤー右回転座標クラス
     public sealed class PlayerRotateRightPos
     {
-        public Vector3 RightRotate{get; private set;}
+        public Vector3 Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerRotateRightPos()
+        public PlayerRotateRightPos(Vector3 tmpPos)
         {
             // 初期化
-            RightRotate = ObjectManager.Player.DataPlayer.RotateRightPos;
+            Amount = tmpPos;
         }
     }
 
     // プレイヤー左回転座標クラス
     public sealed class PlayerRotateLeftPos
     {
-        public Vector3 LeftRotate{get; private set;}
+        public Vector3 Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerRotateLeftPos()
+        public PlayerRotateLeftPos(Vector3 tmpPos)
         {
             // 初期化
-            LeftRotate = ObjectManager.Player.DataPlayer.RotateLeftPos;
+            Amount = tmpPos;
         }
     }
 
     // プレイヤー後ろ回転座標クラス
     public sealed class PlayerRotateBackPos
     {
-        public Vector3 BackRotate{get; private set;}
+        public Vector3 Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerRotateBackPos()
+        public PlayerRotateBackPos(Vector3 tmpPos)
         {
             // 初期化
-            BackRotate = ObjectManager.Player.DataPlayer.RotateBackPos;
+            Amount = tmpPos;
         }
     }
 
     // プレイヤーから出るRayの長さの最大値のクラス
     public sealed class PlayerRayDirection
     {
-        public float RayDirection{get; private set;}
+        public float Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerRayDirection()
+        public PlayerRayDirection(float tmpDirection)
         {
-            RayDirection = ObjectManager.Player.DataPlayer.RayDirection;
+            Amount = tmpDirection;
         }
     }
 }

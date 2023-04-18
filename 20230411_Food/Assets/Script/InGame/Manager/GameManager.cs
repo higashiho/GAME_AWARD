@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
-using player;
+
 using Item;
+using Player;
 
 namespace GameManager
 {

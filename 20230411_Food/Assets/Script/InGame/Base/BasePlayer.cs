@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
 
-namespace player
+namespace Player
 {
     public class BasePlayer
     {
