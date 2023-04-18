@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
+using System.Linq;
 
 
 
@@ -23,17 +24,27 @@ namespace FoodPoint
         // 料理データ
         private DishData dishData;
 
-    
+        private enum DataIndex
+        {
+            DishName = 0,
+            ExplanatoryText = 1,
+            MeatPoint = 2,
+            FishPoint = 3,
+            VegPoint = 4,
+            LevelOfSatietyPoint = 5
+        }
+
 
         /// <summary>
         /// 指定された料理のポイントを保管しておく配列
         /// Meatpoint, FishPoint, VegPoint, LevelOfSatietyPoint 
         /// </summary>
-        private BaseFoodPoint[] specifiedFoodPoints = new BaseFoodPoint[4];
+        // private BaseFoodPoint[] specifiedFoodPoints = new BaseFoodPoint[4];
+        private Dictionary<DataIndex, string> specifiedFoodPoints = new Dictionary<DataIndex, string>(6);
         private string[] getData = new string[16];
          
         
-        public PointManager(ref DishData data, int dishId)
+        public PointManager(DishData data, int dishId)
         {
             dishData = data;
             
@@ -42,22 +53,16 @@ namespace FoodPoint
         }
 
         /// <summary>
-        /// int型の値を渡すとその数値に応じたインデックスの料理データを取得するメソッド
+        /// int型の値を渡すとその数値に応じたインデックスの料理データをstringで取得するメソッド
         /// </summary>
         public void GetDishData(int dishId)
         {
             getData = dishData.DishPointData[dishId];
             
-            // ここちょっと考える
-            specifiedFoodPoints[0] = new MeatPoint(int.Parse(getData[2]));
-            specifiedFoodPoints[1] = new FishPoint(int.Parse(getData[3]));
-            specifiedFoodPoints[2] = new VegPoint(int.Parse(getData[4]));
-            specifiedFoodPoints[3] = new LebelOfSatiety(int.Parse(getData[5]));
-
-            // for(int i = 0; i < specifiedFoodPoints.Length; i++)
-            // {
-            //     Debug.Log(specifiedFoodPoints[i]);
-            // }
+            for(int i = 0; i < Enum.GetValues(typeof(DataIndex)).Length; i++)
+            {
+                specifiedFoodPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex), i), getData[i]);
+            }
             
         }
 
