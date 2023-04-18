@@ -33,46 +33,34 @@ namespace Title
         [SerializeField, Header("テキストイメージ")]
         private Image[] textImageCanvas = new Image[3];
         public Image[] TextImageCanvas{get{return textImageCanvas;}}
-       
-        /// <summary>入力イベントインスタンス化</summary>
-        public TitleInputEvent InputEvent{get; private set;}
 
-        /// <summary>イベント管理クラスインスタンス化</summary>
-        private InputEventManager eventSetting;
         /// <summary>
         /// テキスト接近イベント
         /// </summary>
         private TextApproachEventManager textApproachEvent;
 
         /// <summary>シーン挙動クラスインスタンス化</summary>
-        public MakeTweenMovengs Move{get; private set;}
+        public MakeTweenMovengs Move{get;} = new MakeTweenMovengs();
 
         /// <summary>何かのイベントが処理されているか</summary>
         public bool NowPlayeEvents{get{return nowPlayEvents;} set{nowPlayEvents = value;}}
         private bool nowPlayEvents = false;
 
-        public CancellationTokenSource Cts{get; private set;} = new CancellationTokenSource();
+
+        public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
         void Awake()
         {
             // インスタンス化
             ObjectManager.TitleScene = this;
-            InputEvent  = new TitleInputEvent(this.gameObject);
+            ObjectManager.InputEvent = new InputEvent(this.gameObject);
             ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
             ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
-            eventSetting = new InputEventManager();
-            Move = new MakeTweenMovengs();
             textApproachEvent = new TextApproachEventManager();
-
-            // タイトル入力確認ループ
-            this.UpdateAsObservable()
-                .Subscribe(_ => InputEvent.Update())
-                .AddTo(this);
-
-            // 入力イベント設定
-            eventSetting.SetInputEvents();
 
             // テキストイベント設定
             textApproachEvent.TextApproachEvents();
+            // イベント設定
+            ObjectManager.InputEvent.InputSetting.SetInputEvents();
         }
 
         private void OnDestroy() 
@@ -106,67 +94,7 @@ namespace Title
             }        
         }
     }
-    /// <summary>
-    /// タイトル入力イベント管理クラス
-    /// </summary>
-    public sealed class TitleInputEvent
-    {
-        // 以下入力イベント取得用変数==================================================
-        // ゲームスタートイベント
-        public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
-        // 食材一覧表示イベント
-        public IReadOnlyReactiveProperty<bool> FoodNicknames => keyReturnInput;
-        // 食材相性表示イベント
-        public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
-        // カメラリセットイベント
-        public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyBackInput;
-
-        // =================================================================
-
-
-        
-        // 以下入力イベント実装===============================================
-        private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
-        private readonly ReactiveProperty<bool> keyBackInput = new BoolReactiveProperty();
-
-        private Subject<float> foodNicknamesTextPoint = new Subject<float>();
-        public Subject<float> FoodNicknamesTextPoint
-        {get{return foodNicknamesTextPoint;} set{foodNicknamesTextPoint = value;}}
-        private Subject<float> displayIngredientsListTextPoint = new Subject<float>();
-        public Subject<float> DisplayIngredientsListTextPoint
-        {get{return displayIngredientsListTextPoint;} set{displayIngredientsListTextPoint = value;}}
-        private Subject<float> gameStartTextPoint = new Subject<float>();
-        public Subject<float> GameStartTextPoint
-        {get{return gameStartTextPoint;} set{gameStartTextPoint = value;}}
-        // =================================================================
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="tmpObj">イベント対象オブジェクト</param>
-        public TitleInputEvent(GameObject tmpObj)
-        {
-            // 以下指定オブジェクトDestroy時にイベント破棄設定=========
-            keyReturnInput.AddTo(tmpObj);
-            keyBackInput.AddTo(tmpObj);
-            FoodNicknamesTextPoint.AddTo(tmpObj);
-            DisplayIngredientsListTextPoint.AddTo(tmpObj);
-            GameStartTextPoint.AddTo(tmpObj);
-            // =====================================================
-        }
-
-        /// <summary>
-        /// 入力更新関数
-        /// </summary>
-        public void Update()
-        {
-            // 以下各種入力をReactivePropertyに反映=========================
-            keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
-            keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
-            // ===========================================================
-        }
-    }
-
+   
     /// <summary>
     /// オブジェクト管理クラス
     /// </summary>
@@ -198,6 +126,13 @@ namespace Title
             get{return text;}
             set{text = value; Debug.LogWarning("Assigned to text");}
         }
+
+        // インプットイベント
+        private static InputEvent inputEvent;
+        public static InputEvent InputEvent{
+            get{return inputEvent;} 
+            set{inputEvent = value; Debug.LogWarning("Assigned to inputEvent.");} 
+            }
     }
 
     /// <summary>
@@ -206,10 +141,12 @@ namespace Title
     public sealed class MakeTweenMovengs
     {
         private SceneMoveTime moveTime = new SceneMoveTime(4);
+
         /// <summary>
         /// シーン挙動
         /// </summary>
-        public void GameStartMovement()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public void GameStartMovement(GameObject hitObject)
         {
             
             // カメラのTweenを削除
@@ -220,9 +157,9 @@ namespace Title
 
             // Tween目標座標座標
             var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z / 2)
+                hitObject.transform.position.x,
+                hitObject.transform.position.y + (hitObject.transform.localScale.y / 2),
+                hitObject.transform.position.z - (hitObject.transform.localScale.z / 2)
             );
 
             // Appendで動作を追加
@@ -245,7 +182,8 @@ namespace Title
         /// <summary>
         /// レシピ本開ける動作
         /// </summary>
-        public async UniTask OpenRecipeBook()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public async UniTask OpenRecipeBook(GameObject hitObject)
         {
             
             // カメラのTweenを削除
@@ -253,22 +191,11 @@ namespace Title
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
-            // Tween目標座標座標
-            var targetCoordinates = Vector3.zero;
-
-            if(ObjectManager.Player.HitObject)
                 // Tween目標座標座標
-                targetCoordinates = new Vector3(
-                    ObjectManager.Player.HitObject.transform.position.x,
-                    ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y * 2),
-                    ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z)
-                );
-            else if(ObjectManager.SubPlayer.HitObject)
-                // Tween目標座標座標
-                targetCoordinates = new Vector3(
-                    ObjectManager.SubPlayer.HitObject.transform.position.x,
-                    ObjectManager.SubPlayer.HitObject.transform.position.y + (ObjectManager.SubPlayer.HitObject.transform.localScale.y * 2),
-                    ObjectManager.SubPlayer.HitObject.transform.position.z - (ObjectManager.SubPlayer.HitObject.transform.localScale.z)
+            var targetCoordinates = new Vector3(
+                    hitObject.transform.position.x,
+                    hitObject.transform.position.y + (hitObject.transform.localScale.y * 2),
+                    hitObject.transform.position.z - (hitObject.transform.localScale.z)
                 );
 
             // Appendで動作を追加
@@ -293,7 +220,8 @@ namespace Title
         /// <summary>
         /// 冷蔵庫開ける動作
         /// </summary>
-        public async UniTask OpenRefrugerator()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public async UniTask OpenRefrugerator(GameObject hitObject)
         {
             // カメラのTweenを削除
             DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
@@ -303,9 +231,9 @@ namespace Title
 
             // Tween目標座標座標
             var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2.5f),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z * 2)
+                hitObject.transform.position.x,
+                hitObject.transform.position.y + (hitObject.transform.localScale.y / 2.5f),
+                hitObject.transform.position.z - (hitObject.transform.localScale.z * 2)
             );
 
             // Appendで動作を追加

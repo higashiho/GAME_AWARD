@@ -30,13 +30,8 @@ namespace Title
         /// <summary>
         /// 挙動管理クラス
         /// </summary>
-        public PlayerMove Move;
+        public PlayerMove Move = new PlayerMove();
 
-        /// <summary>
-        /// イベント管理クラス
-        /// </summary>
-        public InputMovementEventManager Events{get{return events;}}
-        private InputMovementEventManager events;
 
         /// <summary>
         /// プレイヤーオブジェクト
@@ -68,13 +63,20 @@ namespace Title
         private Vector3? hitDistance = null;
 
         /// ray処理
-        private PlayerRayProcessing rayProcessing;
+        private PlayerRayProcessing rayProcessing = new PlayerRayProcessing();
+
+        
+        /// <summary>
+        /// Playerイベント管理クラス
+        /// </summary>
+        public InputMovementManager MoveEvents{get;} = new InputMovementManager();
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public PlayerManager(PlayerState tmpState)
         {
+            
             JudgeState = tmpState;
             // 初期化
             Initialization();
@@ -116,10 +118,6 @@ namespace Title
 
             MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
         
-            // インスタンス化
-            Move = new PlayerMove();
-            events = new InputMovementEventManager();
-            rayProcessing = new PlayerRayProcessing();
         }
 
         /// <summary>
@@ -127,9 +125,9 @@ namespace Title
         /// </summary>
         public async void Update()
         {
+            // オブジェクトが生成されるまで待つ
+            await UniTask.WaitWhile(() => !Object);
 
-            // イベントが代入されるまで一旦待つ
-            await UniTask.WaitWhile(() => events == null);
 
             // Ray用ループ
             Object.UpdateAsObservable()
@@ -139,10 +137,7 @@ namespace Title
                 .AddTo(Object);
 
 
-            
-            // イベント処理生成
-            //setInputEvent();
-            events.SetMovementLoops();
+            MoveEvents.SetMovementLoops();
         }   
 
         /// <summary>
@@ -150,9 +145,8 @@ namespace Title
         /// </summary>
         public async void SubUpdate()
         {
-            
-            // イベントが代入されるまで一旦待つ
-            await UniTask.WaitWhile(() => events == null);
+            // オブジェクトが生成されるまで待つ
+            await UniTask.WaitWhile(() => !Object);
 
             // Ray用ループ
             Object.UpdateAsObservable()
@@ -163,7 +157,7 @@ namespace Title
             
             // イベント処理生成
             //setInputEvent();
-            events.SetSubPlayerMovementLoops();
+            MoveEvents.SetSubPlayerMovementLoops();
         }
 
         
@@ -186,7 +180,7 @@ namespace Title
         public void LeftMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.Events.PlayerMoveDis = Vector3.left;
+            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.left;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -203,7 +197,7 @@ namespace Title
         public void RightMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.Events.PlayerMoveDis = Vector3.right;
+            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.right;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -221,7 +215,7 @@ namespace Title
         public void ForwardMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.Events.PlayerMoveDis = Vector3.forward;
+            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.forward;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -238,7 +232,7 @@ namespace Title
         public void BackMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.Events.PlayerMoveDis = Vector3.back;
+            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.back;
 
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -265,7 +259,7 @@ namespace Title
         public void ResetMovement(PlayerManager tmpPlayer)
         {
             // 初期化
-            tmpPlayer.Events.PlayerMoveDis = Vector3.zero;
+            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.zero;
         }
     }
 
@@ -303,11 +297,11 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
-                    ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "RecipeBook")
-                    ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "GasBurner")
-                    ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
@@ -341,11 +335,11 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
-                    ObjectManager.TitleScene.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
-                    ObjectManager.TitleScene.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
-                    ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
 
             }
             else 

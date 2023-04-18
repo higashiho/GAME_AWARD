@@ -87,7 +87,7 @@ namespace Title
             sequence.Play();
             
             //　座標目標値設定
-            ObjectManager.TitleScene.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
+            ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
         }
 
         /// <summary>
