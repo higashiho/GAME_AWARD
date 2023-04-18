@@ -8,7 +8,15 @@ namespace Food
     {
         private DishData dishData;
 
-        private BaseFoodPoint[] FoodPoints = new BaseFoodPoint[4];
+        private enum DataIndex{
+            DishName = 0,
+            ExplanatoryText = 1,
+            MeatPoint = 2,
+            FishPoint = 3,
+            VegPoint = 4,
+            LevelOfSatietyPoint = 5
+        }
+        private Dictionary <DataIndex,string> dishPoints = new Dictionary<DataIndex,string>(6);
 
         public Food (DishData Data, int dishId)
         {
@@ -21,10 +29,10 @@ namespace Food
         {
             getData = dishData.DishPointData[dishId];
 
-            FoodPoints[0] = new MeatPoint(int.Parse(getData[2]));
-            FoodPoints[1] = new FishPoint(int.Parse(getData[3]));
-            FoodPoints[2] = new VegPoint(int.Parse(getData[4]));
-            FoodPoints[3] = new LebelOfSatiety(int.Parse(getData[5]));
+            for(int i = 0;i < Enum.GetValues(typeof(DataIndex)).Length;i++)
+            {
+                dishPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex),i),getData(i))
+            }
         }
     }
 }
