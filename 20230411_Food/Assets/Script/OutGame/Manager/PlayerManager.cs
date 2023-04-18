@@ -159,14 +159,6 @@ namespace Title
             //setInputEvent();
             MoveEvents.SetSubPlayerMovementLoops();
         }
-
-        
-        /// <summary>
-        /// 入力イベント処理代入関数
-        /// </summary>
-        private void setInputEvent()
-        {
-        }
     }
 
     /// <summary>
@@ -174,6 +166,7 @@ namespace Title
     /// </summary>
     public sealed class PlayerMove
     {
+        private player.PlayerMoveSpeed moveSpeed = new player.PlayerMoveSpeed(3);
         /// <summary>
         /// 左移動処理
         /// </summary>
@@ -189,7 +182,7 @@ namespace Title
             tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
 
             // 移動
-            tmpPlayer.Object.transform.position += Vector3.left * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.left * moveSpeed.Amount * Time.deltaTime;
         }
         /// <summary>
         /// 右移動処理
@@ -206,7 +199,7 @@ namespace Title
             tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
 
             // 移動
-            tmpPlayer.Object.transform.position += Vector3.right * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.right * moveSpeed.Amount * Time.deltaTime;
             
         }
         /// <summary>
@@ -224,7 +217,7 @@ namespace Title
             tmpPlayer.Object.transform.eulerAngles = Vector3.zero;
 
             // 移動
-            tmpPlayer.Object.transform.position += Vector3.forward * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.forward * moveSpeed.Amount * Time.deltaTime;
         }
         /// <summary>
         /// 後ろ移動処理
@@ -241,7 +234,7 @@ namespace Title
             tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
 
             // 移動
-            tmpPlayer.Object.transform.position += Vector3.back * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.back * moveSpeed.Amount * Time.deltaTime;
         }
         
         /// <summary>
