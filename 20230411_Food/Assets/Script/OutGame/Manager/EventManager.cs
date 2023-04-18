@@ -89,28 +89,25 @@ namespace Title
             keySpaseInput.Value = Input.GetKeyDown(KeyCode.Space);
 
             // ===========================================================
-            // 何もキーが押されていないときは処理終了
+            
             currentPressed();
         }
 
         /// <summary>
-        /// <see cref="KeyCodeAlphabet"/>に含まれている現在押されているキーを返す.
+        /// キーが押されたら押されているキーをSubjectに代入
         /// </summary>
         /// <returns><see cref="KeyCode"/></returns>
         private void currentPressed()
         {
-            if(!Input.anyKey)
-            {
-                // 代入
-                keyPressed.OnNext((uint)KeyCode.None);
-                return;
-            }
+            // 何もキーが押されていなかったら処理終了
+            if(!Input.anyKey) return;
             
             foreach (KeyCode  keyCode in Enum.GetValues(typeof(KeyCode)))
             {
                 // 対象のキーの場合Subjectに代入
                 if (Input.GetKeyDown(keyCode))
                 {
+                    Debug.Log((uint)keyCode);
                     keyPressed.OnNext((uint)keyCode);
                 }
             }

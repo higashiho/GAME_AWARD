@@ -21,6 +21,11 @@ namespace Constants
         public const float TEXT_IMAGE_APPROACH_POS_Y = -95f;
         /// <summary>テキストイメージ離反目標座標</summary>
         public const float TEXT_IMAGE_LEAVE_POS_Y = -235f;
+
+        /// <summary>
+        /// 冷蔵庫UIテキストのy座標
+        /// </summary>
+        public static readonly float[] TEXT_CHILD_POS_Y = {250, 0, -250};
     }
 }
 
