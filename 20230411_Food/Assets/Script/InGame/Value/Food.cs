@@ -6,42 +6,25 @@ namespace Food
 {
     public class Food
     {
-        public MeatPoint MeatPoint;
+        private DishData dishData;
 
-        public FishPoint FishPoint;
+        private BaseFoodPoint[] FoodPoints = new BaseFoodPoint[4];
 
-        public VegPoint VegPoint;
-
-        public SugarPoint SugarPoint;
-
-        public SaltPoint SaltPoint;
-
-        public VinePoint VinePoint;
-
-        public SoyPoint SoyPoint;
-
-        public MisoPoint MisoPoint;
-
-
-        public Food (
-            MeatPoint tmpMeatPoint,
-            FishPoint tmpFishPoint,
-            VegPoint tmpVegPoint,
-            SugarPoint tmpSugarPoint,
-            SaltPoint tmpSaltPoint,
-            VinePoint tmpVinePoint,
-            SoyPoint tmpSoyPoint,
-            MisoPoint tmpMisoPoint
-        )
+        public Food (DishData Data, int dishId)
         {
-            MeatPoint = tmpMeatPoint;
-            FishPoint = tmpFishPoint;
-            VegPoint = tmpVegPoint;
-            SugarPoint = tmpSugarPoint;
-            SaltPoint = tmpSaltPoint;
-            VinePoint = tmpVinePoint;
-            SoyPoint = tmpSoyPoint;
-            MisoPoint = tmpMisoPoint;
+            dishData = Data;
+
+            GetDishData(dishId);
+        }
+
+        public void GetDishData(int dishId)
+        {
+            getData = dishData.DishPointData[dishId];
+
+            FoodPoints[0] = new MeatPoint(int.Parse(getData[2]));
+            FoodPoints[1] = new FishPoint(int.Parse(getData[3]));
+            FoodPoints[2] = new VegPoint(int.Parse(getData[4]));
+            FoodPoints[3] = new LebelOfSatiety(int.Parse(getData[5]));
         }
     }
 }
