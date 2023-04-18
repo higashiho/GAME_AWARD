@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using GameManager;
 using System.Linq;
+using System;
 
 namespace player
 {
@@ -229,6 +230,9 @@ namespace player
     public class TakeFood
     {
         public BasePlayer BasePlayer{get; private set;}
+        
+        // 取得したアイテムの座標を返すイベント
+        public event EventHandler<ReturnPresentPosEventArgs> ReturnPresentItemPos;
 
         // コンストラクタ
         public TakeFood()
@@ -245,6 +249,13 @@ namespace player
             if(!BasePlayer.PointArr.ContainsKey(getFoodName())
             && Input.GetKey(KeyCode.LeftShift))
             {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.Player.RayHitObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
+
                 // １回しか取得できない
                 ObjectManager.Player.RayHitObject.SetActive(false);
 
@@ -258,6 +269,13 @@ namespace player
             if(BasePlayer.PointArr.ContainsKey(getFoodName())
             && Input.GetKey(KeyCode.LeftShift))
             {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.Player.RayHitObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
+
                 // １回取得すると消える
                 ObjectManager.Player.RayHitObject.SetActive(false);
 
@@ -288,8 +306,22 @@ namespace player
             // 目の前にある食材の名前を返す
             return  ObjectManager.Player.RayHitObject.tag;
         }
-    }
 
+        private void ReturnPresentPos(ReturnPresentPosEventArgs e)
+        {
+            EventHandler<ReturnPresentPosEventArgs> handler = ReturnPresentItemPos;
+
+            if(handler != null)
+            {
+                handler(this, e);
+            }
+        }
+    }
+    
+    public class ReturnPresentPosEventArgs : EventArgs
+    {
+        public Vector3 presentPos;
+    }
 
     // Rayで当たり判定を得ているクラス
     public class RayController

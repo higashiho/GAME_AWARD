@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
 using player;
+using Item;
 
 namespace GameManager
 {
@@ -25,6 +26,7 @@ namespace GameManager
         private gameState phase;
 
         private PointManager pointManager;
+        private ItemManager itemManager;
 
         private GetData getData;
         private DishData dishData;
@@ -41,8 +43,11 @@ namespace GameManager
 
             pointManager = new PointManager(ref dishData, 1);
             
+            
             objectManager = new ObjectManager();
             ObjectManager.Player = new PlayerManager();
+
+            itemManager = new ItemManager(ObjectManager.Player);
         }
 
 
@@ -61,7 +66,11 @@ namespace GameManager
                     break;
 
                 case gameState.GAME:
+                    
                     objectManager.Update();
+                    itemManager.Update();
+                        
+                    
                     break;
                 
                 case gameState.COOKING:

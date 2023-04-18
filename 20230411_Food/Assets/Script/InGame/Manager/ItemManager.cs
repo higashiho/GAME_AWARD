@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using player;
 
 namespace Item
 {
@@ -11,25 +12,31 @@ namespace Item
     public class ItemManager : MonoBehaviour
     {   
         private ItemFactory itemFactory;
+        private PlayerManager playerManager;
 
         // 取得されたアイテムの座標を一時的に保管しておくQueue
         private Queue<Vector3> emptyItemPos;
         
         // コンストラクタ
-        public ItemManager()
+        public ItemManager(PlayerManager tmpPlayerManager)
         {
             
             itemFactory = new ItemFactory();
+            playerManager = tmpPlayerManager;
         }
 
+        public void Update()
+        {
+            playerManager.TakeFood.ReturnPresentItemPos += ReturnEmptyItemPos;
+        }
         /// <summary>
         /// アイテムが取得された時にそのアイテムの座標を保管Queueに返すメソッド
         /// </summary>
         /// <param name="pos">アイテムの座標</param>
-        public void ReturnEmptyItemPos(Vector3 pos)
+        public void ReturnEmptyItemPos(object sender, ReturnPresentPosEventArgs e)
         {
             // 座標保管Queueにいれていく
-            emptyItemPos.Enqueue(pos);
+            emptyItemPos.Enqueue(e.presentPos);
         }
        
         
