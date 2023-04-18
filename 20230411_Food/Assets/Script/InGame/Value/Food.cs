@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
+using System;
 namespace Food
 {
     public class Food
@@ -17,7 +18,7 @@ namespace Food
             LevelOfSatietyPoint = 5
         }
         private Dictionary <DataIndex,string> dishPoints = new Dictionary<DataIndex,string>(6);
-
+        private string[] getData = new string[6]; 
         public Food (DishData Data, int dishId)
         {
             dishData = Data;
@@ -31,7 +32,7 @@ namespace Food
 
             for(int i = 0;i < Enum.GetValues(typeof(DataIndex)).Length;i++)
             {
-                dishPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex),i),getData(i))
+                dishPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex),i), getData[i]);
             }
         }
     }
