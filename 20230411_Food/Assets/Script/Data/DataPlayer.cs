@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace player
+namespace Player
 {
     [CreateAssetMenu(fileName = "PlayerData", menuName = "SriptableObjects/PlayerParamAsset")]
     public class DataPlayer : ScriptableObject

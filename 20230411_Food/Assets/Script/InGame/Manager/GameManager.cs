@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
-using player;
+using Player;
 
 namespace GameManager
     {
