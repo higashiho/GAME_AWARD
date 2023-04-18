@@ -19,16 +19,8 @@ namespace Player
         public FishPoint FishPoint{get; protected set;}
         // お野菜
         public VegPoint VegPoint{get; protected set;}
-        // お砂糖
-        public SugarPoint SugarPoint{get; protected set;}
-        // お塩
-        public SaltPoint SaltPoint{get; protected set;}
-        // お酢
-        public VinePoint VinePoint{get; protected set;}
-        // お醤油
-        public SoyPoint SoyPoint{get; protected set;}
-        // お味噌
-        public MisoPoint MisoPoint{get; protected set;}
+        // 調味料
+        public SeasousingPoint SeasousingPoint{get; protected set;}
     }
 }
 
