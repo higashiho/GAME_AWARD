@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using GameManager;
 using System.Linq;
+using System;
 using FoodPoint;
 
 namespace Player
@@ -219,6 +220,105 @@ namespace Player
         }
     }
 
+    // 食べ物を取得して得点に変換するクラス
+    public class TakeFood
+    {
+
+        public BasePlayer BasePlayer{get; private set;}
+        
+        // 取得したアイテムの座標を返すイベント
+        public event EventHandler<ReturnPresentPosEventArgs> ReturnPresentItemPos;
+
+        // コンストラクタ
+        public TakeFood()
+        {
+            BasePlayer = new BasePlayer();
+        }
+
+
+        // ポイント獲得メソッド
+        public void AddPoint()
+        {
+            // 何にもあたっていなければメソッドから抜ける
+            if(!ObjectManager.Player.RayHitObject) return;
+
+            // 初めてその種類の食材を獲得
+            if(!ObjectManager.Player.Base.PointArr.ContainsKey(getFoodName())
+            && Input.GetKey(KeyCode.LeftShift))
+            {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.Player.RayHitObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
+
+                // １回しか取得できない
+                ObjectManager.Player.RayHitObject.SetActive(false);
+
+                // Dictionaryに肉１点追加
+                ObjectManager.Player.Base.PointArr.Add(getFoodName(), 1);
+                Debug.Log(ObjectManager.Player.Base.PointArr.FirstOrDefault());
+                return;
+            }
+
+            // 2回目以降の食材獲得
+            if(ObjectManager.Player.Base.PointArr.ContainsKey(getFoodName())
+            && Input.GetKey(KeyCode.LeftShift))
+            {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.Player.RayHitObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
+
+                // １回取得すると消える
+                ObjectManager.Player.RayHitObject.SetActive(false);
+
+                // 肉に１点加算
+                incrimentDictionary(getFoodName(), 1);
+                Debug.Log(ObjectManager.Player.Base.PointArr.FirstOrDefault());
+                return;
+            }
+        }
+
+
+        // Dictionaryの特定のキーの値を加算する
+        private void incrimentDictionary(string food, int pointValue)
+        {
+            int tmpCount;
+
+            // tmpCountにfoodの値を代入
+            ObjectManager.Player.Base.PointArr.TryGetValue(food, out tmpCount);
+
+            // 獲得ポイントを加算する
+            ObjectManager.Player.Base.PointArr[food] = tmpCount + pointValue;
+        }
+
+
+        // 獲得した食材の名前を獲得する
+        private string getFoodName()
+        {
+            // 目の前にある食材の名前を返す
+            return  ObjectManager.Player.RayHitObject.tag;
+        }
+
+        private void ReturnPresentPos(ReturnPresentPosEventArgs e)
+        {
+            EventHandler<ReturnPresentPosEventArgs> handler = ReturnPresentItemPos;
+
+            if(handler != null)
+            {
+                handler(this, e);
+            }
+        }
+    }
+    
+    public class ReturnPresentPosEventArgs : EventArgs
+    {
+        public Vector3 presentPos;
+    }
 
     // Rayで当たり判定を得ているクラス
     public class RayController
