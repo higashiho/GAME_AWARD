@@ -15,7 +15,7 @@ namespace Item
         private PlayerManager playerManager;
 
         // 取得されたアイテムの座標を一時的に保管しておくQueue
-        private Queue<Vector3> emptyItemPos;
+        private Queue<Vector3> emptyItemPos = new Queue<Vector3>(8);
         
         // コンストラクタ
         public ItemManager(PlayerManager tmpPlayerManager)
@@ -27,7 +27,8 @@ namespace Item
 
         public void Update()
         {
-            playerManager.TakeFood.ReturnPresentItemPos += ReturnEmptyItemPos;
+            // イベントがうまくいってないため、一時的にコメントアウト
+            //playerManager.TakeFood.ReturnPresentItemPos += ReturnEmptyItemPos;
         }
         /// <summary>
         /// アイテムが取得された時にそのアイテムの座標を保管Queueに返すメソッド

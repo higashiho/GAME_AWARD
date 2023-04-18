@@ -68,11 +68,11 @@ namespace Item
         {
             // アイテムの生成座標配列インスタンス化
             itemPopPos = new Vector3[5,5];
-
+            
             // 座標を入れていく
-            for(int i = 1; i < itemPopPos.Length; i++)
+            for(int i = 1; i < itemPopPos.GetLength(0); i++)
             {
-                for(int j = 1; j < itemPopPos.Rank; j++)
+                for(int j = 1; j < itemPopPos.GetLength(1); j++)
                 {
                     itemPopPos[i,j] = new Vector3(baseLineX + i * spaceX, 0f, baseLineZ * j * spaceZ);
                 }
