@@ -54,6 +54,7 @@ namespace Title
         public IReadOnlyReactiveProperty<bool> SubDisplayIngredientsList => keyReturnInput;
         // カメラリセットイベント
         public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyBackInput;
+        public IObservable<uint> KeyPressed => keyPressed;
 
         // =================================================================
 
@@ -63,6 +64,7 @@ namespace Title
         private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
         private readonly ReactiveProperty<bool> keySpaseInput = new BoolReactiveProperty();
         private readonly ReactiveProperty<bool> keyBackInput = new BoolReactiveProperty();
+        private Subject<uint> keyPressed = new Subject<uint>();
 
         private Subject<float> foodNicknamesTextPoint = new Subject<float>();
         public Subject<float> FoodNicknamesTextPoint
@@ -85,7 +87,33 @@ namespace Title
             keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
             keyBackInput.Value = Input.GetKeyDown(KeyCode.Backspace);
             keySpaseInput.Value = Input.GetKeyDown(KeyCode.Space);
+
             // ===========================================================
+            // 何もキーが押されていないときは処理終了
+            currentPressed();
+        }
+
+        /// <summary>
+        /// <see cref="KeyCodeAlphabet"/>に含まれている現在押されているキーを返す.
+        /// </summary>
+        /// <returns><see cref="KeyCode"/></returns>
+        private void currentPressed()
+        {
+            if(!Input.anyKey)
+            {
+                // 代入
+                keyPressed.OnNext((uint)KeyCode.None);
+                return;
+            }
+            
+            foreach (KeyCode  keyCode in Enum.GetValues(typeof(KeyCode)))
+            {
+                // 対象のキーの場合Subjectに代入
+                if (Input.GetKeyDown(keyCode))
+                {
+                    keyPressed.OnNext((uint)keyCode);
+                }
+            }
         }
     }
 
