@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   firstPlayerCreatePos: {x: 0, y: 0, z: 0}
+  secondPlayerCreatePos: {x: 5, y: 0, z: 5}
   moveSpeed: 3
-  rotatePos: {x: 0, y: 90, z: 0}
-  rayDirection: 5
+  rotateRightPos: {x: 0, y: 90, z: 0}
+  rotateLeftPos: {x: 0, y: 270, z: 0}
+  rotateBackPos: {x: 0, y: 180, z: 0}
+  rayDirection: 1
