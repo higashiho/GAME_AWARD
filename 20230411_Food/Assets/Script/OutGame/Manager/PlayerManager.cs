@@ -17,14 +17,22 @@ namespace Title
     /// </summary>
     public class PlayerManager : IActor
     {
+        
         /// <summary>
-        /// playerが1pか2pか判断ステート
+        /// プレイヤーが動いている向き
+        /// </summary>
+        public Vector3 MoveDis{get{return moveDis;} set{moveDis = value;}}
+        private Vector3 moveDis = Vector3.zero;
+
+
+        /// <summary>
+        /// playerステート
         /// </summary>
         public enum PlayerState
         {
             MAIN, SUB
         }
-        public PlayerState JudgeState;
+        public PlayerState State{get; private set;}
 
 
         /// <summary>
@@ -77,16 +85,16 @@ namespace Title
         public PlayerManager(PlayerState tmpState)
         {
             
-            JudgeState = tmpState;
+            State = tmpState;
             // 初期化
             Initialization();
             
             
             // 更新ループ設定
-            if(JudgeState == PlayerState.MAIN)
+            if(State == PlayerState.MAIN)
                 Update();
             // 更新ループ設定
-            else if(JudgeState == PlayerState.SUB)
+            else if(State == PlayerState.SUB)
                 SubUpdate();
        }
 
@@ -103,9 +111,9 @@ namespace Title
             // ゲームオブジェクト型にcastし生成
             var tmpObj = (GameObject)Handle.Result;
             // 自身がどっちなのか判断して生成
-            if(JudgeState == PlayerState.MAIN)
+            if(State == PlayerState.MAIN)
                 Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
-            else if(JudgeState == PlayerState.SUB)
+            else if(State == PlayerState.SUB)
             {
                 // Playerと反対に生成するためx座標のみ反転
                 var instancePos = new Vector3(
@@ -166,14 +174,14 @@ namespace Title
     /// </summary>
     public sealed class PlayerMove
     {
-        private player.PlayerMoveSpeed moveSpeed = new player.PlayerMoveSpeed(3);
+        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(1.5f);
         /// <summary>
         /// 左移動処理
         /// </summary>
         public void LeftMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.left;
+            tmpPlayer.MoveDis = Vector3.left;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -190,7 +198,7 @@ namespace Title
         public void RightMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.right;
+            tmpPlayer.MoveDis = Vector3.right;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -208,7 +216,7 @@ namespace Title
         public void ForwardMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.forward;
+            tmpPlayer.MoveDis = Vector3.forward;
             
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -225,7 +233,7 @@ namespace Title
         public void BackMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.back;
+            tmpPlayer.MoveDis = Vector3.back;
 
             // 移動アニメーション再生
             tmpPlayer.MoveAnimator.SetBool("Move", true);
@@ -252,7 +260,7 @@ namespace Title
         public void ResetMovement(PlayerManager tmpPlayer)
         {
             // 初期化
-            tmpPlayer.MoveEvents.PlayerMoveDis = Vector3.zero;
+            tmpPlayer.MoveDis = Vector3.zero;
         }
     }
 

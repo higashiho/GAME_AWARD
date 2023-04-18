@@ -10,8 +10,7 @@ using Constants;
 
 namespace Title
 {
-
-     /// <summary>
+    /// <summary>
     /// タイトル入力イベント管理クラス
     /// </summary>
     public sealed class InputEvent
@@ -319,11 +318,6 @@ namespace Title
     public class InputMovementManager
     {
 
-        /// <summary>
-        /// プレイヤーが動いている向き
-        /// </summary>
-        public Vector3 PlayerMoveDis{get{return playerMoveDis;} set{playerMoveDis = value;}}
-        private Vector3 playerMoveDis = Vector3.zero;
 
         /// <summary>
         /// 左移動イベント処理
@@ -341,8 +335,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_LEFT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => PlayerMoveDis == Vector3.zero ||
-                            PlayerMoveDis == Vector3.left)
+                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
+                            ObjectManager.Player.MoveDis == Vector3.left)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.LeftMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -366,8 +360,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_RIGHT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => PlayerMoveDis == Vector3.zero ||
-                            PlayerMoveDis == Vector3.right)
+                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
+                            ObjectManager.Player.MoveDis == Vector3.right)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.RightMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -391,8 +385,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => Vector3.zero != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => PlayerMoveDis == Vector3.zero ||
-                            PlayerMoveDis == Vector3.forward)
+                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
+                            ObjectManager.Player.MoveDis == Vector3.forward)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.ForwardMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -416,8 +410,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_BACK != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => PlayerMoveDis == Vector3.zero ||
-                            PlayerMoveDis == Vector3.back)
+                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
+                            ObjectManager.Player.MoveDis == Vector3.back)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.BackMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
