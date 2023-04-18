@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
+
+using Item;
 using Player;
 
 namespace GameManager
-    {
+{
     public class GameManager : MonoBehaviour
     {
 
@@ -25,14 +27,34 @@ namespace GameManager
         private gameState phase;
 
         private PointManager pointManager;
+        private ItemManager itemManager;
+
+        private GetData getData;
+        private DishData dishData;
+        
+
+        async void Start()
+        {
+            
+            getData = new GetData();
+            dishData = new DishData(ref getData);
+            await dishData.LoadData();
+
+            dishData.GetDishData(getData);
+
+            pointManager = new PointManager(ref dishData, 1);
+            
+            
+            objectManager = new ObjectManager();
+            ObjectManager.Player = new PlayerManager();
+
+            itemManager = new ItemManager();
+        }
+
 
         private ObjectManager objectManager;
 
-        void Start()
-        {
-            objectManager = new ObjectManager();
-            ObjectManager.Player = new PlayerManager();
-        }
+       
         
         void Update()
         {
@@ -45,7 +67,11 @@ namespace GameManager
                     break;
 
                 case gameState.GAME:
+                    
                     objectManager.Update();
+                    itemManager.Update();
+                        
+                    
                     break;
                 
                 case gameState.COOKING:
