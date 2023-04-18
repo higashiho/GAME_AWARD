@@ -18,10 +18,6 @@ namespace player
         // コンストラクタ
         public PlayerInstancePos(Vector3 playerPos)
         {
-            if(pos == null)
-            {
-                Debug.LogError("プレイヤーの初期位置がNULLだよ");
-            }
             // 初期化
             pos = playerPos;
         }
@@ -49,12 +45,20 @@ namespace player
         // コンストラクタ
         public PlayerRotatePos()
         {
-            if(Rotate == null)
-            {
-                Debug.LogError("プレイヤーの回転座標がNULLだよ");
-            }
             // 初期化
             Rotate = ObjectManager.Player.DataPlayer.RotatePos;
+        }
+    }
+
+    // プレイヤーから出るRayの長さの最大値のクラス
+    public sealed class PlayerRayDirection
+    {
+        public float RayDirection{get; private set;}
+
+        // コンストラクタ
+        public PlayerRayDirection()
+        {
+            RayDirection = ObjectManager.Player.DataPlayer.RayDirection;
         }
     }
 }
