@@ -5,6 +5,7 @@ using ObjectInterface;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using GameManager;
+using System.Linq;
 
 namespace player
 {
@@ -18,7 +19,8 @@ namespace player
         /// <summary>
         /// プレイヤーオブジェクト
         /// </summary>
-        public GameObject Object{get; private set;}
+        public GameObject ObjectOne{get; private set;}
+        public GameObject ObjectTwo{get; private set;}
         
         /// <summary>
         /// プレイヤーのデータ
@@ -54,7 +56,6 @@ namespace player
         /// <summary>
         /// Rayを操作するクラス
         /// </summary>
-        /// <value></value>
         public RayController RayController{get; private set;}
 
         // コンストラクタ
@@ -80,12 +81,19 @@ namespace player
             await DataHandle.Task;
 
             // 生成座標を設定   
-            PlayerInstancePos InstancePosOne = new PlayerInstancePos(DataPlayer.FirstPlayerCreatePos);
+            FirstPlayerInstancePos InstancePosOne = new FirstPlayerInstancePos();
+            SecondPlayerInstancePos InstancePosTwo = new SecondPlayerInstancePos();
 
-            // プレイヤー生成
+            // 1Pプレイヤー生成
             var tmpObj = (GameObject)DataHandle.Result;
-            Object = MonoBehaviour.Instantiate(tmpObj
-            , InstancePosOne.pos
+            ObjectOne = MonoBehaviour.Instantiate(tmpObj
+            , InstancePosOne.onePos
+            , Quaternion.identity);
+
+            // 2Pプレイヤー生成
+            var tmpobj = (GameObject)DataHandle.Result;
+            ObjectTwo = MonoBehaviour.Instantiate(tmpobj
+            , InstancePosTwo.twoPos
             , Quaternion.identity);
 
             PlayerMove = new PlayerMove();
@@ -98,10 +106,7 @@ namespace player
         public void Update()
         {
             // 各移動メソッド
-            PlayerMove.ForwardMove();
-            PlayerMove.BackMove();
-            PlayerMove.RightMove();
-            PlayerMove.LeftMove();
+            PlayerMove.Move();
 
             // 回転メソッド
             PlayerRotate.Rotate();
@@ -132,41 +137,27 @@ namespace player
         /// <summary>
         /// プレイヤーを移動させる
         /// </summary>
-        public void ForwardMove()
+        public void Move()
         {
-            if(Input.GetKey(KeyCode.W))
+            if(Input.GetKey(KeyCode.W)
+            || Input.GetKey(KeyCode.A)
+            || Input.GetKey(KeyCode.S)
+            || Input.GetKey(KeyCode.D))
             {
-                ObjectManager.Player.Object.transform.position +=
-                ObjectManager.Player.Object.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
+                ObjectManager.Player.ObjectOne.transform.position +=
+                ObjectManager.Player.ObjectOne.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
             }
-        }
 
-        public void BackMove()
-        {
-            if(Input.GetKey(KeyCode.S))
+            //2P--------------------------------
+            if(Input.GetKey(KeyCode.UpArrow)
+            || Input.GetKey(KeyCode.LeftArrow)
+            || Input.GetKey(KeyCode.DownArrow)
+            || Input.GetKey(KeyCode.RightArrow))
             {
-                ObjectManager.Player.Object.transform.position +=
-                -ObjectManager.Player.Object.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
+                ObjectManager.Player.ObjectTwo.transform.position +=
+                ObjectManager.Player.ObjectTwo.transform.forward * MoveSpeed.moveSpeed * Time.deltaTime;
             }
-        }
-
-        public void RightMove()
-        {
-            if(Input.GetKey(KeyCode.D))
-            {
-                ObjectManager.Player.Object.transform.position +=
-                ObjectManager.Player.Object.transform.right * MoveSpeed.moveSpeed * Time.deltaTime;
-            }
-        }
-
-        public void LeftMove()
-        {
-            if(Input.GetKey(KeyCode.A))
-            {
-                ObjectManager.Player.Object.transform.position +=
-                -ObjectManager.Player.Object.transform.right * MoveSpeed.moveSpeed * Time.deltaTime;
-            }
-        }
+        }        
     }
 
     /// <summary>
@@ -174,12 +165,18 @@ namespace player
     /// </summary>
     public class PlayerRotate
     {
-        public PlayerRotatePos PlayerRotatePos{get; private set;}
+        public PlayerRotateRightPos PlayerRotateRightPos{get; private set;}
+
+        public PlayerRotateLeftPos PlayerRotateLeftPos{get; private set;}
+
+        public PlayerRotateBackPos PlayerRotateBackPos{get; private set;}
 
         // コンストラクタ
         public PlayerRotate()
         {
-            PlayerRotatePos = new PlayerRotatePos();
+            PlayerRotateRightPos = new PlayerRotateRightPos();
+            PlayerRotateLeftPos = new PlayerRotateLeftPos();
+            PlayerRotateBackPos = new PlayerRotateBackPos();
         }
 
         // 回転させる
@@ -187,12 +184,43 @@ namespace player
         {
             if(Input.GetKey(KeyCode.D))
             {
-                ObjectManager.Player.Object.transform.eulerAngles = PlayerRotatePos.Rotate * Time.deltaTime;
+                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateRightPos.RightRotate;
             }
 
             if(Input.GetKey(KeyCode.A))
             {
-                ObjectManager.Player.Object.transform.eulerAngles = -PlayerRotatePos.Rotate * Time.deltaTime;
+                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateLeftPos.LeftRotate;
+            }
+
+            if(Input.GetKey(KeyCode.W))
+            {
+                ObjectManager.Player.ObjectOne.transform.eulerAngles = Vector3.zero;
+            }
+
+            if(Input.GetKey(KeyCode.S))
+            {
+                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateBackPos.BackRotate;
+            }
+
+            //2P--------------------------------
+            if(Input.GetKey(KeyCode.RightArrow))
+            {
+                ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateRightPos.RightRotate;
+            }
+
+            if(Input.GetKey(KeyCode.LeftArrow))
+            {
+                ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateLeftPos.LeftRotate;
+            }
+
+            if(Input.GetKey(KeyCode.UpArrow))
+            {
+                ObjectManager.Player.ObjectTwo.transform.eulerAngles = Vector3.zero;
+            }
+
+            if(Input.GetKey(KeyCode.DownArrow))
+            {
+                ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateBackPos.BackRotate;
             }
         }
     }
@@ -211,17 +239,54 @@ namespace player
         // ポイント獲得メソッド
         public void AddPoint()
         {
-            // XXX:NULL-RayHitObject
-            if(ObjectManager.Player.RayHitObject.tag == ("Food"))
+            if(!ObjectManager.Player.RayHitObject) return;
+
+            // 初めてその種類の食材を獲得
+            if(!BasePlayer.PointArr.ContainsKey(getFoodName())
+            && Input.GetKey(KeyCode.LeftShift))
             {
-                // TODO:RayHitObjectの持っている値を入れる
-                //BasePlayer.PointArr.Add(ObjectManager.Player.RayHitObject., 1);
-                //Debug.Log(BasePlayer.PointArr[BasePlayer.MeatPoint]);
-            }
-            else if(ObjectManager.Player.RayHitObject == null)
-            {
+                // １回しか取得できない
+                ObjectManager.Player.RayHitObject.SetActive(false);
+
+                // Dictionaryに肉１点追加
+                BasePlayer.PointArr.Add(getFoodName(), 1);
+                Debug.Log(BasePlayer.PointArr.FirstOrDefault());
                 return;
             }
+
+            // 2回目以降の食材獲得
+            if(BasePlayer.PointArr.ContainsKey(getFoodName())
+            && Input.GetKey(KeyCode.LeftShift))
+            {
+                // １回取得すると消える
+                ObjectManager.Player.RayHitObject.SetActive(false);
+
+                // 肉に１点加算
+                incrimentDictionary(getFoodName(), 1);
+                Debug.Log(BasePlayer.PointArr.FirstOrDefault());
+                return;
+            }
+        }
+
+
+        // Dictionaryの特定のキーの値を加算する
+        private void incrimentDictionary(string food, int pointValue)
+        {
+            int tmpCount;
+
+            // tmpCountにfoodの値を代入
+            BasePlayer.PointArr.TryGetValue(food, out tmpCount);
+
+            // 獲得ポイントを加算する
+            BasePlayer.PointArr[food] = tmpCount + pointValue;
+        }
+
+
+        // 獲得した食材の名前を獲得する
+        private string getFoodName()
+        {
+            // 目の前にある食材の名前を返す
+            return  ObjectManager.Player.RayHitObject.tag;
         }
     }
 
@@ -240,11 +305,12 @@ namespace player
         public void RayCast()
         {
             // プレイヤーから出るRayの設定
-            var checkFoodRay = new Ray(ObjectManager.Player.Object.transform.position,
-                                       ObjectManager.Player.Object.transform.forward * PlayerRayDirection.RayDirection);
-            // 色がついていない
-            Debug.DrawRay(ObjectManager.Player.Object.transform.position,
-            ObjectManager.Player.Object.transform.forward * PlayerRayDirection.RayDirection, Color.red);
+            var checkFoodRay = new Ray(ObjectManager.Player.ObjectOne.transform.position,
+                                       ObjectManager.Player.ObjectOne.transform.forward * PlayerRayDirection.RayDirection);
+
+            // Rayを可視化する
+            Debug.DrawRay(ObjectManager.Player.ObjectOne.transform.position,
+                          ObjectManager.Player.ObjectOne.transform.forward * PlayerRayDirection.RayDirection, Color.red);
 
             RaycastHit hit;
 

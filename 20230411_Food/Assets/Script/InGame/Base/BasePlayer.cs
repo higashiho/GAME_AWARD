@@ -7,11 +7,8 @@ namespace player
 {
     public class BasePlayer
     {
-        // プレイヤーの生成座標
-        public PlayerInstancePos InstancePosOne{get; protected set;}
-
         // プレイヤーが取得したポイントを保管しておく配列
-        public Dictionary<BaseFoodPoint, int> PointArr = new Dictionary<BaseFoodPoint, int>();
+        public Dictionary<string, int> PointArr = new Dictionary<string, int>();
 
         /// <summary>
         /// 取得ポイント

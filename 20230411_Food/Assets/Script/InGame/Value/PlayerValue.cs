@@ -10,16 +10,29 @@ namespace player
         
     }
 
-    // プレイヤー生成座標クラス
-    public sealed class PlayerInstancePos
+    // 1Pプレイヤー生成座標クラス
+    public sealed class FirstPlayerInstancePos
     {
-        public Vector3 pos{get; private set;}
+        public Vector3 onePos{get; private set;}
 
         // コンストラクタ
-        public PlayerInstancePos(Vector3 playerPos)
+        public FirstPlayerInstancePos()
         {
             // 初期化
-            pos = playerPos;
+            onePos = ObjectManager.Player.DataPlayer.FirstPlayerCreatePos;
+        }
+    }
+
+    // 2Pプレイヤー生成座標クラス
+    public sealed class SecondPlayerInstancePos
+    {
+        public Vector3 twoPos{get; private set;}
+
+        // コンストラクタ
+        public SecondPlayerInstancePos()
+        {
+            // 初期化
+            twoPos = ObjectManager.Player.DataPlayer.SecondPlayerCreatePos;
         }
     }
 
@@ -37,16 +50,42 @@ namespace player
     }
 
 
-    // プレイヤー回転座標クラス
-    public sealed class PlayerRotatePos
+    // プレイヤー右回転座標クラス
+    public sealed class PlayerRotateRightPos
     {
-        public Vector3 Rotate{get; private set;}
+        public Vector3 RightRotate{get; private set;}
 
         // コンストラクタ
-        public PlayerRotatePos()
+        public PlayerRotateRightPos()
         {
             // 初期化
-            Rotate = ObjectManager.Player.DataPlayer.RotatePos;
+            RightRotate = ObjectManager.Player.DataPlayer.RotateRightPos;
+        }
+    }
+
+    // プレイヤー左回転座標クラス
+    public sealed class PlayerRotateLeftPos
+    {
+        public Vector3 LeftRotate{get; private set;}
+
+        // コンストラクタ
+        public PlayerRotateLeftPos()
+        {
+            // 初期化
+            LeftRotate = ObjectManager.Player.DataPlayer.RotateLeftPos;
+        }
+    }
+
+    // プレイヤー後ろ回転座標クラス
+    public sealed class PlayerRotateBackPos
+    {
+        public Vector3 BackRotate{get; private set;}
+
+        // コンストラクタ
+        public PlayerRotateBackPos()
+        {
+            // 初期化
+            BackRotate = ObjectManager.Player.DataPlayer.RotateBackPos;
         }
     }
 
