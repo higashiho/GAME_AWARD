@@ -31,7 +31,7 @@ namespace Title
             /// <returns></returns>
             public async UniTask LoadData()
             {
-                LoadedAsset = await getData.LoadAsset("TextData");
+                LoadedAsset = await getData.LoadAsset("TitleTextDatas");
                 await UniTask.WaitWhile(() => LoadedAsset == null);
             }
 
@@ -39,7 +39,7 @@ namespace Title
             /// CSVデータからリストに読み込むメソッド
             /// </summary>
             /// <param name="getData"></param>
-            public void GetDishData()
+            public void GetTextData()
             {
                 getData.ReadData(LoadedAsset, TextData);
             }

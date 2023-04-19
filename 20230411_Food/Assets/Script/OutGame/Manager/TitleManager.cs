@@ -66,14 +66,16 @@ namespace Title
             {    
                 dishData = new DishData(getData);
                 await dishData.LoadData();
+                dishData.GetDishData();
+                Debug.Log(DishData.DishPointData.Count);
             }
             if(TitleTextData.TextData.Count == 0)
             {
                 textData = new TitleTextData(getData);
                 await textData.LoadData();
+                textData.GetTextData();
+                Debug.Log(TitleTextData.TextData.Count);
             }
-
-            dishData.GetDishData();
             // インスタンス化
             ObjectManager.TitleScene = this;
             ObjectManager.InputEvent = new InputEvent(this.gameObject);

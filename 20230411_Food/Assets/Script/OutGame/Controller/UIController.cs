@@ -335,7 +335,7 @@ namespace Title
             images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[0];
             images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[1];
             images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[2];
-
+            Debug.Log(TitleTextData.TextData[1][0]);
             // テキスト設定
             foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[1][0];
             foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[2][0];

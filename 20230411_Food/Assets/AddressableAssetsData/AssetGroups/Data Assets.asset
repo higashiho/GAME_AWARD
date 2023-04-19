@@ -27,6 +27,7 @@ MonoBehaviour:
     m_Address: Assets/TextDatas.csv
     m_ReadOnly: 0
     m_SerializedLabels:
+    - TitleTextDatas
     - TextData
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
