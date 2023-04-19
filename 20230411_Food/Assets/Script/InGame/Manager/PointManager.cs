@@ -8,6 +8,7 @@ using System.Linq;
 
 
 using Player;
+using Food;
 
 
 namespace FoodPoint
@@ -16,54 +17,50 @@ namespace FoodPoint
     //           => 調味料ポイントを計算する                                         =>４割
     //           => 量の割合を計算する                                               =>１割
 
+
+    // プレイヤーのDictionaryを参照
+    // FoodDataと比較
+    // 計算
+
+    // FoodDataからテキストメッセージを取得
+    // UIで料理を指定するときにメッセージを呼び出せるようにしておく 
+
     /// <summary>
     /// プレイヤーが取得したポイントを管理するクラス
     /// </summary>
     public class PointManager 
     {
+        // フードデータ
+        private FoodData foodData;
         // 料理データ
         private DishData dishData;
-
-        private enum DataIndex
-        {
-            DishName = 0,
-            ExplanatoryText = 1,
-            MeatPoint = 2,
-            FishPoint = 3,
-            VegPoint = 4,
-            LevelOfSatietyPoint = 5
-        }
-
+        // プレイヤー
+        private PlayerManager player;
 
         /// <summary>
-        /// 指定された料理のポイントを保管しておく配列
-        /// Meatpoint, FishPoint, VegPoint, LevelOfSatietyPoint 
+        /// ポイントマネージャーのコンストラクタ
         /// </summary>
-        // private BaseFoodPoint[] specifiedFoodPoints = new BaseFoodPoint[4];
-        private Dictionary<DataIndex, string> specifiedFoodPoints = new Dictionary<DataIndex, string>(6);
-        private string[] getData = new string[16];
-         
-        
-        public PointManager(DishData data, int dishId)
+        /// <param name="data">料理の数値データ</param>
+        public PointManager(DishData data)
         {
             dishData = data;
-            
-            GetDishData(dishId);
-            
         }
 
         /// <summary>
-        /// int型の値を渡すとその数値に応じたインデックスの料理データをstringで取得するメソッド
+        /// 料理を指定するメソッド
+        /// Openingなどで呼び出す
         /// </summary>
-        public void GetDishData(int dishId)
+        /// <param name="id">料理ID</param>
+        public void SetFood(int id)
         {
-            getData = dishData.DishPointData[dishId];
-            
-            for(int i = 0; i < Enum.GetValues(typeof(DataIndex)).Length; i++)
+            if(id < 0)
             {
-                specifiedFoodPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex), i), getData[i]);
+                Debug.LogError("指定された料理のIDは負の値で存在しません");
+                return;
             }
-            
+
+            // 料理を生成
+            foodData = new FoodData(dishData, id);
         }
 
         /// <summary>

@@ -4,7 +4,10 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 
 namespace FoodPoint
-{
+{   
+    /// <summary>
+    /// 料理データを管理するクラス
+    /// </summary>
     public class DishData 
     {
         // 料理データを保存する配列
@@ -13,9 +16,14 @@ namespace FoodPoint
         // CSVデータアセットを保管する変数
         public TextAsset LoadedAsset{get; private set;}
 
+        // データ取得クラス
         private GetData getData;
 
-        public DishData(ref GetData data)
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="data">データ取得クラスのインスタンス</param>
+        public DishData(GetData data)
         {
             getData = data;
         }
@@ -23,7 +31,6 @@ namespace FoodPoint
         /// <summary>
         /// CSVデータをロード
         /// </summary>
-        /// <param name="getData"></param>
         /// <returns></returns>
         public async UniTask LoadData()
         {
@@ -36,7 +43,7 @@ namespace FoodPoint
         /// CSVデータからリストに読み込むメソッド
         /// </summary>
         /// <param name="getData"></param>
-        public void GetDishData(GetData getData)
+        public void GetDishData()
         {
             getData.ReadData(LoadedAsset, DishPointData);
         }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+
 using FoodPoint;
 
 using Item;
@@ -10,7 +12,7 @@ namespace GameManager
 {
     public class GameManager : MonoBehaviour
     {
-
+        private UniTask? initTask = null;
         // ステート
         [SerializeField]
         private enum gameState
@@ -26,10 +28,14 @@ namespace GameManager
         [SerializeField]
         private gameState phase;
 
-        private PointManager pointManager;
-        private ItemManager itemManager;
 
+        // ポイント管理クラス
+        private PointManager pointManager;
+        // アイテム管理クラス
+        private ItemManager itemManager;
+        // データ取得クラス
         private GetData getData;
+        // 料理データクラス
         private DishData dishData;
         
 
@@ -37,12 +43,12 @@ namespace GameManager
         {
             
             getData = new GetData();
-            dishData = new DishData(ref getData);
+            dishData = new DishData(getData);
             await dishData.LoadData();
 
-            dishData.GetDishData(getData);
+            dishData.GetDishData();
 
-            pointManager = new PointManager(dishData, 1);
+            pointManager = new PointManager(dishData);
             
             
             objectManager = new ObjectManager();
@@ -54,16 +60,39 @@ namespace GameManager
 
         private ObjectManager objectManager;
 
+        /// <summary>
+        /// InGameの初期化はこのメソッド内で行う
+        /// </summary>
+        /// <returns></returns>
+        private async UniTask InitGame()
+        {
+            // アイテム関係初期化
+            itemManager.Init();
+            // 仮
+            await UniTask.Delay(5);
+        }
        
         
-        void Update()
+        async void Update()
         {
             switch(phase)
             {
                 case gameState.OPENING:
+                    // スタートアニメーション
+                    // ロードなどの処理
+
+                    // ゲームシーン初期化処理
+                    // if(initTask == null)
+                    // {
+                    //     initTask = InitGame();
+
+                    //     await (UniTask)initTask;
+                    // }
+
                     break;
                 
                 case gameState.COUNTDOWM:
+                    // ゲームスタート時のカウントダウン処理
                     break;
 
                 case gameState.GAME:

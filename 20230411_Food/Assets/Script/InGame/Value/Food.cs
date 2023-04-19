@@ -5,11 +5,11 @@ using FoodPoint;
 using System;
 namespace Food
 {
-    public class Food
+    public class FoodData
     {
         private DishData dishData;
 
-        private enum DataIndex{
+        public enum DataIndex{
             DishName = 0,
             ExplanatoryText = 1,
             MeatPoint = 2,
@@ -17,22 +17,23 @@ namespace Food
             VegPoint = 4,
             LevelOfSatietyPoint = 5
         }
-        private Dictionary <DataIndex,string> dishPoints = new Dictionary<DataIndex,string>(6);
+
+        public Dictionary<DataIndex, string> DishPoints{get; private set;} = new Dictionary<DataIndex,string>(6);
         private string[] getData = new string[6]; 
-        public Food (DishData Data, int dishId)
+        public FoodData (DishData Data, int dishId)
         {
             dishData = Data;
 
             GetDishData(dishId);
         }
 
-        public void GetDishData(int dishId)
+        private void GetDishData(int dishId)
         {
             getData = dishData.DishPointData[dishId];
 
             for(int i = 0;i < Enum.GetValues(typeof(DataIndex)).Length;i++)
             {
-                dishPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex),i), getData[i]);
+                DishPoints.Add((DataIndex)Enum.ToObject(typeof(DataIndex),i), getData[i]);
             }
         }
     }
