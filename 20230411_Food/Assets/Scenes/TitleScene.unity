@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 6594aa0e0f0f9af429d1cb3af66988ec, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2070,7 +2070,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e4001c2ce7436c74da380cd9b10c72a8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2146,7 +2146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 3aaffb2f391f4234394c319888349935, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3772,17 +3772,17 @@ MonoBehaviour:
   recipeBookChanvas: {fileID: 1374843607}
   refrigeratorCanvas: {fileID: 528769952}
   meatImage:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: e4001c2ce7436c74da380cd9b10c72a8, type: 3}
+  - {fileID: 21300000, guid: 6594aa0e0f0f9af429d1cb3af66988ec, type: 3}
+  - {fileID: 21300000, guid: 3aaffb2f391f4234394c319888349935, type: 3}
   fishImage:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 1b847d454e628d04a8b5eb53ae193886, type: 3}
+  - {fileID: 21300000, guid: 8c356b267275f50499cbf54b75402e80, type: 3}
+  - {fileID: 21300000, guid: 8cc42840b4529b047a14476cabf9a4dc, type: 3}
   vagImage:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 48947c73d310d974383b2c016e7cf071, type: 3}
+  - {fileID: 21300000, guid: ee5e53215b9a6d34d9bef7975ac6ac5c, type: 3}
+  - {fileID: 21300000, guid: 28b7c4b82c7f68a46a1e85154c5e58b1, type: 3}
 --- !u!4 &2023560435
 Transform:
   m_ObjectHideFlags: 0
