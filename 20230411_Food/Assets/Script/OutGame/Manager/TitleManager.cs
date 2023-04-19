@@ -9,6 +9,7 @@ using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Constants;
+using FoodPoint;
 
 
 namespace Title
@@ -47,9 +48,34 @@ namespace Title
         private bool nowPlayEvents = false;
 
 
+        // データ取得クラス
+        private GetData getData;
+        // 料理データクラス
+        private DishData dishData;
+        // テキストデータクラス
+        private TitleTextData textData;
+
         public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
-        void Awake()
+        async void Awake()
         {
+            // インスタンス化
+            getData = new GetData();
+
+            // リストを取得出来ていなかったら取得する
+            if(DishData.DishPointData.Count == 0)
+            {    
+                dishData = new DishData(getData);
+                await dishData.LoadData();
+                dishData.GetDishData();
+                Debug.Log(DishData.DishPointData.Count);
+            }
+            if(TitleTextData.TextData.Count == 0)
+            {
+                textData = new TitleTextData(getData);
+                await textData.LoadData();
+                textData.GetTextData();
+                Debug.Log(TitleTextData.TextData.Count);
+            }
             // インスタンス化
             ObjectManager.TitleScene = this;
             ObjectManager.InputEvent = new InputEvent(this.gameObject);
