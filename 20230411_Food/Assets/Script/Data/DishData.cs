@@ -8,7 +8,7 @@ namespace FoodPoint
     public class DishData 
     {
         // 料理データを保存する配列
-        public List<string[]> DishPointData = new List<string[]>();
+        public static List<string[]> DishPointData{get;} = new List<string[]>();
         
         // CSVデータアセットを保管する変数
         public TextAsset LoadedAsset{get; private set;}

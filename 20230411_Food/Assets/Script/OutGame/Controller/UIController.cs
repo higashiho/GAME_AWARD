@@ -6,6 +6,7 @@ using UniRx;
 using Cysharp.Threading.Tasks;
 using Constants;
 using DG.Tweening;
+using TMPro;
 
 namespace Title
 {
@@ -20,22 +21,27 @@ namespace Title
         [SerializeField, Header("冷蔵庫のキャンバス")]
         private Canvas refrigeratorCanvas;
         public Canvas RefrigeratorCanvas{get{return refrigeratorCanvas;}}
-        
+        [SerializeField, Header("肉イメージSprite")]
+        private Sprite[] meatImage = new Sprite[3];
+        public Sprite[] MeatImage{get{return meatImage;}}
+        [SerializeField, Header("魚イメージSprite")]
+        private Sprite[] fishImage = new Sprite[3];
+        public Sprite[] FishImage{get{return fishImage;}}
+        [SerializeField, Header("野菜イメージSprite")]
+        private Sprite[] vagImage = new Sprite[3];
+        public Sprite[] VagImage{get{return vagImage;}}
         // インスタンス化
-        private RecipeBookUIMove recipeBookUIMove;
         private RefrigeratorUIMove refrigeratorUIMove;
         // Start is called before the first frame update
         async void Start()
         {
             // インスタンス化
-            recipeBookUIMove = new RecipeBookUIMove();
             refrigeratorUIMove = new RefrigeratorUIMove(RefrigeratorCanvas);
             ObjectManager.Ui = this;
 
             // インプットイベントがインスタンス化されるまで待つ
             await UniTask.WaitWhile(() => ObjectManager.InputEvent == null);
             // イベント設定
-            recipeBookUIMove.InputUIEvent();
             refrigeratorUIMove.InputUIEvent();
         }
 
@@ -60,90 +66,7 @@ namespace Title
 
     }
 
-    /// <summary>
-    /// レシピブックUIの挙動クラス
-    /// </summary>
-    public class RecipeBookUIMove
-    {
-
-        /// <summary>
-        /// 各インプットイベント設定関数
-        /// </summary>
-        public void InputUIEvent()
-        {
-           cursorUp();
-           cursorLeft();
-           cursorDown();
-           cursorRight();
-           
-        }
-
-        /// <summary>
-        /// カーソル上移動
-        /// </summary>
-        private void cursorUp()
-        {
-            ObjectManager.InputEvent.KeyPressed
-                .Where(x => (KeyCode)x == KeyCode.W || (KeyCode)x == KeyCode.UpArrow)
-                .DistinctUntilChanged()
-                .Subscribe(_ => {
-                    
-                });
-        }
-
-        /// <summary>
-        /// カーソル左移動
-        /// </summary>
-        private void cursorLeft()
-        {
-            ObjectManager.InputEvent.KeyPressed
-                .Where(x => (KeyCode)x == KeyCode.A || (KeyCode)x == KeyCode.LeftArrow)
-                .DistinctUntilChanged()
-                .Subscribe(_ => {
-                    
-                });
-        }
-
-        /// <summary>
-        /// カーソル下移動
-        /// </summary>
-        private void cursorDown()
-        {
-             ObjectManager.InputEvent.KeyPressed
-                .Where(x => (KeyCode)x == KeyCode.S || (KeyCode)x == KeyCode.DownArrow)
-                .DistinctUntilChanged()
-                .Subscribe(_ => {
-                    
-                });
-        }
-
-        /// <summary>
-        /// カーソル右移動
-        /// </summary>
-        private void cursorRight()
-        {
-            ObjectManager.InputEvent.KeyPressed
-                .Where(x => (KeyCode)x == KeyCode.D || (KeyCode)x == KeyCode.RightArrow)
-                .DistinctUntilChanged()
-                .Subscribe(_ => {
-                    
-                });
-        }
-
-        /// <summary>
-        /// 決定挙動
-        /// </summary>
-        private void decision()
-        {
-            ObjectManager.InputEvent.KeyPressed
-                .Where(x => (KeyCode)x == KeyCode.LeftShift || (KeyCode)x == KeyCode.RightShift)
-                .DistinctUntilChanged()
-                .Subscribe(_ => {
-
-                });
-        }
-    }
-
+    
     /// <summary>
     /// 冷蔵庫UIの挙動クラス
     /// </summary>
@@ -153,6 +76,7 @@ namespace Title
         private Canvas canvas;
         // 種類テキストまとめオブジェクト
         private GameObject texts;
+        private GameObject foodTexts;
         // カーソル
         private Image cursor;
         // 表示イメージまとめオブジェクト
@@ -171,6 +95,7 @@ namespace Title
             texts = canvas.transform.GetChild(1).gameObject;
             cursor = canvas.transform.GetChild(2).GetComponent<Image>();
             images = canvas.transform.GetChild(3).gameObject;
+            foodTexts = canvas.transform.GetChild(4).gameObject;
         }
         /// <summary>
         /// 各インプットイベント設定関数
@@ -359,15 +284,19 @@ namespace Title
                 sequence.Join(images.transform.DOLocalMoveX(0, moveTile.Amount).SetEase(Ease.Linear));
 
                 // 再生
-                sequence.Play().OnStart(() => onPlayTween = true).OnComplete(() => onPlayTween = false);
+                sequence.Play().OnStart(() => onPlayTween = true).OnComplete(() => 
+                {
+                    foodTexts.SetActive(true);
+                    onPlayTween = false;
+                });
 
 
                 if(name == "Meat")
-                    Debug.Log("Meatを表示");
+                    meatUISetting();
                 else if(name == "Fish")
-                    Debug.Log("Fishを表示");
+                    fishUISetting();
                 else if(name == "Veg")
-                    Debug.Log("Vegを表示");
+                    vagUISetting();
             }
         }
 
@@ -391,8 +320,56 @@ namespace Title
                 sequence.Join(images.transform.DOLocalMoveX(OutGameConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
 
                 // 再生
-                sequence.Play().OnStart(() => onPlayTween = true).OnComplete(() => onPlayTween = false);
+                sequence.Play().OnStart(() => {
+                    onPlayTween = true;
+                    foodTexts.SetActive(false);
+                    }).OnComplete(() => onPlayTween = false);
             }
+        }
+        /// <summary>
+        /// 肉UI設定関数
+        /// </summary>
+        private void meatUISetting()
+        {
+            // イメージ設定
+            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[0];
+            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[1];
+            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[2];
+
+            // テキスト設定
+            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = "meat";
+            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = "meat";
+            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = "meat";
+        }
+        /// <summary>
+        /// 魚UI設定関数
+        /// </summary>
+        private void fishUISetting()
+        {
+            // イメージ設定
+            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[0];
+            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[1];
+            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[2];
+            
+            // テキスト設定
+            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = "fish";
+            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = "fhis";
+            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = "fish";
+        }
+        /// <summary>
+        /// 野菜UI設定関数
+        /// </summary>
+        private void vagUISetting()
+        {
+            // イメージ設定
+            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[0];
+            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[1];
+            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[2];
+
+            // テキスト設定
+            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = "vag";
+            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = "vag";
+            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = "vag";
         }
     }
 
