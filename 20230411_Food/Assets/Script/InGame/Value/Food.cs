@@ -29,7 +29,7 @@ namespace Food
 
         private void GetDishData(int dishId)
         {
-            getData = dishData.DishPointData[dishId];
+            getData = DishData.DishPointData[dishId];
 
             for(int i = 0;i < Enum.GetValues(typeof(DataIndex)).Length;i++)
             {
