@@ -8,6 +8,7 @@ using GameManager;
 using System.Linq;
 using System;
 using FoodPoint;
+using Item;
 
 namespace Player
 {
@@ -337,6 +338,9 @@ namespace Player
                 // Dictionaryに肉１点追加
                 Array.Add(getFoodName(), 1);
                 Debug.Log(Array.FirstOrDefault());
+
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
                 return;
             }
 
@@ -357,6 +361,9 @@ namespace Player
                 // 肉に１点加算
                 incrimentDictionary(getFoodName(), 1);
                 Debug.Log(Array.FirstOrDefault());
+
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
                 return;
             }
         }

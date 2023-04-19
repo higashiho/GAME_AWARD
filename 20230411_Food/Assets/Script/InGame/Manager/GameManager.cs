@@ -27,12 +27,13 @@ namespace GameManager
         // ゲームステート管理変数
         [SerializeField]
         private gameState phase;
+        
+        // アイテム管理クラス
+        private ItemManager itemManager;
 
 
         // ポイント管理クラス
         private PointManager pointManager;
-        // アイテム管理クラス
-        private ItemManager itemManager;
         // データ取得クラス
         private GetData getData;
         // 料理データクラス
@@ -97,8 +98,8 @@ namespace GameManager
 
                 case gameState.GAME:
                     
-                    objectManager.Update();
-                    itemManager.Update();
+                    objectManager.PlayerUpdate();
+                    objectManager.ItemUpdate();
                         
                     
                     break;
@@ -120,6 +121,21 @@ namespace GameManager
 
     public class ObjectManager
     {
+        
+        // アイテム管理クラス
+        private static ItemManager itemManager;
+
+        public static ItemManager ItemManager
+        {
+            get{return itemManager;}
+            set{itemManager = value;}
+        }
+
+        public void ItemUpdate()
+        {
+            ItemManager.Update();
+        }
+
         // プレイヤー
         private static PlayerManager player;
 
@@ -130,7 +146,7 @@ namespace GameManager
         }
 
         // インゲーム全体統括メソッド
-        public void Update()
+        public void PlayerUpdate()
         {
             Player.Update();
         }
