@@ -10,21 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Acter Assets
+  m_Name: Data Assets
   m_EditorClassIdentifier: 
-  m_GroupName: Acter Assets
+  m_GroupName: Data Assets
   m_Data:
     m_SerializedData: []
-  m_GUID: f32b676d5f7473d4b9a8905752560158
+  m_GUID: 2848aad8547152d4a83616d334286aed
   m_SerializeEntries:
-  - m_GUID: 0e974d2f57b638242a97d47ff6f645f5
-    m_Address: Assets/Prefab/OutGame/Player.prefab
+  - m_GUID: 91eee2fd591af234a858998b0f3589e5
+    m_Address: Assets/DishPointDatas.csv
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Player
+    - DishPointDatas
+    - TextData
+  - m_GUID: 9beac4de1c6c22648aefa4441c2bbb16
+    m_Address: Assets/TextDatas.csv
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - TextData
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: d18672cb105ba5b4582cb19f8d53d1d1, type: 2}
-    - {fileID: 11400000, guid: aff71b36f561e8e4681bdf484b83e203, type: 2}
+    - {fileID: 11400000, guid: 85a166207eab147498d82785eeb96b27, type: 2}
+    - {fileID: 11400000, guid: 54b9792f12998ba47bbb320ff337e69c, type: 2}
