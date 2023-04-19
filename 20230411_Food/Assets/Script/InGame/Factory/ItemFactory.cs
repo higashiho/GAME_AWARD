@@ -9,7 +9,7 @@ namespace Item
     /// </summary>
     public class ItemFactory 
     {
-        // プールQueue
+        // アイテムをプールしておくQueue
         private Queue<GameObject> pool = new Queue<GameObject>(8);
 
         // アイテムの生成座標を保管する配列
@@ -34,9 +34,24 @@ namespace Item
             makePopPosArr();
         }
 
+        /// <summary>
+        /// ステージのアイテムをセットするメソッド
+        /// ゲーム開始時の一度だけ呼ばれる
+        /// </summary>
+        public void InitItem()
+        {
+            for(int i = 0; i < itemPopPos.GetLength(0); i++)
+            {
+                for(int j = 0; j < itemPopPos.GetLength(1); j++)
+                {
+                    Create(itemPopPos[i, j]);
+                }
+            }
+        }
 
         /// <summary>
         /// アイテムを生成するメソッド
+        /// アイテムのリポップ時、ゲーム開始時に呼ばれる
         /// </summary>
         public void Create(Vector3 pos)
         {
