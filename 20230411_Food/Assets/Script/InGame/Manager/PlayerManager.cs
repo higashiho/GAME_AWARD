@@ -274,8 +274,8 @@ namespace Player
                                     , ObjectManager.Player.ObjectOne.transform.forward);
 
             // Rayを可視化する
-            Debug.DrawRay(ObjectManager.Player.ObjectOne.transform.position,
-                          ObjectManager.Player.ObjectOne.transform.forward, Color.red);
+            Debug.DrawRay(-ObjectManager.Player.ObjectOne.transform.forward / 2
+                        , ObjectManager.Player.ObjectOne.transform.forward, Color.red);
 
             RaycastHit hit;
 

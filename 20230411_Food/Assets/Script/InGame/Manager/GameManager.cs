@@ -27,10 +27,6 @@ namespace GameManager
         // ゲームステート管理変数
         [SerializeField]
         private gameState phase;
-        
-        // アイテム管理クラス
-        private ItemManager itemManager;
-
 
         // ポイント管理クラス
         private PointManager pointManager;
@@ -55,7 +51,7 @@ namespace GameManager
             objectManager = new ObjectManager();
             ObjectManager.Player = new PlayerManager();
 
-            itemManager = new ItemManager();
+            ObjectManager.ItemManager = new ItemManager();
         }
 
 
@@ -68,7 +64,7 @@ namespace GameManager
         private async UniTask InitGame()
         {
             // アイテム関係初期化
-            itemManager.Init();
+            ObjectManager.ItemManager.Init();
             // 仮
             await UniTask.Delay(5);
         }
