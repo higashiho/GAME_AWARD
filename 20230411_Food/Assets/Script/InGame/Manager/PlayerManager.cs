@@ -66,7 +66,7 @@ namespace Player
         {
 
             // プレイヤーデータ取得
-            DataHandle = Addressables.LoadAssetAsync<DataPlayer>("nGame/PlayerData.assetyerData.asset");
+            DataHandle = Addressables.LoadAssetAsync<DataPlayer>("Assets/Data/InGame/MainPlayerData.asset");
             // プレイヤーデータハンドルを非同期にする
             await DataHandle.Task;
             Data = (DataPlayer)DataHandle.Result;
@@ -88,6 +88,7 @@ namespace Player
             , Quaternion.identity);
 
             Move = new PlayerMove();
+
             Rotate = new PlayerRotate();
             
             RayController = new RayController();
@@ -106,8 +107,6 @@ namespace Player
 
             // 食べ物を獲得してポイントゲット
             FoodPoint.AddPoint();
-
-            foodPoint.AddPoint();
         }
     }
 
@@ -173,6 +172,7 @@ namespace Player
             player.transform.forward * moveSpeed.Amount * Time.deltaTime;
         }
 
+        // 1Pか2Pかを調べる
         // public bool checkActor(GameObject player)
         // {
         //     if(player == ObjectManager.Player.ObjectOne)
@@ -254,31 +254,32 @@ namespace Player
         public Vector3 presentPos;
     }
 
+    // todo:プレイヤーの内側にも当たり判定をつける
     // Rayで当たり判定を得ているクラス
     public class RayController
     {
-        private PlayerRayDirection PlayerRayDirection;
+        private PlayerRayDirection playerRayDirection;
 
         // コンストラクタ
         public RayController()
         {
-            PlayerRayDirection = new PlayerRayDirection(ObjectManager.Player.Data.RayDirection);
+            playerRayDirection = new PlayerRayDirection(ObjectManager.Player.Data.RayDirection);
         }
 
         public void RayCast()
         {
             // プレイヤーから出るRayの設定
-            var checkFoodRay = new Ray(ObjectManager.Player.ObjectOne.transform.position,
-                                       ObjectManager.Player.ObjectOne.transform.forward * PlayerRayDirection.Amount);
+            var checkFoodRay = new Ray(-ObjectManager.Player.ObjectOne.transform.forward / 2
+                                    , ObjectManager.Player.ObjectOne.transform.forward);
 
             // Rayを可視化する
             Debug.DrawRay(ObjectManager.Player.ObjectOne.transform.position,
-                          ObjectManager.Player.ObjectOne.transform.forward * PlayerRayDirection.Amount, Color.red);
+                          ObjectManager.Player.ObjectOne.transform.forward, Color.red);
 
             RaycastHit hit;
 
             // Rayが当たったら
-            if(Physics.Raycast(checkFoodRay, out hit, PlayerRayDirection.Amount))
+            if(Physics.Raycast(checkFoodRay, out hit, playerRayDirection.Amount))
             {
                 // Rayが当たったオブジェクトを格納
                 ObjectManager.Player.RayHitObject = hit.collider.gameObject;
@@ -289,6 +290,9 @@ namespace Player
             }
         }
     }
+
+
+    
 
     // プレイヤーが獲得した得点を管理するクラス
     public class FoodPoint
@@ -317,8 +321,9 @@ namespace Player
 
             // 初めてその種類の食材を獲得
             if(!Array.ContainsKey(getFoodName())
-            && Input.GetKey(KeyCode.LeftShift))
+            && Input.GetKeyDown(KeyCode.LeftShift))
             {
+                Debug.Log("当たっている");
                 // アイテムの座標を取得するイベントインスタンス化
                 ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
                 // 座標設定
@@ -337,7 +342,7 @@ namespace Player
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName())
-            && Input.GetKey(KeyCode.LeftShift))
+            && Input.GetKeyDown(KeyCode.LeftShift))
             {
                 // アイテムの座標を取得するイベントインスタンス化
                 ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
