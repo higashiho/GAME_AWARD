@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2764b7e5736de4b45a7d32fe1133e1b0, type: 3}
-  m_Name: PlayerData
+  m_Name: MainPlayerData
   m_EditorClassIdentifier: 
-  firstPlayerCreatePos: {x: 0, y: 0, z: 0}
-  secondPlayerCreatePos: {x: 5, y: 0, z: 5}
+  firstPlayerCreatePos: {x: 15, y: 1, z: 0}
+  secondPlayerCreatePos: {x: 0, y: 0, z: 0}
   moveSpeed: 3
   rotateRightPos: {x: 0, y: 90, z: 0}
   rotateLeftPos: {x: 0, y: 270, z: 0}

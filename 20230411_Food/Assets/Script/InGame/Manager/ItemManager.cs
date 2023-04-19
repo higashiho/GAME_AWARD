@@ -13,7 +13,7 @@ namespace Item
     /// </summary>
     public class ItemManager 
     {   
-        private ItemFactory itemFactory;
+        public ItemFactory itemFactory{get; private set;}
         private PlayerManager playerManager;
         
 
