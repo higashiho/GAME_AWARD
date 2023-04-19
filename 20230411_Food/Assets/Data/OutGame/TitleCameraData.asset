@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e3ed19648c52554881db4d3d8bc48a4, type: 3}
   m_Name: TitleCameraData
   m_EditorClassIdentifier: 
-  startPos: {x: 0, y: 0, z: 0}
-  startAngle: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 4, z: -14}
+  startAngle: {x: 20, y: 0, z: 0}

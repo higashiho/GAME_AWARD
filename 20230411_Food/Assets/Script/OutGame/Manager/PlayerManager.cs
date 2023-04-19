@@ -17,19 +17,29 @@ namespace Title
     /// </summary>
     public class PlayerManager : IActor
     {
-        // 入力イベント
-        private PlayerInputEvent inputEvent;
+        
+        /// <summary>
+        /// プレイヤーが動いている向き
+        /// </summary>
+        public Vector3 MoveDis{get{return moveDis;} set{moveDis = value;}}
+        private Vector3 moveDis = Vector3.zero;
+
+
+        /// <summary>
+        /// playerステート
+        /// </summary>
+        public enum PlayerState
+        {
+            MAIN, SUB
+        }
+        public PlayerState State{get; private set;}
+
 
         /// <summary>
         /// 挙動管理クラス
         /// </summary>
-        public PlayerMove Move;
+        public PlayerMove Move = new PlayerMove();
 
-        /// <summary>
-        /// イベント管理クラス
-        /// </summary>
-        public EventManager Events{get{return events;}}
-        private EventManager events;
 
         /// <summary>
         /// プレイヤーオブジェクト
@@ -61,20 +71,31 @@ namespace Title
         private Vector3? hitDistance = null;
 
         /// ray処理
-        private PlayerRayProcessing rayProcessing;
+        private PlayerRayProcessing rayProcessing = new PlayerRayProcessing();
+
+        
+        /// <summary>
+        /// Playerイベント管理クラス
+        /// </summary>
+        public InputMovementManager MoveEvents{get;} = new InputMovementManager();
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PlayerManager()
+        public PlayerManager(PlayerState tmpState)
         {
-
+            
+            State = tmpState;
             // 初期化
             Initialization();
-
-
+            
+            
             // 更新ループ設定
-            Update();
+            if(State == PlayerState.MAIN)
+                Update();
+            // 更新ループ設定
+            else if(State == PlayerState.SUB)
+                SubUpdate();
        }
 
         /// <summary>
@@ -89,15 +110,22 @@ namespace Title
             // プレイヤー生成
             // ゲームオブジェクト型にcastし生成
             var tmpObj = (GameObject)Handle.Result;
-            Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+            // 自身がどっちなのか判断して生成
+            if(State == PlayerState.MAIN)
+                Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+            else if(State == PlayerState.SUB)
+            {
+                // Playerと反対に生成するためx座標のみ反転
+                var instancePos = new Vector3(
+                    -tmpObj.transform.position.x,
+                    tmpObj.transform.position.y,
+                    tmpObj.transform.position.z
+                );
+                Object = MonoBehaviour.Instantiate(tmpObj, instancePos, Quaternion.identity);
+            }
 
             MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
         
-            // 入力イベントインスタンス化
-            inputEvent = new PlayerInputEvent(Object);
-            Move = new PlayerMove();
-            events = new EventManager();
-            rayProcessing = new PlayerRayProcessing();
         }
 
         /// <summary>
@@ -105,9 +133,8 @@ namespace Title
         /// </summary>
         public async void Update()
         {
-            
-            // インプットイベントが代入されるまで一旦待つ
-            await UniTask.WaitWhile(() => inputEvent == null);
+            // オブジェクトが生成されるまで待つ
+            await UniTask.WaitWhile(() => !Object);
 
 
             // Ray用ループ
@@ -117,61 +144,28 @@ namespace Title
                 })
                 .AddTo(Object);
 
-            // タイトルPlayer入力確認ループ
-            Object.UpdateAsObservable()
-                .Subscribe(_ => inputEvent.Update())
-                .AddTo(Object);
 
+            MoveEvents.SetMovementLoops();
+        }   
+
+        /// <summary>
+        /// 2P用更新設定関数
+        /// </summary>
+        public async void SubUpdate()
+        {
+            // オブジェクトが生成されるまで待つ
+            await UniTask.WaitWhile(() => !Object);
+
+            // Ray用ループ
+            Object.UpdateAsObservable()
+                .Subscribe(_ => {
+                    rayProcessing.SubProcessing();
+                })
+                .AddTo(Object);
             
             // イベント処理生成
             //setInputEvent();
-            events.SetMovementLoops();
-        }   
-
-        
-        /// <summary>
-        /// 入力イベント処理代入関数
-        /// </summary>
-        private void setInputEvent()
-        {
-        }
-    }
-
-
-    /// <summary>
-    /// タイトルPlayer入力イベント管理クラス
-    /// </summary>
-    public sealed class PlayerInputEvent
-    {
-        // 以下入力イベント==================================================
-        
-        // =================================================================
-
-
-        
-        // 以下入力イベント実装===============================================
-       
-        // =================================================================
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="tmpObj">イベント対象オブジェクト</param>
-        public PlayerInputEvent(GameObject tmpObj)
-        {
-            // 以下指定オブジェクトDestroy時にイベント破棄設定=========
-           
-            // =====================================================
-        }
-
-        /// <summary>
-        /// 入力更新関数
-        /// </summary>
-        public void Update()
-        {
-            // 以下各種入力をReactivePropertyに反映=========================
-            
-            // ===========================================================
+            MoveEvents.SetSubPlayerMovementLoops();
         }
     }
 
@@ -180,92 +174,93 @@ namespace Title
     /// </summary>
     public sealed class PlayerMove
     {
+        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(1.5f);
         /// <summary>
         /// 左移動処理
         /// </summary>
-        public void LeftMovement()
+        public void LeftMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.left;
+            tmpPlayer.MoveDis = Vector3.left;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度左を向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.left * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.left * moveSpeed.Amount * Time.deltaTime;
         }
         /// <summary>
         /// 右移動処理
         /// </summary>
-        public void RightMovement()
+        public void RightMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.right;
+            tmpPlayer.MoveDis = Vector3.right;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度右を向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.right * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.right * moveSpeed.Amount * Time.deltaTime;
             
         }
         /// <summary>
         /// 前移動処理
         /// </summary>
-        public void ForwardMovement()
+        public void ForwardMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.forward;
+            tmpPlayer.MoveDis = Vector3.forward;
             
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 前を向く
-            ObjectManager.Player.Object.transform.eulerAngles = Vector3.zero;
+            tmpPlayer.Object.transform.eulerAngles = Vector3.zero;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.forward * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.forward * moveSpeed.Amount * Time.deltaTime;
         }
         /// <summary>
         /// 後ろ移動処理
         /// </summary>
-        public void BackMovement()
+        public void BackMovement(PlayerManager tmpPlayer)
         {
             // どの向きに歩いているか設定
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.back;
+            tmpPlayer.MoveDis = Vector3.back;
 
             // 移動アニメーション再生
-            ObjectManager.Player.MoveAnimator.SetBool("Move", true);
+            tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 後ろを向く
-            ObjectManager.Player.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
+            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
 
             // 移動
-            ObjectManager.Player.Object.transform.position += Vector3.back * Time.deltaTime;
+            tmpPlayer.Object.transform.position += Vector3.back * moveSpeed.Amount * Time.deltaTime;
         }
         
         /// <summary>
         /// アニメーションリセット関数
         /// </summary>
-        public void ResetAnim()
+        public void ResetAnim(PlayerManager tmpPlayer)
         {
             // 初期化
-            ObjectManager.Player.MoveAnimator.SetBool("Move", false);
+            tmpPlayer.MoveAnimator.SetBool("Move", false);
         }
 
         /// <summary>
         /// 挙動リセット関数
         /// </summary>
-        public void ResetMovement()
+        public void ResetMovement(PlayerManager tmpPlayer)
         {
             // 初期化
-            ObjectManager.Player.Events.PlayerMoveDis = Vector3.zero;
+            tmpPlayer.MoveDis = Vector3.zero;
         }
     }
 
@@ -278,7 +273,7 @@ namespace Title
         /// <summary>
         /// PlayerのRayの長さ
         /// </summary>
-        private RayDistance rayDistance = new RayDistance(OutGameConstants.PLAYER_RAY_DISTANCE);
+        private RayDistance rayDistance = new RayDistance(1);
 
         /// <summary>
         /// Ray処理
@@ -286,22 +281,73 @@ namespace Title
         public void Processing()
         {
             var forwardRay = new Ray(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward);
-            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward * rayDistance.DistanceAmount, Color.blue);
+            Debug.DrawRay(ObjectManager.Player.Object.transform.position, ObjectManager.Player.Object.transform.forward * rayDistance.Amount, Color.blue);
         
             RaycastHit hit;
             // rayの当たり判定を確認
-            if(Physics.Raycast(forwardRay, out hit, rayDistance.DistanceAmount))
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // オブジェクトが変わっていなかったら処理中断
+                if(ObjectManager.Player.HitObject == hit.collider.gameObject) return;
+
+                
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
-                // 当たっていたらオブジェクト格納
+                // オブジェクト格納
                 ObjectManager.Player.HitObject = hit.collider.gameObject;
+
+                // サブジェクトに代入
+                if(ObjectManager.Player.HitObject.name == "Refrugerator")
+                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.Player.HitObject.name == "RecipeBook")
+                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.Player.HitObject.name == "GasBurner")
+                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
                 // 当たっていなかったらnullに変換
                 ObjectManager.Player.HitDistance = null;
                 ObjectManager.Player.HitObject = null;
+            }
+        }
+
+        /// <summary>
+        /// サブプレイヤー用Ray処理
+        /// </summary>
+        public void SubProcessing()
+        {
+            var forwardRay = new Ray(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward);
+            Debug.DrawRay(ObjectManager.SubPlayer.Object.transform.position, ObjectManager.SubPlayer.Object.transform.forward * rayDistance.Amount, Color.blue);
+        
+            RaycastHit hit;
+            // rayの当たり判定を確認
+            if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
+            {
+                // オブジェクトが変わっていなかったら処理中断
+                if(ObjectManager.SubPlayer.HitObject == hit.collider.gameObject) return;
+
+
+               
+                // 当たっていたら向き格納
+                ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
+                // 当たっていたらオブジェクト格納
+                ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
+
+                // サブジェクトに代入
+                if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
+                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
+                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
+                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+
+            }
+            else 
+            {
+                // 当たっていなかったらnullに変換
+                ObjectManager.SubPlayer.HitDistance = null;
+                ObjectManager.SubPlayer.HitObject = null;
             }
         }
     }
