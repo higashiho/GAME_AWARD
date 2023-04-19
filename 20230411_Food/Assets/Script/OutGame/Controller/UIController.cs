@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using Cysharp.Threading.Tasks;
 using Constants;
+using DG.Tweening;
 
 namespace Title
 {
@@ -26,13 +27,35 @@ namespace Title
         // Start is called before the first frame update
         async void Start()
         {
-            await UniTask.WaitWhile(() => ObjectManager.InputEvent == null);
             // インスタンス化
             recipeBookUIMove = new RecipeBookUIMove();
             refrigeratorUIMove = new RefrigeratorUIMove(RefrigeratorCanvas);
+            ObjectManager.Ui = this;
+
+            // インプットイベントがインスタンス化されるまで待つ
+            await UniTask.WaitWhile(() => ObjectManager.InputEvent == null);
             // イベント設定
             recipeBookUIMove.InputUIEvent();
             refrigeratorUIMove.InputUIEvent();
+        }
+
+
+        /// <summary>
+        /// アクティブ化設定関数
+        /// </summary>
+        /// <param name="value">true : アクティブ false : 非アクティブ</param>
+        public void SetRefrigeratorCanvasActive(bool value)
+        {
+            RefrigeratorCanvas.gameObject.SetActive(value);
+        }
+
+        /// <summary>
+        /// アクティブ化設定関数
+        /// </summary>
+        /// <param name="value">true : アクティブ false : 非アクティブ</param>
+        public void SetRecipeBookChanvasActive(bool value)
+        {
+            RecipeBookChanvas.gameObject.SetActive(value);
         }
 
     }
@@ -134,6 +157,12 @@ namespace Title
         private Image cursor;
         // 表示イメージまとめオブジェクト
         private GameObject images;
+
+        // UIが動き終わるまでの時間
+        private UIMoveTile moveTile = new UIMoveTile(1);
+
+        // Tweenが動いているか
+        private bool onPlayTween = false;
 
         // コンストラクタ
         public RefrigeratorUIMove(Canvas tmpCanvas)
@@ -293,6 +322,7 @@ namespace Title
         /// </summary>
         private void decisionMove()
         {
+
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)
             {
@@ -315,24 +345,54 @@ namespace Title
         /// </summary>
         private void changeUI(string name)
         {
-            texts.SetActive(false);
-            cursor.gameObject.SetActive(false);
-            images.SetActive(true);
+            // Tweenが動いていなかったら処理実行
+            if(!onPlayTween)
+            {    
+                // Sequenceのインスタンスを作成
+                var sequence = DOTween.Sequence();
 
-            if(name == "Meat")
-                Debug.Log("Meatを表示");
-            else if(name == "Fish")
-                Debug.Log("Fishを表示");
-            else if(name == "Veg")
-                Debug.Log("Vegを表示");
+                // カーソル非表示
+                cursor.gameObject.SetActive(false);
+                
+                // Tween設定
+                sequence.Append(texts.transform.DOLocalMoveX(-OutGameConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
+                sequence.Join(images.transform.DOLocalMoveX(0, moveTile.Amount).SetEase(Ease.Linear));
+
+                // 再生
+                sequence.Play().OnStart(() => onPlayTween = true).OnComplete(() => onPlayTween = false);
+
+
+                if(name == "Meat")
+                    Debug.Log("Meatを表示");
+                else if(name == "Fish")
+                    Debug.Log("Fishを表示");
+                else if(name == "Veg")
+                    Debug.Log("Vegを表示");
+            }
         }
 
+        /// <summary>
+        /// UIリセット挙動
+        /// </summary>
         private void resetUI()
         {
-            Debug.Log("Reset");
-            texts.SetActive(true);
-            cursor.gameObject.SetActive(true);
-            images.SetActive(false);
+            // Tweenが動いていなかったら処理実行
+            if(!onPlayTween)
+            {    
+                Debug.Log("Reset");
+
+                // Sequenceのインスタンスを作成
+                var sequence = DOTween.Sequence();
+
+                
+                // Tween設定
+                sequence.Append(texts.transform.DOLocalMoveX(0, moveTile.Amount).SetEase(Ease.Linear)
+                .OnComplete(() => cursor.gameObject.SetActive(true)));
+                sequence.Join(images.transform.DOLocalMoveX(OutGameConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
+
+                // 再生
+                sequence.Play().OnStart(() => onPlayTween = true).OnComplete(() => onPlayTween = false);
+            }
         }
     }
 

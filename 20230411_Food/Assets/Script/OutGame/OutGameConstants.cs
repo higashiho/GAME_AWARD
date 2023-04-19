@@ -26,6 +26,11 @@ namespace Constants
         /// 冷蔵庫UIテキストのy座標
         /// </summary>
         public static readonly float[] TEXT_CHILD_POS_Y = {250, 0, -250};
+
+        /// <summary>
+        /// UIの画面外座標
+        /// </summary>
+        public const float UI_OUTCAMERA_POS_X = 1800f;
     }
 }
 

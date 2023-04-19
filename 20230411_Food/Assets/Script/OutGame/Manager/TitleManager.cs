@@ -104,35 +104,48 @@ namespace Title
         private static PlayerManager player;
         public static PlayerManager Player{
             get{return player;} 
-            set{player = value; Debug.LogWarning("Assigned to player.");}
+            // 再代入を防止
+            set{if(player == null) player = value;}
         }
         // サブプレイヤー
         private static PlayerManager subPlayer;
         public static PlayerManager SubPlayer{
             get{return subPlayer;}
-            set{subPlayer = value; Debug.LogWarning("Assigned to subPlayer");}
+            // 再代入を防止
+            set{if(subPlayer == null) subPlayer = value;}
         }
 
         // タイトルマネージャー
         private static TitleManager titleScene;
         public static TitleManager TitleScene{
             get{return titleScene;} 
-            set{titleScene = value; Debug.LogWarning("Assigned to titleScene.");} 
-            }
+            // 再代入を防止
+            set{if(titleScene == null) titleScene = value;} 
+        }
+
+        // UIコントローラー
+        private static UIController ui;
+        public static UIController Ui{
+            get{return ui;}
+            // 再代入を防止
+            set{if(ui == null) ui = value;}
+        }
 
         // テキストマネージャー
         private static TextManager text;
         public static TextManager Text{
             get{return text;}
-            set{text = value; Debug.LogWarning("Assigned to text");}
+            // 再代入を防止
+            set{if(text == null) text = value;}
         }
 
         // インプットイベント
         private static InputEvent inputEvent;
         public static InputEvent InputEvent{
             get{return inputEvent;} 
-            set{inputEvent = value; Debug.LogWarning("Assigned to inputEvent.");} 
-            }
+            // 再代入を防止
+            set{if(inputEvent == null) inputEvent = value;} 
+        }
     }
 
     /// <summary>
@@ -208,7 +221,10 @@ namespace Title
                 Vector3.right * 45,
                 moveTime.Amount / 2
             ).SetEase(Ease.Linear)
-            .OnComplete(() => Debug.Log("OpenRecipeBook")));
+            .OnComplete(() => 
+                // UI表示
+                ObjectManager.Ui.SetRecipeBookChanvasActive(true)
+            ));
 
             
             // Playで実行
@@ -241,7 +257,10 @@ namespace Title
                 targetCoordinates,
                 moveTime.Amount / 2
             ).SetEase(Ease.Linear)
-            .OnComplete(() => Debug.Log("OpenRefrugerator")));
+            .OnComplete(() => 
+                // UI表示
+                ObjectManager.Ui.SetRefrigeratorCanvasActive(true)
+            ));
 
             
             // Playで実行
@@ -266,7 +285,14 @@ namespace Title
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 ObjectManager.TitleScene.CameraData.StartPos,
                 moveTime.Amount / 2
-            ).SetEase(Ease.Linear)
+            ).SetEase(Ease.Linear).OnStart(() => {
+                // アクティブ状態なら非アクティブに変更
+                if(ObjectManager.Ui.RecipeBookChanvas.gameObject.activeSelf)
+                    ObjectManager.Ui.SetRecipeBookChanvasActive(false);
+                // アクティブ状態なら非アクティブに変更
+                if(ObjectManager.Ui.RefrigeratorCanvas.gameObject.activeSelf)    
+                    ObjectManager.Ui.SetRefrigeratorCanvasActive(false);
+            })
             .OnComplete(() => Debug.Log("ResetCamera")));
 
             sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(

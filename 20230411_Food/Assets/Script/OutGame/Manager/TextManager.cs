@@ -71,6 +71,7 @@ namespace Title
                 var tmpPos = textImageObject.transform.localPosition;
                 tmpPos.y = OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y;
                 textImageObject.transform.localPosition = tmpPos;
+
             }));
 
             // 拡大
