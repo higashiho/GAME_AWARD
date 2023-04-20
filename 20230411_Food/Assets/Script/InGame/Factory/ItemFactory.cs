@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
 using System.Linq;
 using System;
@@ -49,9 +48,11 @@ namespace Item
         /// </summary>
         public async void InitItem()
         {
+            Debug.Log("1");
             // アイテムをロード
             if(loadTask == null)
             {
+                Debug.Log("1");
                 // アイテムロードタスクにロード処理を入れる
                 loadTask = load();
                 // ロードタスクが終わるのを待つ
@@ -137,13 +138,13 @@ namespace Item
         /// </summary>
         private async UniTask load()
         {
-            var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredient", null);
+            var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
+            
             await handle.Task;
             foreach(var item in handle.Result)
             { 
                 loadPrefab.Add(item);
             }
-
         }
 
     }
