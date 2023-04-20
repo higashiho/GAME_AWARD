@@ -2477,6 +2477,7 @@ MonoBehaviour:
   - {fileID: 421847755}
   - {fileID: 2035031283}
   - {fileID: 227061341}
+  playerData: {fileID: 11400000, guid: 3e7f20e5d3a56cf4aa495969934f04ef, type: 2}
 --- !u!4 &1444457466
 Transform:
   m_ObjectHideFlags: 0
