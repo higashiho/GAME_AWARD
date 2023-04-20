@@ -332,34 +332,32 @@ namespace Title
         private void meatUISetting()
         {
             // イメージ設定
-            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[0];
-            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[1];
-            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[2];
+            setImage(ObjectManager.Ui.MeatImage);
+
             Debug.Log(TitleTextData.TextData[1][0]);
 
             // テキスト設定
             var textNum = 1;
             var tildNum = 0;
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum, textNum);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum, textNum);
         }
         /// <summary>
         /// 魚UI設定関数
         /// </summary>
         private void fishUISetting()
         {
-            // イメージ設定
-            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[0];
-            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[1];
-            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[2];
+            // イメージ設定            
+            setImage(ObjectManager.Ui.FishImage);
+
             
             // テキスト設定
             var textNum = 5;
             var tildNum = 0;
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum, textNum);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum, textNum);
         }
         /// <summary>
         /// 野菜UI設定関数
@@ -367,16 +365,14 @@ namespace Title
         private void vagUISetting()
         {
             // イメージ設定
-            images.transform.GetChild(0).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[0];
-            images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[1];
-            images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[2];
+            setImage(ObjectManager.Ui.VagImage);
 
             // テキスト設定
             var textNum = 9;
             var tildNum = 0;
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum++, textNum++);
-            getUIText(tildNum, textNum);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum++, textNum++);
+            setUIText(tildNum, textNum);
         }
 
         /// <summary>
@@ -384,12 +380,23 @@ namespace Title
         /// </summary>
         /// <param name="childIndex">代入テキストイメージの場所インデックス</param>
         /// <param name="index">取得行数</param>
-        private void getUIText(int childIndex,int index)
+        private void setUIText(int childIndex,int index)
         {
             foreach(string text in TitleTextData.TextData[index])
             {
                 foodTexts.transform.GetChild(childIndex).GetComponent<TextMeshProUGUI >().text = text + "\n";
             }
+        }
+
+        /// <summary>
+        /// イメージ差し替え関数
+        /// </summary>
+        /// <param name="spriteImages">セットするイメージのスプライト配列</param>
+        private void setImage(Sprite[] spriteImages)
+        {
+            images.transform.GetChild(0).GetComponent<Image>().sprite = spriteImages[0];
+            images.transform.GetChild(1).GetComponent<Image>().sprite = spriteImages[1];
+            images.transform.GetChild(2).GetComponent<Image>().sprite = spriteImages[2];
         }
     }
 
