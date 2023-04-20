@@ -40,7 +40,7 @@ namespace Title
             ObjectManager.Ui = this;
 
             // インプットイベントがインスタンス化されるまで待つ
-            await UniTask.WaitWhile(() => ObjectManager.InputEvent == null);
+            await UniTask.WaitWhile(() => ObjectManager.Events == null);
             // イベント設定
             refrigeratorUIMove.InputUIEvent();
         }
@@ -112,7 +112,7 @@ namespace Title
         /// </summary>
         private void cursorUp()
         {
-            ObjectManager.InputEvent.KeyPressed
+            ObjectManager.Events.KeyPressed
                 // カーソルが表示されているときのみ判断
                 .Where(_ => cursor.gameObject.activeSelf)
                 .Where(x => (KeyCode)x == KeyCode.W || (KeyCode)x == KeyCode.UpArrow)
@@ -171,7 +171,7 @@ namespace Title
         /// </summary>
         private void cursorDown()
         {
-             ObjectManager.InputEvent.KeyPressed
+             ObjectManager.Events.KeyPressed
                 // カーソルが表示されているときのみ判断
                 .Where(_ => cursor.gameObject.activeSelf)
                 .Where(x => (KeyCode)x == KeyCode.S || (KeyCode)x == KeyCode.DownArrow)
@@ -228,7 +228,7 @@ namespace Title
         /// </summary>
         private void decision()
         {
-            ObjectManager.InputEvent.KeyPressed
+            ObjectManager.Events.KeyPressed
                 // キャンバスが表示されているときのみ判断
                 .Where(_ => canvas.gameObject.activeSelf)
                 .Where(x => (KeyCode)x == KeyCode.LeftShift || (KeyCode)x == KeyCode.RightShift)

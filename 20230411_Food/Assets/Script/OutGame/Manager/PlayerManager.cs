@@ -296,14 +296,15 @@ namespace Title
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
                 // オブジェクト格納
                 ObjectManager.Player.HitObject = hit.collider.gameObject;
+                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
 
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
-                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "RecipeBook")
-                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "GasBurner")
-                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
@@ -334,14 +335,16 @@ namespace Title
                 ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
                 // 当たっていたらオブジェクト格納
                 ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
+                // サブジェクトに代入
+                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
 
                 // サブジェクトに代入
                 if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
-                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
-                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
-                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
 
             }
             else 
