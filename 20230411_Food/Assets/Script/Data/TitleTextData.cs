@@ -43,7 +43,6 @@ namespace Title
             {
                 getData.ReadData(LoadedAsset, TextData);
             }
-        
     }
 }
 

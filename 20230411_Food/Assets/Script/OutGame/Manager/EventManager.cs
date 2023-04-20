@@ -95,7 +95,6 @@ namespace Title
                 // 対象のキーの場合Subjectに代入
                 if (Input.GetKeyDown(keyCode))
                 {
-                    Debug.Log((uint)keyCode);
                     keyPressed.OnNext((uint)keyCode);
                 }
             }
@@ -134,6 +133,7 @@ namespace Title
                 .Where(x => x)
                 // スタート用のオブジェクトが入っているか
                 .Where(x => x.name == "GasBurner")
+                .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 // シーン転移が可能か
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
@@ -156,6 +156,7 @@ namespace Title
                 .Where(x => x)
                 // スタート用のオブジェクトが入っているか
                 .Where(x => x.name == "GasBurner")
+                .Where(_ => Input.GetKeyDown(KeyCode.Return))
                 // シーン転移が可能か
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
@@ -186,6 +187,7 @@ namespace Title
                 .Where(x => x)
                 // playerかSubPlayerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "RecipeBook")
+                .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 // 押されて指定秒経っていたら
                 // レシピ本は挙動が二つある為２倍する
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount * 2))
@@ -209,6 +211,7 @@ namespace Title
                 .Where(x => x)
                 // playerかSubPlayerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "RecipeBook")
+                .Where(_ => Input.GetKeyDown(KeyCode.Return))
                 // 押されて指定秒経っていたら
                 // レシピ本は挙動が二つある為２倍する
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount * 2))
@@ -241,6 +244,7 @@ namespace Title
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "Refrugerator")
+                .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 // 押されて指定秒経っていたら
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
@@ -263,11 +267,15 @@ namespace Title
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "Refrugerator")
+                .Where(_ => Input.GetKeyDown(KeyCode.Return))
                 // 押されて指定秒経っていたら
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
                 .Subscribe(async x =>
                 {
+                    // アシストUI表示
+                    if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, true);
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行
@@ -312,7 +320,7 @@ namespace Title
         /// <summary>
         /// タイトル入力イベント設定関数
         /// </summary>
-        public  void SetEvents()
+        public void SetEvents()
         {
             gameStartEvents();
             
@@ -348,8 +356,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_LEFT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
-                            ObjectManager.Player.MoveDis == Vector3.left)
+                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
+                            tmpPlayer.MoveDis == Vector3.left)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.LeftMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -373,8 +381,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_RIGHT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
-                            ObjectManager.Player.MoveDis == Vector3.right)
+                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
+                            tmpPlayer.MoveDis == Vector3.right)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.RightMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -398,8 +406,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => Vector3.zero != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
-                            ObjectManager.Player.MoveDis == Vector3.forward)
+                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
+                            tmpPlayer.MoveDis == Vector3.forward)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.ForwardMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで
@@ -423,8 +431,8 @@ namespace Title
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
                 .Where(_ => OutGameConstants.PLAYER_DIRECTION_BACK != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => ObjectManager.Player.MoveDis == Vector3.zero ||
-                            ObjectManager.Player.MoveDis == Vector3.back)
+                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
+                            tmpPlayer.MoveDis == Vector3.back)
                 // 実行
                 .Subscribe(_ => tmpPlayer.Move.BackMovement(tmpPlayer))
                 // 指定のオブジェクトが消えるまで

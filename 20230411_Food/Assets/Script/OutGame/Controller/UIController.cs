@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
+using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
 using Constants;
 using DG.Tweening;
@@ -30,19 +31,46 @@ namespace Title
         [SerializeField, Header("野菜イメージSprite")]
         private Sprite[] vagImage = new Sprite[3];
         public Sprite[] VagImage{get{return vagImage;}}
+        [SerializeField, Header("Player達の補助用UIキャンバス")]
+        private Canvas assistCanvas;
+        public Canvas AssistCanvas{get{return assistCanvas;}}
+
+
         // インスタンス化
         private RefrigeratorUIMove refrigeratorUIMove;
+        private PlayerAssistUIMove assistUIMove;
+
         // Start is called before the first frame update
         async void Start()
         {
             // インスタンス化
             refrigeratorUIMove = new RefrigeratorUIMove(RefrigeratorCanvas);
             ObjectManager.Ui = this;
+            assistUIMove = new PlayerAssistUIMove(AssistCanvas);
+
 
             // インプットイベントがインスタンス化されるまで待つ
             await UniTask.WaitWhile(() => ObjectManager.Events == null);
             // イベント設定
             refrigeratorUIMove.InputUIEvent();
+
+            // ループ設定
+            setRoop();
+        }
+
+        /// <summary>
+        /// ループ設定関数
+        /// </summary>
+        private void setRoop()
+        {
+            // アシストUI挙動設定
+            this.UpdateAsObservable()
+                .Subscribe(_ => {
+                    assistUIMove.Display((int)PlayerManager.PlayerState.MAIN);
+                    assistUIMove.Display((int)PlayerManager.PlayerState.SUB);
+                    assistUIMove.MainMovement();
+                    assistUIMove.SubMovement();
+                }).AddTo(this);
         }
 
 
@@ -63,7 +91,96 @@ namespace Title
         {
             RecipeBookChanvas.gameObject.SetActive(value);
         }
+        /// <summary>
+        /// アクティブ化設定関数
+        /// </summary>
+        /// <param name="num">child要素数</param>
+        /// <param name="value">true : アクティブ false : 非アクティブ</param>
+        public void SetAssistPlayerUIActive(int num, bool value)
+        {
+            Debug.Log(value);
+            AssistCanvas.transform.GetChild(num).gameObject.SetActive(value);
+        }
+    }
 
+    /// <summary>
+    /// Player達のアシストUI挙動クラス
+    /// </summary>
+    public class PlayerAssistUIMove
+    {
+        private Canvas canvas;
+
+        public PlayerAssistUIMove(Canvas parentCanvas)
+        {
+            canvas = parentCanvas;
+        }
+
+        private Tween mainMoveTween = null;
+        private Tween subMoveTween = null;
+
+        private UIMoveTile moveTile = new UIMoveTile(1);
+
+        /// <summary>
+        /// アシストUI挙動関数
+        /// </summary>
+        /// <param name="num">表示したい対象子オブジェクトの要素数</param>
+        public void Display(int num)
+        {
+            if(canvas.transform.GetChild(num).gameObject.activeSelf)
+            {
+                if(num == (int)PlayerManager.PlayerState.MAIN)
+                {
+                    var tmpPos = new Vector3(
+                        ObjectManager.Player.Object.transform.position.x,
+                        canvas.transform.GetChild(num).position.y,
+                        canvas.transform.GetChild(num).position.z
+                    );
+
+                    canvas.transform.GetChild(num).position = tmpPos;
+                }
+                else if(num == (int)PlayerManager.PlayerState.SUB)
+                {
+                    var tmpPos = new Vector3(
+                        ObjectManager.SubPlayer.Object.transform.position.x,
+                        canvas.transform.GetChild(num).position.y,
+                        canvas.transform.GetChild(num).position.z
+                    );
+
+                    canvas.transform.GetChild(num).position = tmpPos;
+                }
+            }
+        }
+
+        /// <summary>
+        /// メインキャラ用アシスト挙動関数
+        /// </summary>
+        public void MainMovement()
+        {
+            if(mainMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+            {
+                mainMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).DOLocalMoveY(
+                    canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).localPosition.y + OutGameConstants.ASSISTUI_MOVE_Y,
+                    moveTile.Amount
+                ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => mainMoveTween = null);
+            }
+            else if(!canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf) 
+                DOTween.Kill(canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN));
+        }
+        /// <summary>
+        /// サブキャラ用アシスト挙動関数
+        /// </summary>
+        public void SubMovement()
+        {
+            if(subMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+            {
+                subMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).DOLocalMoveY(
+                    canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).localPosition.y + OutGameConstants.ASSISTUI_MOVE_Y,
+                    moveTile.Amount
+                ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => subMoveTween = null);
+            }
+            else if(!canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf) 
+                DOTween.Kill(canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB));
+        }
     }
 
     

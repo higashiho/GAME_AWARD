@@ -31,6 +31,11 @@ namespace Constants
         /// UIの画面外座標
         /// </summary>
         public const float UI_OUTCAMERA_POS_X = 1800f;
+
+        /// <summary>
+        /// アシストUIがY座標に動く距離
+        /// </summary>
+        public const float ASSISTUI_MOVE_Y = 10;
     }
 }
 

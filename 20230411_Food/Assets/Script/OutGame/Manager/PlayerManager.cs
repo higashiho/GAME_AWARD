@@ -288,15 +288,21 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // サブジェクトに代入
+                ObjectManager.Events.HavePlayerObject.OnNext(hit.collider.gameObject);
+
                 // オブジェクトが変わっていなかったら処理中断
                 if(ObjectManager.Player.HitObject == hit.collider.gameObject) return;
 
                 
+                // アシストUI表示
+                if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, true);
+
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
                 // オブジェクト格納
                 ObjectManager.Player.HitObject = hit.collider.gameObject;
-                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
 
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
@@ -308,6 +314,10 @@ namespace Title
             }
             else 
             {
+                // イメージUIが表示されていたら非表示にする
+                if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+                    
                 // 当たっていなかったらnullに変換
                 ObjectManager.Player.HitDistance = null;
                 ObjectManager.Player.HitObject = null;
@@ -326,17 +336,21 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // サブジェクトに代入
+                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
+
                 // オブジェクトが変わっていなかったら処理中断
                 if(ObjectManager.SubPlayer.HitObject == hit.collider.gameObject) return;
 
 
                
+                // アシストUI表示
+                if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, true);
                 // 当たっていたら向き格納
                 ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
                 // 当たっていたらオブジェクト格納
                 ObjectManager.SubPlayer.HitObject = hit.collider.gameObject;
-                // サブジェクトに代入
-                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
 
                 // サブジェクトに代入
                 if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
@@ -349,7 +363,10 @@ namespace Title
             }
             else 
             {
-                // 当たっていなかったらnullに変換
+                // イメージUIが表示されていたら非表示にする
+                if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+               // 当たっていなかったらnullに変換
                 ObjectManager.SubPlayer.HitDistance = null;
                 ObjectManager.SubPlayer.HitObject = null;
             }
