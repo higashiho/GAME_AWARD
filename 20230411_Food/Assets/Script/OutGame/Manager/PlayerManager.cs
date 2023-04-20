@@ -25,6 +25,7 @@ namespace Title
         private Vector3 moveDis = Vector3.zero;
 
 
+
         /// <summary>
         /// playerステート
         /// </summary>
@@ -112,14 +113,14 @@ namespace Title
             var tmpObj = (GameObject)Handle.Result;
             // 自身がどっちなのか判断して生成
             if(State == PlayerState.MAIN)
-                Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+                Object = MonoBehaviour.Instantiate(tmpObj, ObjectManager.TitleScene.PlayerData.InstancePos, Quaternion.identity);
             else if(State == PlayerState.SUB)
             {
                 // Playerと反対に生成するためx座標のみ反転
                 var instancePos = new Vector3(
-                    -tmpObj.transform.position.x,
-                    tmpObj.transform.position.y,
-                    tmpObj.transform.position.z
+                    -ObjectManager.TitleScene.PlayerData.InstancePos.x,
+                    ObjectManager.TitleScene.PlayerData.InstancePos.y,
+                    ObjectManager.TitleScene.PlayerData.InstancePos.z
                 );
                 Object = MonoBehaviour.Instantiate(tmpObj, instancePos, Quaternion.identity);
             }
@@ -174,7 +175,7 @@ namespace Title
     /// </summary>
     public sealed class PlayerMove
     {
-        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(1.5f);
+        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(ObjectManager.TitleScene.PlayerData.MoveSpeed);
         /// <summary>
         /// 左移動処理
         /// </summary>
@@ -273,7 +274,7 @@ namespace Title
         /// <summary>
         /// PlayerのRayの長さ
         /// </summary>
-        private RayDistance rayDistance = new RayDistance(1);
+        private RayDistance rayDistance = new RayDistance(ObjectManager.TitleScene.PlayerData.RayDistance);
 
         /// <summary>
         /// Ray処理

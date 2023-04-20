@@ -34,7 +34,9 @@ namespace Title
         [SerializeField, Header("テキストイメージ")]
         private Image[] textImageCanvas = new Image[3];
         public Image[] TextImageCanvas{get{return textImageCanvas;}}
-
+        [SerializeField, Header("Playerのデータ")]
+        private TitlePlayerData playerData;
+        public TitlePlayerData PlayerData{get{return playerData;}}
         /// <summary>
         /// テキスト接近イベント
         /// </summary>
