@@ -22,11 +22,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Player
-  - m_GUID: 91eee2fd591af234a858998b0f3589e5
-    m_Address: Assets/DishPointDatas.csv
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - DishPointDatas
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:

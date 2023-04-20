@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ using UniRx.Triggers;
 using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Constants;
+using FoodPoint;
 
 
 namespace Title
@@ -16,113 +19,159 @@ namespace Title
     /// </summary>
     public class TitleManager : MonoBehaviour
     {
-        [SerializeField, Header("Main Camera")]
+        [SerializeField, Header("メインカメラ")]
         private GameObject mainCamera;
         public GameObject MainCamera{get{return mainCamera;}}
 
-        [SerializeField, Header("Fade Panel")]
+        [SerializeField, Header("フェイドパネルイメージ")]
         private Image fadePanel;
         public Image FadePanel{get{return fadePanel;}}
 
-        [SerializeField, Header("Title Camera Data")]
+        [SerializeField, Header("タイトルカメラのデータ")]
         private TitleCameraData cameraData;
         public TitleCameraData CameraData{get{return cameraData;}}
-       
-        /// <summary>
-        /// 入力イベントインスタンス化
-        /// </summary>
-        public TitleInputEvent InputEvent{get; private set;}
+
+        [SerializeField, Header("テキストイメージ")]
+        private Image[] textImageCanvas = new Image[3];
+        public Image[] TextImageCanvas{get{return textImageCanvas;}}
 
         /// <summary>
-        /// イベント管理クラスインスタンス化
+        /// テキスト接近イベント
         /// </summary>
-        private EventManager eventSetting;
+        private TextApproachEventManager textApproachEvent;
 
-        /// <summary>
-        /// シーン挙動クラスインスタンス化
-        /// </summary>
-        /// <value></value>
-        public MakeTweenMovengs Move{get; private set;}
-        
-        void Awake()
+        /// <summary>シーン挙動クラスインスタンス化</summary>
+        public MakeTweenMovengs Move{get;} = new MakeTweenMovengs();
+
+        /// <summary>何かのイベントが処理されているか</summary>
+        public bool NowPlayeEvents{get{return nowPlayEvents;} set{nowPlayEvents = value;}}
+        private bool nowPlayEvents = false;
+
+
+        // データ取得クラス
+        private GetData getData;
+        // 料理データクラス
+        private DishData dishData;
+        // テキストデータクラス
+        private TitleTextData textData;
+
+        public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
+        async void Awake()
         {
             // インスタンス化
-            InputEvent  = new TitleInputEvent(this.gameObject);
-            ObjectManager.Player = new PlayerManager();
-            eventSetting = new EventManager();
-            Move = new MakeTweenMovengs();
+            getData = new GetData();
+
+            // リストを取得出来ていなかったら取得する
+            if(DishData.DishPointData.Count == 0)
+            {    
+                dishData = new DishData(getData);
+                await dishData.LoadData();
+                dishData.GetDishData();
+                Debug.Log(DishData.DishPointData.Count);
+            }
+            if(TitleTextData.TextData.Count == 0)
+            {
+                textData = new TitleTextData(getData);
+                await textData.LoadData();
+                textData.GetTextData();
+                Debug.Log(TitleTextData.TextData.Count);
+            }
+            // インスタンス化
             ObjectManager.TitleScene = this;
+            ObjectManager.InputEvent = new InputEvent(this.gameObject);
+            ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
+            ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
+            textApproachEvent = new TextApproachEventManager();
 
-            // タイトル入力確認ループ
-            this.UpdateAsObservable()
-                .Subscribe(_ => InputEvent.Update())
-                .AddTo(this);
-
-            // 入力イベント設定
-            eventSetting.SetInputEvents();
+            // テキストイベント設定
+            textApproachEvent.TextApproachEvents();
+            // イベント設定
+            ObjectManager.InputEvent.InputSetting.SetInputEvents();
         }
 
         private void OnDestroy() 
         {
             DOTween.KillAll();
+            Cts.Cancel();
+        }
+
+        /// <summary>
+        /// 描画関数
+        /// </summary>
+        void OnDrawGizmos()
+        {
+            // Ray描画
+            //　Cubeのレイを疑似的に視覚化
+            for(int i = 0; i < TextImageCanvas.Length; i++)
+            {    
+                var drawRayScale = new Vector3(
+                    TextImageCanvas[i].transform.localScale.x * 3,
+                    TextImageCanvas[i].transform.localScale.y * 2,
+                    TextImageCanvas[i].transform.localScale.z * 0.5f
+                );
+                var drawRayPos = new Vector3(
+                    TextImageCanvas[i].transform.position.x,
+                    // 中央に表示しないように少し下げる
+                    TextImageCanvas[i].transform.position.y * 0.9f,
+                    TextImageCanvas[i].transform.position.z
+                );
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireCube(drawRayPos + TextImageCanvas[i].transform.forward, drawRayScale);
+            }        
         }
     }
+   
     /// <summary>
-    /// タイトル入力イベント管理クラス
+    /// オブジェクト管理クラス
     /// </summary>
-    public sealed class TitleInputEvent
-    {
-        // 以下入力イベント==================================================
-        public IReadOnlyReactiveProperty<bool> GameStart => keyReturnInput;
-        public IReadOnlyReactiveProperty<bool> FoodNicknames => keyReturnInput;
-        public IReadOnlyReactiveProperty<bool> DisplayIngredientsList => keyReturnInput;
-        public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyReturnInput;
-
-        // =================================================================
-
-
-        
-        // 以下入力イベント実装===============================================
-        private readonly ReactiveProperty<bool> keyReturnInput = new BoolReactiveProperty();
-        // =================================================================
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="tmpObj">イベント対象オブジェクト</param>
-        public TitleInputEvent(GameObject tmpObj)
-        {
-            // 以下指定オブジェクトDestroy時にイベント破棄設定=========
-            keyReturnInput.AddTo(tmpObj);
-            // =====================================================
-        }
-
-        /// <summary>
-        /// 入力更新関数
-        /// </summary>
-        public void Update()
-        {
-            // 以下各種入力をReactivePropertyに反映=========================
-            keyReturnInput.Value = Input.GetKeyDown(KeyCode.Return);
-            // ===========================================================
-        }
-    }
-
     public abstract class ObjectManager
     {
         // プレイヤー
         private static PlayerManager player;
         public static PlayerManager Player{
             get{return player;} 
-            set{player = value; Debug.LogWarning("Assigned to player.");}
+            // 再代入を防止
+            set{if(player == null) player = value;}
+        }
+        // サブプレイヤー
+        private static PlayerManager subPlayer;
+        public static PlayerManager SubPlayer{
+            get{return subPlayer;}
+            // 再代入を防止
+            set{if(subPlayer == null) subPlayer = value;}
         }
 
         // タイトルマネージャー
         private static TitleManager titleScene;
         public static TitleManager TitleScene{
             get{return titleScene;} 
-            set{titleScene = value; Debug.LogWarning("Assigned to titleScene.");} 
-            }
+            // 再代入を防止
+            set{if(titleScene == null) titleScene = value;} 
+        }
+
+        // UIコントローラー
+        private static UIController ui;
+        public static UIController Ui{
+            get{return ui;}
+            // 再代入を防止
+            set{if(ui == null) ui = value;}
+        }
+
+        // テキストマネージャー
+        private static TextManager text;
+        public static TextManager Text{
+            get{return text;}
+            // 再代入を防止
+            set{if(text == null) text = value;}
+        }
+
+        // インプットイベント
+        private static InputEvent inputEvent;
+        public static InputEvent InputEvent{
+            get{return inputEvent;} 
+            // 再代入を防止
+            set{if(inputEvent == null) inputEvent = value;} 
+        }
     }
 
     /// <summary>
@@ -131,10 +180,12 @@ namespace Title
     public sealed class MakeTweenMovengs
     {
         private SceneMoveTime moveTime = new SceneMoveTime(4);
+
         /// <summary>
         /// シーン挙動
         /// </summary>
-        public void GameStartMovement()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public void GameStartMovement(GameObject hitObject)
         {
             
             // カメラのTweenを削除
@@ -145,22 +196,22 @@ namespace Title
 
             // Tween目標座標座標
             var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z / 2)
+                hitObject.transform.position.x,
+                hitObject.transform.position.y + (hitObject.transform.localScale.y / 2),
+                hitObject.transform.position.z - (hitObject.transform.localScale.z / 2)
             );
 
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount
+                moveTime.Amount
             ).SetEase(Ease.Linear)
             .OnComplete(() => SceneManager.LoadScene("InGameScene")));
 
             // Appendで動作を追加
             sequence.Join(ObjectManager.TitleScene.FadePanel.rectTransform.DOScale(
                 Vector3.zero,
-                moveTime.MoveTimeAmount
+                moveTime.Amount
             ).SetEase(Ease.InCirc));
 
             // Playで実行
@@ -170,7 +221,8 @@ namespace Title
         /// <summary>
         /// レシピ本開ける動作
         /// </summary>
-        public async UniTask OpenRecipeBook()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public async UniTask OpenRecipeBook(GameObject hitObject)
         {
             
             // カメラのTweenを削除
@@ -178,25 +230,27 @@ namespace Title
 
             // Sequenceのインスタンスを作成
             var sequence = DOTween.Sequence();
-
-            // Tween目標座標座標
+                // Tween目標座標座標
             var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y * 2),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z)
-            );
+                    hitObject.transform.position.x,
+                    hitObject.transform.position.y + (hitObject.transform.localScale.y * 2),
+                    hitObject.transform.position.z - (hitObject.transform.localScale.z)
+                );
 
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear));
             
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DORotate(
                 Vector3.right * 45,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear)
-            .OnComplete(() => Debug.Log("OpenRecipeBook")));
+            .OnComplete(() => 
+                // UI表示
+                ObjectManager.Ui.SetRecipeBookChanvasActive(true)
+            ));
 
             
             // Playで実行
@@ -208,7 +262,8 @@ namespace Title
         /// <summary>
         /// 冷蔵庫開ける動作
         /// </summary>
-        public async UniTask OpenRefrugerator()
+        /// <param name="hitObject">当たった対象オブジェクト</param>
+        public async UniTask OpenRefrugerator(GameObject hitObject)
         {
             // カメラのTweenを削除
             DOTween.Kill(ObjectManager.TitleScene.MainCamera.transform);
@@ -218,17 +273,20 @@ namespace Title
 
             // Tween目標座標座標
             var targetCoordinates = new Vector3(
-                ObjectManager.Player.HitObject.transform.position.x,
-                ObjectManager.Player.HitObject.transform.position.y + (ObjectManager.Player.HitObject.transform.localScale.y / 2.5f),
-                ObjectManager.Player.HitObject.transform.position.z - (ObjectManager.Player.HitObject.transform.localScale.z * 2)
+                hitObject.transform.position.x,
+                hitObject.transform.position.y + (hitObject.transform.localScale.y / 2.5f),
+                hitObject.transform.position.z - (hitObject.transform.localScale.z * 2)
             );
 
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 targetCoordinates,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear)
-            .OnComplete(() => Debug.Log("OpenRefrugerator")));
+            .OnComplete(() => 
+                // UI表示
+                ObjectManager.Ui.SetRefrigeratorCanvasActive(true)
+            ));
 
             
             // Playで実行
@@ -252,13 +310,20 @@ namespace Title
             // Appendで動作を追加
             sequence.Append(ObjectManager.TitleScene.MainCamera.transform.DOMove(
                 ObjectManager.TitleScene.CameraData.StartPos,
-                moveTime.MoveTimeAmount / 2
-            ).SetEase(Ease.Linear)
+                moveTime.Amount / 2
+            ).SetEase(Ease.Linear).OnStart(() => {
+                // アクティブ状態なら非アクティブに変更
+                if(ObjectManager.Ui.RecipeBookChanvas.gameObject.activeSelf)
+                    ObjectManager.Ui.SetRecipeBookChanvasActive(false);
+                // アクティブ状態なら非アクティブに変更
+                if(ObjectManager.Ui.RefrigeratorCanvas.gameObject.activeSelf)    
+                    ObjectManager.Ui.SetRefrigeratorCanvasActive(false);
+            })
             .OnComplete(() => Debug.Log("ResetCamera")));
 
             sequence.Join(ObjectManager.TitleScene.MainCamera.transform.DORotate(
                 ObjectManager.TitleScene.CameraData.StartAngle,
-                moveTime.MoveTimeAmount / 2
+                moveTime.Amount / 2
             ).SetEase(Ease.Linear));
 
             // Playで実行

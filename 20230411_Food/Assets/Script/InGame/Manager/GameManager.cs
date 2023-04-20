@@ -30,22 +30,10 @@ namespace GameManager
 
         // ポイント管理クラス
         private PointManager pointManager;
-        // データ取得クラス
-        private GetData getData;
-        // 料理データクラス
-        private DishData dishData;
         
 
-        async void Start()
+        void Start()
         {
-            
-            getData = new GetData();
-            dishData = new DishData(getData);
-            await dishData.LoadData();
-
-            dishData.GetDishData();
-
-            pointManager = new PointManager(dishData);
             
             
             objectManager = new ObjectManager();
