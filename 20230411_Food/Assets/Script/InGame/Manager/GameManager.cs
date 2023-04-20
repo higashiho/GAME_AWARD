@@ -30,29 +30,16 @@ namespace GameManager
 
         // ポイント管理クラス
         private PointManager pointManager;
-        // データ取得クラス
-        private GetData getData;
-        // 料理データクラス
-        private DishData dishData;
         
 
-        async void Start()
+        void Start()
         {
             
-            getData = new GetData();
-            dishData = new DishData(getData);
-            await dishData.LoadData();
-
-            dishData.GetDishData();
-
-            pointManager = new PointManager(dishData);
             
             objectManager = new ObjectManager();
-            
-            
             ObjectManager.Player = new PlayerManager();
 
-            
+            ObjectManager.ItemManager = new ItemManager();
         }
 
 
@@ -64,11 +51,10 @@ namespace GameManager
         /// <returns></returns>
         private async UniTask InitGame()
         {
-            ObjectManager.ItemManager = new ItemManager();
-            
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
-            
+            // 仮
+            await UniTask.Delay(5);
         }
        
         
@@ -81,12 +67,12 @@ namespace GameManager
                     // ロードなどの処理
 
                     // ゲームシーン初期化処理
-                    if(initTask == null)
-                    {
-                        initTask = InitGame();
+                    // if(initTask == null)
+                    // {
+                    //     initTask = InitGame();
 
-                        await (UniTask)initTask;
-                    }
+                    //     await (UniTask)initTask;
+                    // }
 
                     break;
                 
