@@ -382,9 +382,12 @@ namespace Title
         /// <param name="index">取得行数</param>
         private void setUIText(int childIndex,int index)
         {
+            // テキスト初期化
+            foodTexts.transform.GetChild(childIndex).GetComponent<TextMeshProUGUI >().text = "";
+            // テキスト代入処理
             foreach(string text in TitleTextData.TextData[index])
             {
-                foodTexts.transform.GetChild(childIndex).GetComponent<TextMeshProUGUI >().text = text + "\n";
+                foodTexts.transform.GetChild(childIndex).GetComponent<TextMeshProUGUI >().text += text + "\n";
             }
         }
 
