@@ -336,10 +336,13 @@ namespace Title
             images.transform.GetChild(1).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[1];
             images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.MeatImage[2];
             Debug.Log(TitleTextData.TextData[1][0]);
+
             // テキスト設定
-            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[1][0];
-            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[2][0];
-            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[3][0];
+            var textNum = 1;
+            var tildNum = 0;
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum, textNum);
         }
         /// <summary>
         /// 魚UI設定関数
@@ -352,9 +355,11 @@ namespace Title
             images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.FishImage[2];
             
             // テキスト設定
-            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[5][0];
-            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[6][0];
-            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[7][0];
+            var textNum = 5;
+            var tildNum = 0;
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum, textNum);
         }
         /// <summary>
         /// 野菜UI設定関数
@@ -367,9 +372,24 @@ namespace Title
             images.transform.GetChild(2).GetComponent<Image>().sprite = ObjectManager.Ui.VagImage[2];
 
             // テキスト設定
-            foodTexts.transform.GetChild(0).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[9][0];
-            foodTexts.transform.GetChild(1).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[10][0];
-            foodTexts.transform.GetChild(2).GetComponent<TextMeshProUGUI >().text = TitleTextData.TextData[11][0];
+            var textNum = 9;
+            var tildNum = 0;
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum++, textNum++);
+            getUIText(tildNum, textNum);
+        }
+
+        /// <summary>
+        /// テキスト代入関数
+        /// </summary>
+        /// <param name="childIndex">代入テキストイメージの場所インデックス</param>
+        /// <param name="index">取得行数</param>
+        private void getUIText(int childIndex,int index)
+        {
+            foreach(string text in TitleTextData.TextData[index])
+            {
+                foodTexts.transform.GetChild(childIndex).GetComponent<TextMeshProUGUI >().text = text + "\n";
+            }
         }
     }
 
