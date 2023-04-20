@@ -13,13 +13,15 @@ namespace Item
     /// </summary>
     public class ItemManager 
     {   
+
+        
         public ItemFactory itemFactory{get; private set;}
         private PlayerManager playerManager;
         
 
         // 取得されたアイテムの座標を一時的に保管しておくQueue
-        private Queue<Vector3> emptyItemPos = new Queue<Vector3>(8);
-        private Queue<GameObject> storingItem = new Queue<GameObject>();
+        private List<Vector3> emptyItemPos = new List<Vector3>(16);
+        
         
         // コンストラクタ
         public ItemManager()
@@ -29,21 +31,24 @@ namespace Item
             
         }
 
+        /// <summary>
+        /// アイテム関連の初期化メソッド
+        /// </summary>
         public void Init()
         {
             // アイテムをステージにセット
             itemFactory.InitItem();
-
-            
         }
 
+        /// <summary>
+        /// アイテム関連の更新メソッド
+        /// </summary>
         public void Update()
         {
-            
-            // イベントを登録
+            // プレイヤーがアイテムを取得したときのイベントを登録
             ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
             // アイテムリポップ
-            //CreateItem();
+            CreateItem();
         }
         /// <summary>
         /// アイテムが取得された時にそのアイテムの座標を保管Queueに返すメソッド
@@ -52,7 +57,7 @@ namespace Item
         public void ReturnEmptyItemPos(object sender, ReturnPresentPosEventArgs e)
         {
             // 座標保管Queueにいれていく
-            emptyItemPos.Enqueue(e.presentPos);
+            emptyItemPos.Add(e.presentPos);
         }
 
 
@@ -62,17 +67,20 @@ namespace Item
         /// <returns></returns>
         public async void CreateItem()
         {
-            // アイテムの空き座標をQueueから取得
-            Vector3? createPos = emptyItemPos.Dequeue();
+            if(emptyItemPos.Count == 0)
+                return;
 
-            // アイテム生成座標がQueueに無かった場合処理を抜ける
-            if(createPos == null)   return;
+            // アイテムの空き座標をQueueから取得
+            Vector3? createPos = emptyItemPos[0];
+            emptyItemPos.RemoveAt(0);
+
+            
             
             // 5秒待機
             await Task.Delay(5 * 1000);
 
             // アイテムリポップ
-            itemFactory.Create((Vector3)createPos);
+            //itemFactory.Create((Vector3)createPos);
 
         }
         
