@@ -130,47 +130,41 @@ namespace Title
         private static PlayerManager player;
         public static PlayerManager Player{
             get{return player;} 
-            // 再代入を防止
-            set{if(player == null) player = value;}
+            set{player = value;}
         }
         // サブプレイヤー
         private static PlayerManager subPlayer;
         public static PlayerManager SubPlayer{
             get{return subPlayer;}
-            // 再代入を防止
-            set{if(subPlayer == null) subPlayer = value;}
+            set{subPlayer = value;}
         }
 
         // タイトルマネージャー
         private static TitleManager titleScene;
         public static TitleManager TitleScene{
             get{return titleScene;} 
-            // 再代入を防止
-            set{if(titleScene == null) titleScene = value;} 
+            set{titleScene = value;} 
         }
 
         // UIコントローラー
         private static UIController ui;
         public static UIController Ui{
             get{return ui;}
-            // 再代入を防止
-            set{if(ui == null) ui = value;}
+            set{ui = value;}
         }
 
         // テキストマネージャー
         private static TextManager text;
         public static TextManager Text{
             get{return text;}
-            // 再代入を防止
-            set{if(text == null) text = value;}
+            set{text = value;}
         }
 
         // インプットイベント
         private static InputEvent inputEvent;
         public static InputEvent InputEvent{
             get{return inputEvent;} 
-            // 再代入を防止
-            set{if(inputEvent == null) inputEvent = value;} 
+            set{inputEvent = value;} 
         }
     }
 
