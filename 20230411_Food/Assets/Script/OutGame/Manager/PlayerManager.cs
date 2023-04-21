@@ -25,6 +25,7 @@ namespace Title
         private Vector3 moveDis = Vector3.zero;
 
 
+
         /// <summary>
         /// playerステート
         /// </summary>
@@ -112,14 +113,14 @@ namespace Title
             var tmpObj = (GameObject)Handle.Result;
             // 自身がどっちなのか判断して生成
             if(State == PlayerState.MAIN)
-                Object = MonoBehaviour.Instantiate(tmpObj, tmpObj.transform.position, Quaternion.identity);
+                Object = MonoBehaviour.Instantiate(tmpObj, ObjectManager.TitleScene.PlayerData.InstancePos, Quaternion.identity);
             else if(State == PlayerState.SUB)
             {
                 // Playerと反対に生成するためx座標のみ反転
                 var instancePos = new Vector3(
-                    -tmpObj.transform.position.x,
-                    tmpObj.transform.position.y,
-                    tmpObj.transform.position.z
+                    -ObjectManager.TitleScene.PlayerData.InstancePos.x,
+                    ObjectManager.TitleScene.PlayerData.InstancePos.y,
+                    ObjectManager.TitleScene.PlayerData.InstancePos.z
                 );
                 Object = MonoBehaviour.Instantiate(tmpObj, instancePos, Quaternion.identity);
             }
@@ -174,7 +175,7 @@ namespace Title
     /// </summary>
     public sealed class PlayerMove
     {
-        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(1.5f);
+        private Player.PlayerMoveSpeed moveSpeed = new Player.PlayerMoveSpeed(ObjectManager.TitleScene.PlayerData.MoveSpeed);
         /// <summary>
         /// 左移動処理
         /// </summary>
@@ -273,7 +274,7 @@ namespace Title
         /// <summary>
         /// PlayerのRayの長さ
         /// </summary>
-        private RayDistance rayDistance = new RayDistance(1);
+        private RayDistance rayDistance = new RayDistance(ObjectManager.TitleScene.PlayerData.RayDistance);
 
         /// <summary>
         /// Ray処理
@@ -287,10 +288,17 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // サブジェクトに代入
+                ObjectManager.Events.HavePlayerObject.OnNext(hit.collider.gameObject);
+
                 // オブジェクトが変わっていなかったら処理中断
                 if(ObjectManager.Player.HitObject == hit.collider.gameObject) return;
 
                 
+                // アシストUI表示
+                if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, true);
+
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
                 // オブジェクト格納
@@ -298,14 +306,18 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
-                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "RecipeBook")
-                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "GasBurner")
-                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
+                // イメージUIが表示されていたら非表示にする
+                if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+                    
                 // 当たっていなかったらnullに変換
                 ObjectManager.Player.HitDistance = null;
                 ObjectManager.Player.HitObject = null;
@@ -324,11 +336,17 @@ namespace Title
             // rayの当たり判定を確認
             if(Physics.Raycast(forwardRay, out hit, rayDistance.Amount))
             {
+                // サブジェクトに代入
+                ObjectManager.Events.HaveSubPlayerObject.OnNext(hit.collider.gameObject);
+
                 // オブジェクトが変わっていなかったら処理中断
                 if(ObjectManager.SubPlayer.HitObject == hit.collider.gameObject) return;
 
 
                
+                // アシストUI表示
+                if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, true);
                 // 当たっていたら向き格納
                 ObjectManager.SubPlayer.HitDistance = ObjectManager.SubPlayer.Object.transform.eulerAngles;
                 // 当たっていたらオブジェクト格納
@@ -336,16 +354,19 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
-                    ObjectManager.InputEvent.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
-                    ObjectManager.InputEvent.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
-                    ObjectManager.InputEvent.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
 
             }
             else 
             {
-                // 当たっていなかったらnullに変換
+                // イメージUIが表示されていたら非表示にする
+                if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+               // 当たっていなかったらnullに変換
                 ObjectManager.SubPlayer.HitDistance = null;
                 ObjectManager.SubPlayer.HitObject = null;
             }

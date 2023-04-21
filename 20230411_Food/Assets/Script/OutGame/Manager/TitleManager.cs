@@ -34,7 +34,9 @@ namespace Title
         [SerializeField, Header("テキストイメージ")]
         private Image[] textImageCanvas = new Image[3];
         public Image[] TextImageCanvas{get{return textImageCanvas;}}
-
+        [SerializeField, Header("Playerのデータ")]
+        private TitlePlayerData playerData;
+        public TitlePlayerData PlayerData{get{return playerData;}}
         /// <summary>
         /// テキスト接近イベント
         /// </summary>
@@ -78,7 +80,7 @@ namespace Title
             }
             // インスタンス化
             ObjectManager.TitleScene = this;
-            ObjectManager.InputEvent = new InputEvent(this.gameObject);
+            ObjectManager.Events = new EventsManager(this.gameObject);
             ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
             ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
             textApproachEvent = new TextApproachEventManager();
@@ -86,7 +88,7 @@ namespace Title
             // テキストイベント設定
             textApproachEvent.TextApproachEvents();
             // イベント設定
-            ObjectManager.InputEvent.InputSetting.SetInputEvents();
+            ObjectManager.Events.InputSetting.SetEvents();
         }
 
         private void OnDestroy() 
@@ -161,10 +163,10 @@ namespace Title
         }
 
         // インプットイベント
-        private static InputEvent inputEvent;
-        public static InputEvent InputEvent{
-            get{return inputEvent;} 
-            set{inputEvent = value;} 
+        private static EventsManager events;
+        public static EventsManager Events{
+            get{return events;} 
+            set{events = value;} 
         }
     }
 
