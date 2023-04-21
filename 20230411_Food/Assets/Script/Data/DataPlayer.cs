@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Player
 {
-    [CreateAssetMenu(fileName = "PlayerData", menuName = "SriptableObjects/PlayerParamAsset")]
+    [CreateAssetMenu(fileName = "PlayerData", menuName = "ScriptableObjects/PlayerParamAsset")]
     public class DataPlayer : ScriptableObject
     {
         [SerializeField, Header("1P生成座標")]
