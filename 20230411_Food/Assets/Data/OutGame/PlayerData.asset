@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4189fefff4de9948ab9997711c9b61d, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  instancePos: {x: -4.5, y: 0, z: -7.5}
+  instancePos: {x: -4.5, y: 1, z: -7.5}
   moveSpeed: 1.5
   rayDistance: 1
