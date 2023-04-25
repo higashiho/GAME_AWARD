@@ -691,3 +691,39 @@ namespace Title
     }
 }
 
+namespace Result
+{
+    /// <summary>
+    /// リザルトイベント管理クラス
+    /// </summary>
+    public class EventsManager
+    {
+        // コンストラクタ
+        public EventsManager(GameObject managerObject)
+        {
+            resultPatternSubject.AddTo(managerObject);
+        }
+
+        // リザルトのイベントパターン
+        public enum ResultPatternEnum
+        {
+            START, FOOD_RATE, FOOD_AMOUNT, SEASONING, JUDGMENT, END
+        }
+
+        // 取得用イベント
+        public IObservable<ResultPatternEnum> ResultPattern => resultPatternSubject;
+        
+        // リザルトの現在のパターン
+        private Subject<ResultPatternEnum> resultPatternSubject{get;} = new Subject<ResultPatternEnum>();
+
+        /// <summary>
+        /// リザルトサブジェクトOnNext代入関数
+        /// </summary>
+        /// <param name="value">代入したいリザルトパターン</param>
+        public void SetResultPatterunSubject(ResultPatternEnum value)
+        {
+            resultPatternSubject.OnNext(value);
+        }
+        
+    }
+}
