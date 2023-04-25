@@ -16,17 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: e35d5f87b52265441aa613eb499bd57f
-  m_SerializeEntries:
-  - m_GUID: 4fd07609e4588bc46819a672d2c2c7ee
-    m_Address: Assets/Prefab/InGame/Food/FoodExample.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredient
-  - m_GUID: c1f2872f40c221542906244f00723b34
-    m_Address: Assets/Prefab/InGame/Food/Sphere.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredient
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
