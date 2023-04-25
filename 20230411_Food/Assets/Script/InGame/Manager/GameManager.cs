@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 using FoodPoint;
 
@@ -37,9 +38,8 @@ namespace GameManager
             
             
             objectManager = new ObjectManager();
-            ObjectManager.Player = new PlayerManager();
 
-            ObjectManager.ItemManager = new ItemManager();
+            
         }
 
 
@@ -51,6 +51,9 @@ namespace GameManager
         /// <returns></returns>
         private async UniTask InitGame()
         {
+            
+            ObjectManager.Player = new PlayerManager();
+            ObjectManager.ItemManager = new ItemManager();
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
             // 仮
@@ -67,12 +70,12 @@ namespace GameManager
                     // ロードなどの処理
 
                     // ゲームシーン初期化処理
-                    // if(initTask == null)
-                    // {
-                    //     initTask = InitGame();
+                    if(initTask == null)
+                    {
+                        initTask = InitGame();
 
-                    //     await (UniTask)initTask;
-                    // }
+                        await (UniTask)initTask;
+                    }
 
                     break;
                 
@@ -97,6 +100,8 @@ namespace GameManager
                 case gameState.END:
 
                     // リザルトシーンへ
+                    SceneManager.LoadScene("ResultScene");
+                    phase = gameState.OPENING;
                     break;
 
             }

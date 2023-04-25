@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stage
 {
-    [CreateAssetMenu(fileName = "StageData", menuName = "SriptableObjects/StageParamAsset")]
+    [CreateAssetMenu(fileName = "StageData", menuName = "ScriptableObjects/StageParamAsset")]
     public class DataStage : ScriptableObject
     {
         [SerializeField, Header("ステージの横の長さ")]
