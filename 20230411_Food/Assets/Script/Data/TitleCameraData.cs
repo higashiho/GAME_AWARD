@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Title
 {
-    [CreateAssetMenu(fileName = "TitleCameraData", menuName = "SriptableObjects/TitleCameraData")]
+    [CreateAssetMenu(fileName = "TitleCameraData", menuName = "ScriptableObjects/TitleCameraData")]
     public class TitleCameraData : ScriptableObject
     {
         [SerializeField, Header("初期座標")]

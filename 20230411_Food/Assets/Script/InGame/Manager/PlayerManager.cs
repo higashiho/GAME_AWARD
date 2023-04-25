@@ -398,6 +398,9 @@ namespace Player
                 // 座標を返す
                 ReturnPresentPos(args);
 
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
+
                 // １回しか取得できない
                 deleteFood();
 
@@ -405,8 +408,7 @@ namespace Player
                 Array.Add(getFoodName(), 1);
                 Debug.Log(Array.FirstOrDefault());
 
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
+                
                 return;
             }
 
@@ -421,6 +423,9 @@ namespace Player
                 // 座標を返す
                 ReturnPresentPos(args);
 
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
+                
                 // １回取得すると消える
                 deleteFood();
 
@@ -428,8 +433,7 @@ namespace Player
                 incrimentDictionary(getFoodName(), 1);
                 Debug.Log(Array.FirstOrDefault());
 
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
+                
                 return;
             }
         }
