@@ -15,6 +15,8 @@ namespace Item
     // 出現アイテムが取得される => 空座標からランダムに生成座標を決定
     // 生成座標にランダムなアイテムを表示
 
+    // アイテム全部をインスタンス化してない問題
+
 
     /// <summary>
     /// アイテムの生成を担当するクラス
@@ -91,16 +93,22 @@ namespace Item
                 // 生成座標リストをシャッフル
                 itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
 
+                // for(int i = 0; i < 8; i++)
+                // {
+                //     // 生成座標データ取得
+                //     ItemPosData data = itemPos[i];
+        
+                //     // アイテム生成フラグON
+                //     data.attend = true;
+                //     // アイテム生成
+                //     setItem(data.pos);
+                // }
                 for(int i = 0; i < 8; i++)
                 {
-                    // 生成座標データ取得
-                    ItemPosData data = itemPos[i];
-        
-                    // アイテム生成フラグON
-                    data.attend = true;
-                    // アイテム生成
-                    setItem(data.pos);
+                    Create();
                 }
+                    
+                
                         
                     
                 ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
@@ -114,14 +122,18 @@ namespace Item
         /// </summary>
         public void Create()
         {
+            loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
             // 生成アイテムをアイテムリストから取得
             GameObject obj = loadPrefab[0];
+            loadPrefab.RemoveAt(0);
 
+            itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
             // 座標リストから空座標のデータを取得
-            var data = itemPos.Find(item => !item.attend);
-
+            ItemPosData data = itemPos.Find(item => !item.attend);
+            Debug.Log(data.pos);
             // 生成座標設定
             obj.transform.position = data.pos;
+
             // アイテム生成フラグON
             data.attend = true;
 
@@ -144,7 +156,8 @@ namespace Item
             // FoodPoint設定
 
             // 生成
-            MonoBehaviour.Instantiate(obj);
+            obj.SetActive(true);
+            
                 
         }
 
@@ -158,8 +171,8 @@ namespace Item
             loadPrefab.Add(obj);
 
             // プレイヤーがアイテムを取得したときのイベントを登録
-            ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
-            Debug.Log("a");
+            //ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
+            
         }
 
 
@@ -195,7 +208,9 @@ namespace Item
             
             await handle.Task;
             foreach(var item in handle.Result)
-            { 
+            {   
+                MonoBehaviour.Instantiate(item);
+                item.SetActive(false);
                 loadPrefab.Add(item);
             }
         }
@@ -206,16 +221,14 @@ namespace Item
         /// <param name="pos">アイテムの座標</param>
         public async void ReturnEmptyItemPos(object sender, ReturnPresentPosEventArgs e)
         {
-            // 空座標リストに追加
-            Vector3 emptyPos = e.presentPos;
-
+            
             // プレイヤーが取得したアイテムの座標データ取得
             var index = itemPos.Find(item => item.pos == e.presentPos);
 
             // アイテム出現フラグOFF
             index.attend = false;
 
-            await Task.Delay(5 * 1000);
+            //await Task.Delay(5 * 1000);
             CreateItem();
         }
 
@@ -227,11 +240,15 @@ namespace Item
         public void CreateItem()
         {
             // 表示されているアイテムが8個未満の場合
-            if(dispObj.Count < 8)
+            int num = itemPos.Count(item => item.attend);
+            // Debug.Log(num);
+            if(num < 8)
             {
                 // アイテム生成
                 Create();
             }
+            
+            
         }
 
         

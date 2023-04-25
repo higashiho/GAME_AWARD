@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 using FoodPoint;
 
@@ -99,6 +100,8 @@ namespace GameManager
                 case gameState.END:
 
                     // リザルトシーンへ
+                    SceneManager.LoadScene("ResultScene");
+                    phase = gameState.OPENING;
                     break;
 
             }
