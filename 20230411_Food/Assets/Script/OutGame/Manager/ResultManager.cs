@@ -1,24 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UniRx.Triggers;
 using UniRx;
+using Cysharp.Threading.Tasks;
 
 namespace Result
 {
     public class ResultManager : MonoBehaviour
     {
-        private ResultMove move = new ResultMove();
+        private ResultMove move;
+
+        [SerializeField, Header("Gageイメージのマスク")]
+        private GameObject[] gageImages = new GameObject[2];
+        public GameObject[] GageImages{get => gageImages;}
+        
         // Start is called before the first frame update
         void Start()
         {
             // インスタンス化
             ObjectManager.Result = this;
             ObjectManager.Events = new EventsManager(this.gameObject);
+            move = new ResultMove();
 
             // ループイベント設定
             move.SetEvents();
+            move.SetLoops();
+
+            
+            // 初期サブジェクト代入
+            ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.START);
         }
     }
     public sealed class ObjectManager
@@ -56,11 +69,12 @@ namespace Result
         {
             // イベント設定
             resultEvent[0] = startEvenet;
-            resultEvent[1] = startEvenet;
-            resultEvent[2] = startEvenet;
-            resultEvent[3] = startEvenet;
-            resultEvent[4] = startEvenet;
-            resultEvent[5] = startEvenet;
+            resultEvent[1] = foodRateEvenet;
+            resultEvent[2] = foodAmountEvenet;
+            resultEvent[3] = seasoningEvenet;
+            resultEvent[4] = judgmentEvenet;
+            resultEvent[5] = endEvenet;
+
         }
 
 
@@ -107,6 +121,8 @@ namespace Result
                         // フラグがたっていたら実行
                         if(onEventMountingFlag[i])
                         {
+                            // フラグを折って実行
+                            onEventMountingFlag[i] = false;
                             resultEvent[i]();
                             break;
                         }
@@ -115,13 +131,77 @@ namespace Result
                 ).AddTo(ObjectManager.Result);
         }
 
+        /// <summary>
+        /// リザルトパターンがスタート時処理
+        /// </summary>
         private async void startEvenet()
         {
-            onEventMountingFlag[0] = false;
 
-
+            await UniTask.Delay(1000);
+            Debug.Log("Start");
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_RATE);
+        }
+        /// <summary>
+        /// リザルトパターンが食材割合確認時処理
+        /// </summary>
+        private async void foodRateEvenet()
+        {
+
+            await UniTask.Delay(1000);
+            Debug.Log("foodRate");
+            // 次の状態を代入
+            ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_AMOUNT);
+        }
+        /// <summary>
+        /// リザルトパターンが食材量確認時処理
+        /// </summary>
+        private async void foodAmountEvenet()
+        {
+
+            await UniTask.Delay(1000);
+            Debug.Log("foodAmount");
+            // 次の状態を代入
+            ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.SEASONING);
+        }
+        /// <summary>
+        /// リザルトパターンが調味料確認時処理
+        /// </summary>
+        private async void seasoningEvenet()
+        {
+
+            await UniTask.Delay(1000);
+            Debug.Log("seasoning");
+            // 次の状態を代入
+            ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.JUDGMENT);
+        }
+        /// <summary>
+        /// リザルトパターンがゲージ確認時処理
+        /// </summary>
+        private async void judgmentEvenet()
+        {
+
+            await UniTask.Delay(1000);
+            Debug.Log("judgment");
+            // 次の状態を代入
+            ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.END);
+        }
+        /// <summary>
+        /// リザルトパターンがエンド時処理
+        /// </summary>
+        private async void endEvenet()
+        {
+
+            await UniTask.Delay(1000);
+            Debug.Log("end");
+        }
+
+        /// <summary>
+        /// ゲージアップ処理
+        /// </summary>
+        private async void gageUp()
+        {
+
         }
     }
 }
