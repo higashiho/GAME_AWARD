@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -16,7 +17,11 @@ namespace Result
         [SerializeField, Header("Gageイメージのマスク")]
         private GameObject[] gageImages = new GameObject[2];
         public GameObject[] GageImages{get => gageImages;}
-        
+
+        [SerializeField, Header("割合管理データ")]
+        private FoodPointRateData foodPointRate;
+        public FoodPointRateData FoodPointRate{get => foodPointRate;} 
+        public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
         // Start is called before the first frame update
         void Start()
         {
@@ -147,9 +152,9 @@ namespace Result
         /// </summary>
         private async void foodRateEvenet()
         {
-
-            await UniTask.Delay(1000);
             Debug.Log("foodRate");
+
+            await gageUp(ObjectManager.Result.FoodPointRate.Rate[0]);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_AMOUNT);
         }
@@ -158,9 +163,9 @@ namespace Result
         /// </summary>
         private async void foodAmountEvenet()
         {
-
-            await UniTask.Delay(1000);
             Debug.Log("foodAmount");
+
+            await gageUp(ObjectManager.Result.FoodPointRate.Rate[1]);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.SEASONING);
         }
@@ -169,9 +174,9 @@ namespace Result
         /// </summary>
         private async void seasoningEvenet()
         {
-
-            await UniTask.Delay(1000);
             Debug.Log("seasoning");
+
+            await gageUp(ObjectManager.Result.FoodPointRate.Rate[2]);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.JUDGMENT);
         }
@@ -180,9 +185,9 @@ namespace Result
         /// </summary>
         private async void judgmentEvenet()
         {
+            Debug.Log("judgment");
 
             await UniTask.Delay(1000);
-            Debug.Log("judgment");
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.END);
         }
@@ -191,17 +196,70 @@ namespace Result
         /// </summary>
         private async void endEvenet()
         {
+            Debug.Log("end");
 
             await UniTask.Delay(1000);
-            Debug.Log("end");
         }
 
         /// <summary>
         /// ゲージアップ処理
         /// </summary>
-        private async void gageUp()
+        /// <param name="rate">ゲージアップする割合</param>
+        private async UniTask gageUp(int rate)
         {
+            // ゲージ減算最大値                 // 割合を取りたいため0.1積算
+            var gageAmount = ObjectManager.Result.GageImages[0].GetComponent<RectTransform>().sizeDelta.y * (rate * 0.1f);
 
+            
+            // ゲージイメージパディング取得
+            var playerGagePadding = ObjectManager.Result.GageImages[0].GetComponent<RectMask2D>().padding;
+            var subPlayerGagePadding = ObjectManager.Result.GageImages[1].GetComponent<RectMask2D>().padding;
+
+            // プレイヤーとサブプレイヤーのゲージ減算量
+            var playerGageAmount = gageAmount * (100f / 100f);
+            var subPlayerGageAmount = gageAmount * (80f / 100f);
+
+            
+            // ゲージ目標paddingのtop
+            var playerTargetPadding = playerGagePadding.w - playerGageAmount;
+            var subPlayerTargetPadding = subPlayerGagePadding.w - subPlayerGageAmount;
+
+            // ０．１秒に対して減算する量(20%ずつ減算するため２０で除算)
+            var playerDecrement = playerGageAmount / 20f;
+            var subPlayerDecrement = subPlayerGageAmount / 20f;
+            Debug.Log("gageAmount : " + gageAmount);
+            Debug.Log("playerTargetPadding : " + playerTargetPadding);
+            Debug.Log("subPlayerTargetPadding : " + subPlayerTargetPadding);
+            // ゲージ減算ループ
+            while(!ObjectManager.Result.Cts.Token.IsCancellationRequested)
+            {
+                // TODO　ゲージが指定一以下になったらではなく２秒経ったら処理終了
+                // またはどちらのゲージも伸びなくなったら終了処理。
+                // ゲージ増加量は規定値。
+                
+                // 指定値以下の場合は
+                playerGagePadding.w -= playerDecrement;
+                subPlayerGagePadding.w -= subPlayerDecrement;
+                
+                // 代入
+                ObjectManager.Result.GageImages[0].GetComponent<RectMask2D>().padding = playerGagePadding;
+                ObjectManager.Result.GageImages[1].GetComponent<RectMask2D>().padding = subPlayerGagePadding;
+
+                // ゲージが指定値以下になったら処理終了
+                if(playerGagePadding.w <= playerTargetPadding && subPlayerGagePadding.w <= subPlayerTargetPadding)
+                {
+                    playerGagePadding.w = playerTargetPadding;
+                    subPlayerGagePadding.w = subPlayerTargetPadding;
+                    ObjectManager.Result.GageImages[0].GetComponent<RectMask2D>().padding = playerGagePadding;
+                    ObjectManager.Result.GageImages[1].GetComponent<RectMask2D>().padding = subPlayerGagePadding;
+
+                    // ３秒待つ
+                    await UniTask.Delay(3000);
+                    break;
+                }
+
+                await UniTask.Delay(100);
+            }
         }
     }
 }

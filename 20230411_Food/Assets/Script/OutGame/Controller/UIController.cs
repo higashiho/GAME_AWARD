@@ -159,7 +159,7 @@ namespace Title
             if(mainMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
             {
                 mainMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).DOLocalMoveY(
-                    canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).localPosition.y + OutGameConstants.ASSISTUI_MOVE_Y,
+                    canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).localPosition.y + TitleConstants.ASSISTUI_MOVE_Y,
                     moveTile.Amount
                 ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => mainMoveTween = null);
             }
@@ -174,7 +174,7 @@ namespace Title
             if(subMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
             {
                 subMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).DOLocalMoveY(
-                    canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).localPosition.y + OutGameConstants.ASSISTUI_MOVE_Y,
+                    canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).localPosition.y + TitleConstants.ASSISTUI_MOVE_Y,
                     moveTile.Amount
                 ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => subMoveTween = null);
             }
@@ -249,29 +249,29 @@ namespace Title
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)
             {
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[0]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[0]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[2],
+                        TitleConstants.TEXT_CHILD_POS_Y[2],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[1]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[1]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[0],
+                        TitleConstants.TEXT_CHILD_POS_Y[0],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[2]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[2]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[1],
+                        TitleConstants.TEXT_CHILD_POS_Y[1],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
@@ -307,29 +307,29 @@ namespace Title
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)
             {
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[0]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[0]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[1],
+                        TitleConstants.TEXT_CHILD_POS_Y[1],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[1]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[1]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[2],
+                        TitleConstants.TEXT_CHILD_POS_Y[2],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[2]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[2]:
                     movePos = new Vector3
                     (
                         cursor.transform.localPosition.x,
-                        OutGameConstants.TEXT_CHILD_POS_Y[0],
+                        TitleConstants.TEXT_CHILD_POS_Y[0],
                         cursor.transform.localPosition.z
                     );
                     cursor.transform.localPosition = movePos;
@@ -368,13 +368,13 @@ namespace Title
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)
             {
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[0]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[0]:
                     changeUI("Meat");
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[1]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[1]:
                     changeUI("Fish");
                     break;
-                case float i when i == OutGameConstants.TEXT_CHILD_POS_Y[2]:
+                case float i when i == TitleConstants.TEXT_CHILD_POS_Y[2]:
                     changeUI("Veg");
                     break;
                 default:
@@ -397,7 +397,7 @@ namespace Title
                 cursor.gameObject.SetActive(false);
                 
                 // Tween設定
-                sequence.Append(texts.transform.DOLocalMoveX(-OutGameConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
+                sequence.Append(texts.transform.DOLocalMoveX(-TitleConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
                 sequence.Join(images.transform.DOLocalMoveX(0, moveTile.Amount).SetEase(Ease.Linear));
 
                 // 再生
@@ -434,7 +434,7 @@ namespace Title
                 // Tween設定
                 sequence.Append(texts.transform.DOLocalMoveX(0, moveTile.Amount).SetEase(Ease.Linear)
                 .OnComplete(() => cursor.gameObject.SetActive(true)));
-                sequence.Join(images.transform.DOLocalMoveX(OutGameConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
+                sequence.Join(images.transform.DOLocalMoveX(TitleConstants.UI_OUTCAMERA_POS_X, moveTile.Amount).SetEase(Ease.Linear));
 
                 // 再生
                 sequence.Play().OnStart(() => {

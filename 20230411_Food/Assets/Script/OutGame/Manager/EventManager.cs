@@ -354,7 +354,7 @@ namespace Title
                 // イベントが実行中でないか
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_LEFT != tmpPlayer.HitDistance)
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_LEFT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
                 .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
                             tmpPlayer.MoveDis == Vector3.left)
@@ -379,7 +379,7 @@ namespace Title
                 // イベントが実行中でないか
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_RIGHT != tmpPlayer.HitDistance)
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_RIGHT != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
                 .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
                             tmpPlayer.MoveDis == Vector3.right)
@@ -429,7 +429,7 @@ namespace Title
                 // イベントが実行中でないか
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => OutGameConstants.PLAYER_DIRECTION_BACK != tmpPlayer.HitDistance)
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_BACK != tmpPlayer.HitDistance)
                 // playerが待機中か同じ向きに動いているか
                 .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
                             tmpPlayer.MoveDis == Vector3.back)
@@ -562,12 +562,12 @@ namespace Title
                 .Where(_ => ObjectManager.Player.HitObject?.name == ("Refrugerator") ||
                             ObjectManager.SubPlayer.HitObject?.name == ("Refrugerator"))
                 // 目標座標が接近座標の場合
-                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
                 .Subscribe(x => {
                     ObjectManager.Text.Move.FoodNicknamesTextMovement(x);
                     //　座標目標値設定
-                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(TitleConstants.TEXT_IMAGE_LEAVE_POS_Y);
                     })
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
@@ -584,12 +584,12 @@ namespace Title
                 .Where(_ => ObjectManager.Player.HitObject?.name == ("RecipeBook") ||
                             ObjectManager.SubPlayer.HitObject?.name == ("RecipeBook"))
                 // 目標座標が接近座標の場合
-                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
                 .Subscribe(x => {
                     ObjectManager.Text.Move.DisplayIngredientsListTextMovement(x);                    
                     //　座標目標値設定
-                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(TitleConstants.TEXT_IMAGE_LEAVE_POS_Y);
                     })
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
@@ -606,12 +606,12 @@ namespace Title
                 .Where(_ => ObjectManager.Player.HitObject?.name == ("GasBurner") ||
                             ObjectManager.SubPlayer.HitObject?.name == ("GasBurner"))
                 // 目標座標が接近座標の場合
-                .Where(x => x == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+                .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
                 .Subscribe(x =>{
                     ObjectManager.Text.Move.GameStartTextMovement(x);
                     //　座標目標値設定
-                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(TitleConstants.TEXT_IMAGE_LEAVE_POS_Y);
                     } )
                 // 指定のオブジェクトが消えるまで
                 .AddTo(ObjectManager.TitleScene);
@@ -625,9 +625,9 @@ namespace Title
             while(!ObjectManager.TitleScene.Cts.Token.IsCancellationRequested)
             {
                 // テキストイメージが全て初期位置にいた場合
-                if(ObjectManager.TitleScene.TextImageCanvas[0].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y &&
-                ObjectManager.TitleScene.TextImageCanvas[1].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y &&
-                ObjectManager.TitleScene.TextImageCanvas[2].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y)
+                if(ObjectManager.TitleScene.TextImageCanvas[0].transform.localPosition.y == TitleConstants.TEXT_IMAGE_LEAVE_POS_Y &&
+                ObjectManager.TitleScene.TextImageCanvas[1].transform.localPosition.y == TitleConstants.TEXT_IMAGE_LEAVE_POS_Y &&
+                ObjectManager.TitleScene.TextImageCanvas[2].transform.localPosition.y == TitleConstants.TEXT_IMAGE_LEAVE_POS_Y)
                 {
                     await UniTask.Yield();
                     continue;
@@ -638,7 +638,7 @@ namespace Title
                 for(int i = 0; i < ObjectManager.TitleScene.TextImageCanvas.Length; i++)
                 {
                     // 自身が初期座標にいた場合処理を通過
-                    if(ObjectManager.TitleScene.TextImageCanvas[i].transform.localPosition.y == OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y)
+                    if(ObjectManager.TitleScene.TextImageCanvas[i].transform.localPosition.y == TitleConstants.TEXT_IMAGE_LEAVE_POS_Y)
                         continue;
                     
                     // 判定サイズ設定

@@ -69,7 +69,7 @@ namespace Title
             {
                 // 座標更新
                 var tmpPos = textImageObject.transform.localPosition;
-                tmpPos.y = OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y;
+                tmpPos.y = TitleConstants.TEXT_IMAGE_APPROACH_POS_Y;
                 textImageObject.transform.localPosition = tmpPos;
 
             }));
@@ -88,7 +88,7 @@ namespace Title
             sequence.Play();
             
             //　座標目標値設定
-            ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y);
+            ObjectManager.Events.GameStartTextPoint.OnNext(TitleConstants.TEXT_IMAGE_LEAVE_POS_Y);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Title
             {
                 // 座標更新
                 var tmpPos = textImageObject.transform.localPosition;
-                tmpPos.y = OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y;
+                tmpPos.y = TitleConstants.TEXT_IMAGE_APPROACH_POS_Y;
                 textImageObject.transform.localPosition = tmpPos;
             }));
 
@@ -154,7 +154,7 @@ namespace Title
             {
                 // 座標更新
                 var tmpPos = textImageObject.transform.localPosition;
-                tmpPos.y = OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y;
+                tmpPos.y = TitleConstants.TEXT_IMAGE_APPROACH_POS_Y;
                 textImageObject.transform.localPosition = tmpPos;
             }));
 
@@ -179,7 +179,7 @@ namespace Title
         {
             // TODO : 引数オブジェクトの座標で元に戻すテキストイメージを判断して実行
             // Posが指定の座標と同じじゃなければ移動処理
-            if(resetImage.transform.localPosition.y == OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y)
+            if(resetImage.transform.localPosition.y == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
             {
                  // Sequenceのインスタンスを作成
                     var sequence = DOTween.Sequence();
@@ -187,14 +187,14 @@ namespace Title
                     // 下挙動
                     sequence.Append(
                         resetImage.transform.DOLocalMoveY(
-                            OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y,
+                            TitleConstants.TEXT_IMAGE_LEAVE_POS_Y,
                             approachMovementTime.Amount
                         ).SetEase(Ease.Linear).OnStart(() => {
                             Debug.Log("ResetTextMovement");
                             }).OnComplete(() => {
                             // 座標調整
                             var tmpPos = resetImage.transform.localPosition;
-                            tmpPos.y = OutGameConstants.TEXT_IMAGE_LEAVE_POS_Y;
+                            tmpPos.y = TitleConstants.TEXT_IMAGE_LEAVE_POS_Y;
                             resetImage.transform.localPosition = tmpPos;
                         }));
 

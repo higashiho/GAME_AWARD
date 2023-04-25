@@ -1848,6 +1848,7 @@ MonoBehaviour:
   gageImages:
   - {fileID: 1049128547}
   - {fileID: 1984464231}
+  foodPointRate: {fileID: 11400000, guid: 91cb4b9a434b02e4d8adf6bde931c1ed, type: 2}
 --- !u!4 &1484687625
 Transform:
   m_ObjectHideFlags: 0
