@@ -45,10 +45,16 @@ namespace Constants
         /// </summary>
         public static readonly Vector3[] TEXT_START_POS = new Vector3[3]
         {
-            new Vector3(250f, 700f, 0),
-            new Vector3(-1030f, 0, 0),
-            new Vector3(1500f, 0, 0)
+            new Vector3(0f, 650f, 0),
+            new Vector3(-1250f, 0, 0),
+            new Vector3(1250f, 0, 0)
         };
+
+        /// <summary>
+        /// テキスト目的地
+        /// </summary>
+        public const float TARGET_POS_X = 660f;
+        public static readonly float[] TARGET_POS_Y = {200f,350f};
     }
 }
 
