@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Title
 {
-    [CreateAssetMenu(fileName = "TitlePlayerData", menuName = "SriptableObjects/TitlePlayerData")]
+    [CreateAssetMenu(fileName = "TitlePlayerData", menuName = "ScriptableObjects/TitlePlayerParamAsset")]
     public class TitlePlayerData : ScriptableObject
     {
         [SerializeField, Header("Player生成座標")]

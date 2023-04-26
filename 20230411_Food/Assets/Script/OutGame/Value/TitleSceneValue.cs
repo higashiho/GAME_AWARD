@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Title
+namespace OutGame
 {
     /// <summary>
     /// Rayの長さ

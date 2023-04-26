@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
@@ -9,6 +6,7 @@ using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
 using ObjectInterface;
 using Constants;
+using OutGame;
 
 namespace Title
 {
@@ -188,7 +186,7 @@ namespace Title
             tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度左を向く
-            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_LEFT;
+            tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_LEFT;
 
             // 移動
             tmpPlayer.Object.transform.position += Vector3.left * moveSpeed.Amount * Time.deltaTime;
@@ -205,7 +203,7 @@ namespace Title
             tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度右を向く
-            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_RIGHT;
+            tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_RIGHT;
 
             // 移動
             tmpPlayer.Object.transform.position += Vector3.right * moveSpeed.Amount * Time.deltaTime;
@@ -240,7 +238,7 @@ namespace Title
             tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 後ろを向く
-            tmpPlayer.Object.transform.eulerAngles = OutGameConstants.PLAYER_DIRECTION_BACK;
+            tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_BACK;
 
             // 移動
             tmpPlayer.Object.transform.position += Vector3.back * moveSpeed.Amount * Time.deltaTime;
@@ -306,11 +304,11 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
-                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "RecipeBook")
-                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.Player.HitObject.name == "GasBurner")
-                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
             }
             else 
             {
@@ -354,11 +352,11 @@ namespace Title
 
                 // サブジェクトに代入
                 if(ObjectManager.SubPlayer.HitObject.name == "Refrugerator")
-                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.FoodNicknamesTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "RecipeBook")
-                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
                 else if(ObjectManager.SubPlayer.HitObject.name == "GasBurner")
-                    ObjectManager.Events.GameStartTextPoint.OnNext(OutGameConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    ObjectManager.Events.GameStartTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
 
             }
             else 

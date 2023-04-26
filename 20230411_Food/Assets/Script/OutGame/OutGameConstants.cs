@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Constants
 {
     /// <summary>
-    /// アウトゲーム定数クラス
+    /// タイトル定数クラス
     /// </summary>
-    public abstract class OutGameConstants
+    public abstract class TitleConstants
     {
         /// <summary>プレイヤー左向き</summary>
         public static readonly Vector3 PLAYER_DIRECTION_LEFT = new Vector3(0, 270, 0);
@@ -36,6 +36,19 @@ namespace Constants
         /// アシストUIがY座標に動く距離
         /// </summary>
         public const float ASSISTUI_MOVE_Y = 10;
+    }
+
+    public class ResultConstants
+    {
+        /// <summary>
+        /// テキスト初期位置
+        /// </summary>
+        public static readonly Vector3[] TEXT_START_POS = new Vector3[3]
+        {
+            new Vector3(250f, 700f, 0),
+            new Vector3(-1030f, 0, 0),
+            new Vector3(1500f, 0, 0)
+        };
     }
 }
 

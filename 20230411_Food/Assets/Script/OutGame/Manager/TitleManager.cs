@@ -1,14 +1,11 @@
-using System.Collections;
 using System.Threading;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UniRx.Triggers;
 using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
-using Constants;
+using OutGame;
 using FoodPoint;
 
 
