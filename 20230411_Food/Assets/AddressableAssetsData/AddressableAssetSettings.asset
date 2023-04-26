@@ -96,6 +96,8 @@ MonoBehaviour:
     - TitleTextDatas
     - InPlayer
     - Ingredients
+    - Player_2
+    - Player_1
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: cb540e3b789465c43b412882c56064a8, type: 2}

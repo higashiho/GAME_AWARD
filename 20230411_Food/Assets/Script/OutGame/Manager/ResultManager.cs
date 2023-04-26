@@ -1,5 +1,6 @@
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UniRx.Triggers;
@@ -29,6 +30,14 @@ namespace Result
         [SerializeField, Header("テキストの親オブジェクト")]
         private GameObject textsParent = default;
         public GameObject TextsParent{get => textsParent;}
+        [SerializeField, Header("リザルトテキスト")]
+        private GameObject[] resultText = new GameObject[2];
+        public GameObject[] ResultText{get => resultText;}
+        [SerializeField, Header("Player達のアニメーション配列")]
+        private Animator[] playerAnim = new Animator[2];
+        public Animator[] PlayerAnim{get => playerAnim;}
+        
+
         // Start is called before the first frame update
         void Start()
         {
@@ -37,7 +46,7 @@ namespace Result
             ObjectManager.Events = new EventsManager(this.gameObject);
             move = new ResultUIMove();
 
-            // ループイベント設定
+            // 購読設定
             move.SetSubscribe();
 
             
@@ -50,6 +59,10 @@ namespace Result
             Cts.Cancel();
         }
     }
+
+    /// <summary>
+    /// オブジェクト管理クラス
+    /// </summary>
     public sealed class ObjectManager
     {
         // リザルトマネージャー
@@ -81,6 +94,9 @@ namespace Result
         {
             false, false, false, false, false, false
         };
+
+        // リザルトが終われるか
+        private bool nowFinishFlag = false;
 
         private UnityAction[] resultEvent = new UnityAction[6];
 
@@ -151,6 +167,22 @@ namespace Result
                     }
                 }
                 ).AddTo(ObjectManager.Result);
+
+                ObjectManager.Result.UpdateAsObservable()
+                .Where(_ => ObjectManager.Result.ResultText[0].activeSelf)
+                .Subscribe(_ =>
+                {
+                    ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().color = Color.HSVToRGB(Time.time % 1, 1, 1);
+                
+                    if(nowFinishFlag)
+                    {
+                        if(Input.GetKeyDown(KeyCode.Return))
+                            SceneManager.LoadScene("InGameScene");
+
+                        if(Input.GetKeyDown(KeyCode.Space))
+                            SceneManager.LoadScene("TitleScene");
+                    }
+                }).AddTo(ObjectManager.Result);
         }
 
         /// <summary>
@@ -175,7 +207,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 100f, 80f);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_AMOUNT);
         }
@@ -190,7 +222,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 100, 80);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.SEASONING);
         }
@@ -205,7 +237,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 100f, 80);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.JUDGMENT);
         }
@@ -215,6 +247,26 @@ namespace Result
         private async void judgmentEvenet()
         {
             Debug.Log("judgment");
+
+            // Player勝利
+            if(gage.GetPlayerGageMaskPadding().w <= gage.GetSubPlayerGageMaskPadding().w)
+            {
+                ObjectManager.Result.PlayerAnim[0].SetBool("Win", true);
+                ObjectManager.Result.PlayerAnim[1].SetBool("Lose", true);
+                ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "1P Win !!!!!!!!!!!!!!";
+            }
+            // サブプレイヤー勝利
+            else
+            {
+                ObjectManager.Result.PlayerAnim[0].SetBool("Lose", true);
+                ObjectManager.Result.PlayerAnim[1].SetBool("Win", true);
+                ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
+            }
+
+            ObjectManager.Result.ResultText[0].SetActive(true);ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
+            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
+
+  
 
             await UniTask.Delay(1000);
             // 次の状態を代入
@@ -226,7 +278,12 @@ namespace Result
         private async void endEvenet()
         {
             Debug.Log("end");
-
+            if(!ObjectManager.Result.ResultText[1].activeSelf)
+            {
+                ObjectManager.Result.ResultText[1].SetActive(true);
+                ObjectManager.Result.ResultText[1].GetComponent<TextMeshProUGUI>().DOFade(1, 1).SetEase(Ease.Linear);
+            }
+            nowFinishFlag = true;
             await UniTask.Delay(1000);
         }  
     }
@@ -296,12 +353,32 @@ namespace Result
                     playerGageMask.padding = playerGagePadding;
                     subPlayerGageMask.padding = subPlayerGagePadding;
 
+                    // 2000ミリ秒待つ
+                    await UniTask.Delay(1000);
                     break;
                 }
 
-                // 0.001秒待つ
+                // 1ミリ秒待つ
                 await UniTask.Delay(1);
             }
+        }
+
+        /// <summary>
+        /// マスクパディング取得
+        /// </summary>
+        /// <returns>パディングの値</returns>
+        public Vector4 GetPlayerGageMaskPadding()
+        {
+            return playerGageMask.padding;
+        }
+
+        /// <summary>
+        /// マスクパディング取得
+        /// </summary>
+        /// <returns>パディングの値</returns>
+        public Vector4 GetSubPlayerGageMaskPadding()
+        {
+            return subPlayerGageMask.padding;
         }
     }
 
@@ -312,14 +389,14 @@ namespace Result
     {
         private TextMeshProUGUI[] texts = new TextMeshProUGUI[3];
 
-        private UIMoveTile moveTile = new UIMoveTile(1);
+        private UIMoveTile moveTile = new UIMoveTile(0.5f);
 
         private bool onMoveFlag = false;
 
         public TextMove(GameObject parent)
         {
             // 初期化
-            for(int i = 0; i < parent.transform.childCount; i++)
+            for(int i = 0; i < texts.Length; i++)
             {
                 texts[i] = parent.transform.GetChild(i).GetComponent<TextMeshProUGUI>();
                 texts[i].rectTransform.localPosition = ResultConstants.TEXT_START_POS[i];
@@ -349,9 +426,9 @@ namespace Result
         /// </summary>
         private async UniTask main()
         {
-            changeText(texts[0], "main");
+            changeText(texts[0], "resultName");
 
-            var textTween = texts[0].transform.DOLocalMoveY(350f ,moveTile.Amount).SetEase(Ease.Linear);
+            var textTween = texts[0].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[1] ,moveTile.Amount).SetEase(Ease.Linear);
 
             await textTween.AsyncWaitForCompletion();
         }
@@ -363,16 +440,16 @@ namespace Result
         {
             var sequence = DOTween.Sequence();
 
-            changeText(texts[1], "player");
+            changeText(texts[1], "playerPoint");
 
             // 挙動追加
-            sequence.Append(texts[1].transform.DOLocalMoveX(-400f ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[1].transform.DOLocalMoveX(-ResultConstants.TARGET_POS_X ,moveTile.Amount).SetEase(Ease.Linear));
 
             // 一秒待機
             sequence.AppendInterval(moveTile.Amount);
 
             // 挙動追加
-            sequence.Append(texts[1].transform.DOLocalMoveY(100f ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[1].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[0] ,moveTile.Amount).SetEase(Ease.Linear));
             
             // 同時挙動追加
             sequence.Join(texts[1].DOFade(0 ,moveTile.Amount).SetEase(Ease.Linear));
@@ -388,16 +465,16 @@ namespace Result
         {
             var sequence = DOTween.Sequence();
 
-            changeText(texts[2], "subPlayer");
+            changeText(texts[2], "subPlayerPoint");
             
             // 挙動追加
-            sequence.Append(texts[2].transform.DOLocalMoveX(930f ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[2].transform.DOLocalMoveX(ResultConstants.TARGET_POS_X ,moveTile.Amount).SetEase(Ease.Linear));
 
             // 一秒待機
             sequence.AppendInterval(moveTile.Amount);
-            
+
             // 挙動追加
-            sequence.Append(texts[2].transform.DOLocalMoveY(100f ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[2].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[0] ,moveTile.Amount).SetEase(Ease.Linear));
             
             // 同時挙動追加
             sequence.Join(texts[2].DOFade(0 ,moveTile.Amount).SetEase(Ease.Linear));

@@ -174,7 +174,6 @@ namespace Title
         /// <param name="resetImage">テキストイメージ</param>
         public void ResetTextMovement(Image resetImage)
         {
-            // TODO : 引数オブジェクトの座標で元に戻すテキストイメージを判断して実行
             // Posが指定の座標と同じじゃなければ移動処理
             if(resetImage.transform.localPosition.y == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
             {

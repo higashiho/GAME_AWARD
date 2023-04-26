@@ -21,11 +21,6 @@ MonoBehaviour:
     m_Address: Assets/Data/InGame/MainPlayerData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 0438078d550dc3547a10b4efca3fb680
-    m_Address: Assets/Prefab/InGame/Player/InPlayer.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - InPlayer
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
