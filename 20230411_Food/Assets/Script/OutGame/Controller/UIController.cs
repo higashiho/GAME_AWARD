@@ -64,6 +64,7 @@ namespace Title
         {
             // アシストUI挙動設定
             this.UpdateAsObservable()
+                .Where(_ => ObjectManager.Player.HitObject || ObjectManager.SubPlayer.HitObject)
                 .Subscribe(_ => {
                     assistUIMove.Display((int)PlayerManager.PlayerState.MAIN);
                     assistUIMove.Display((int)PlayerManager.PlayerState.SUB);
@@ -97,7 +98,6 @@ namespace Title
         /// <param name="value">true : アクティブ false : 非アクティブ</param>
         public void SetAssistPlayerUIActive(int num, bool value)
         {
-            Debug.Log(value);
             AssistCanvas.transform.GetChild(num).gameObject.SetActive(value);
         }
     }

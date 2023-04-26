@@ -54,7 +54,7 @@ namespace Title
         /// <summary>
         /// playerの挙動アニメーション
         /// </summary>
-        public Animator MoveAnimator{get;private set;}
+        //public Animator MoveAnimator{get;private set;}
 
         /// <summary>
         /// rayが当たった対象オブジェクト
@@ -102,28 +102,42 @@ namespace Title
         /// </summary>
         public async void Initialization()
         {
+            GameObject playerObj = null;
+            // 自身がどっちなのか判断して生成
+            if(State == PlayerState.MAIN)
+            {
+
             // 取得し完了するまで待つ
-            Handle = Addressables.LoadAssetAsync<GameObject>("Player");
+            Handle = Addressables.LoadAssetAsync<GameObject>("Player_1");
             await Handle.Task;
 
             // プレイヤー生成
             // ゲームオブジェクト型にcastし生成
-            var tmpObj = (GameObject)Handle.Result;
-            // 自身がどっちなのか判断して生成
-            if(State == PlayerState.MAIN)
-                Object = MonoBehaviour.Instantiate(tmpObj, ObjectManager.TitleScene.PlayerData.InstancePos, Quaternion.identity);
+            playerObj = (GameObject)Handle.Result;
+
+            Object = MonoBehaviour.Instantiate(playerObj, ObjectManager.TitleScene.PlayerData.InstancePos, Quaternion.identity);
+
+            }
             else if(State == PlayerState.SUB)
             {
+                
+                // 取得し完了するまで待つ
+                Handle = Addressables.LoadAssetAsync<GameObject>("Player_2");
+                await Handle.Task;
+
+                // プレイヤー生成
+                // ゲームオブジェクト型にcastし生成
+                playerObj = (GameObject)Handle.Result;
                 // Playerと反対に生成するためx座標のみ反転
                 var instancePos = new Vector3(
                     -ObjectManager.TitleScene.PlayerData.InstancePos.x,
                     ObjectManager.TitleScene.PlayerData.InstancePos.y,
                     ObjectManager.TitleScene.PlayerData.InstancePos.z
                 );
-                Object = MonoBehaviour.Instantiate(tmpObj, instancePos, Quaternion.identity);
+                Object = MonoBehaviour.Instantiate(playerObj, instancePos, Quaternion.identity);
             }
 
-            MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
+            //MoveAnimator = Object.transform.GetChild(0).GetComponent<Animator>();
         
         }
 
@@ -183,7 +197,7 @@ namespace Title
             tmpPlayer.MoveDis = Vector3.left;
             
             // 移動アニメーション再生
-            tmpPlayer.MoveAnimator.SetBool("Move", true);
+            //tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度左を向く
             tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_LEFT;
@@ -200,7 +214,7 @@ namespace Title
             tmpPlayer.MoveDis = Vector3.right;
             
             // 移動アニメーション再生
-            tmpPlayer.MoveAnimator.SetBool("Move", true);
+            //tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // ９０度右を向く
             tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_RIGHT;
@@ -218,7 +232,7 @@ namespace Title
             tmpPlayer.MoveDis = Vector3.forward;
             
             // 移動アニメーション再生
-            tmpPlayer.MoveAnimator.SetBool("Move", true);
+            //tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 前を向く
             tmpPlayer.Object.transform.eulerAngles = Vector3.zero;
@@ -235,7 +249,7 @@ namespace Title
             tmpPlayer.MoveDis = Vector3.back;
 
             // 移動アニメーション再生
-            tmpPlayer.MoveAnimator.SetBool("Move", true);
+            //tmpPlayer.MoveAnimator.SetBool("Move", true);
 
             // 後ろを向く
             tmpPlayer.Object.transform.eulerAngles = TitleConstants.PLAYER_DIRECTION_BACK;
@@ -250,7 +264,7 @@ namespace Title
         public void ResetAnim(PlayerManager tmpPlayer)
         {
             // 初期化
-            tmpPlayer.MoveAnimator.SetBool("Move", false);
+            //mpPlayer.MoveAnimator.SetBool("Move", false);
         }
 
         /// <summary>
@@ -293,22 +307,37 @@ namespace Title
                 if(ObjectManager.Player.HitObject == hit.collider.gameObject) return;
 
                 
-                // アシストUI表示
-                if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
-                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, true);
-
                 // 当たっていたら向き格納
                 ObjectManager.Player.HitDistance = ObjectManager.Player.Object.transform.eulerAngles;
                 // オブジェクト格納
                 ObjectManager.Player.HitObject = hit.collider.gameObject;
 
+                // 表示できるか
+                bool displayableFlag = false;
+
                 // サブジェクトに代入
                 if(ObjectManager.Player.HitObject.name == "Refrugerator")
+                {
                     ObjectManager.Events.FoodNicknamesTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    displayableFlag = true;
+                }
                 else if(ObjectManager.Player.HitObject.name == "RecipeBook")
+                {
                     ObjectManager.Events.DisplayIngredientsListTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    displayableFlag = true;
+                }
                 else if(ObjectManager.Player.HitObject.name == "GasBurner")
+                {
                     ObjectManager.Events.GameStartTextPoint.OnNext(TitleConstants.TEXT_IMAGE_APPROACH_POS_Y);
+                    displayableFlag = true;
+                }
+
+                    
+                // アシストUI表示
+                if( displayableFlag &&
+                    !ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                    ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, true);
+
             }
             else 
             {

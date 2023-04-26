@@ -137,6 +137,10 @@ namespace Title
                 // 実施
                 .Subscribe(x =>
                 {
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // フラグを折る
@@ -159,7 +163,11 @@ namespace Title
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
                 .Subscribe(x =>
-                {
+                {                    
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // フラグを折る
@@ -192,6 +200,11 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
+                    
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示
@@ -216,6 +229,11 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
+                    
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示
@@ -248,6 +266,11 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
+                    
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行
@@ -271,9 +294,9 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
-                    // アシストUI表示
-                    if(!ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, true);
+                    // アシストUI非表示
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行

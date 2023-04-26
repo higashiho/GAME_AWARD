@@ -17,11 +17,25 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: f32b676d5f7473d4b9a8905752560158
   m_SerializeEntries:
-  - m_GUID: 0e974d2f57b638242a97d47ff6f645f5
-    m_Address: Assets/Prefab/OutGame/Player.prefab
+  - m_GUID: 8146374d820c3ac45baeed5014144363
+    m_Address: Assets/Player Avatar/Prefabs/G1_Black.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: aaf0bae1b4fe202469a91f418e19fa04
+    m_Address: Assets/Player Avatar/Prefabs/Player_2.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Player
+    - Player_2
+  - m_GUID: 0438078d550dc3547a10b4efca3fb680
+    m_Address: Assets/Prefab/InGame/Player/InPlayer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - InPlayer
+  - m_GUID: 7577e3de9babd604d9880ded032d1752
+    m_Address: Assets/Player Avatar/Prefabs/Player_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Player_1
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:

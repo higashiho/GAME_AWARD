@@ -1,5 +1,6 @@
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UniRx.Triggers;
@@ -32,6 +33,10 @@ namespace Result
         [SerializeField, Header("リザルトテキスト")]
         private GameObject resulttText;
         public GameObject ResultText{get => resulttText;}
+        [SerializeField, Header("Player達のアニメーション配列")]
+        private Animator[] playerAnim = new Animator[2];
+        public Animator[] PlayerAnim{get => playerAnim;}
+        
 
         // Start is called before the first frame update
         void Start()
@@ -54,6 +59,10 @@ namespace Result
             Cts.Cancel();
         }
     }
+
+    /// <summary>
+    /// オブジェクト管理クラス
+    /// </summary>
     public sealed class ObjectManager
     {
         // リザルトマネージャー
@@ -85,6 +94,9 @@ namespace Result
         {
             false, false, false, false, false, false
         };
+
+        // リザルトが終われるか
+        private bool nowFinishFlag = false;
 
         private UnityAction[] resultEvent = new UnityAction[6];
 
@@ -161,6 +173,15 @@ namespace Result
                 .Subscribe(_ =>
                 {
                     ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().color = Color.HSVToRGB(Time.time % 1, 1, 1);
+                
+                    if(nowFinishFlag)
+                    {
+                        if(Input.GetKeyDown(KeyCode.Return))
+                            SceneManager.LoadScene("InGameScene");
+
+                        if(Input.GetKeyDown(KeyCode.Space))
+                            SceneManager.LoadScene("TitleScene");
+                    }
                 }).AddTo(ObjectManager.Result);
         }
 
@@ -186,7 +207,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 100f, 80f);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_AMOUNT);
         }
@@ -201,7 +222,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 100, 80);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.SEASONING);
         }
@@ -216,7 +237,7 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 100f, 80);
+            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 80f, 100f);
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.JUDGMENT);
         }
@@ -226,6 +247,21 @@ namespace Result
         private async void judgmentEvenet()
         {
             Debug.Log("judgment");
+
+            // Player勝利
+            if(gage.GetPlayerGageMaskPadding().w <= gage.GetSubPlayerGageMaskPadding().w)
+            {
+                ObjectManager.Result.PlayerAnim[0].SetBool("Win", true);
+                ObjectManager.Result.PlayerAnim[1].SetBool("Lose", true);
+                ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().text = "1P Win !!!!!!!!!!!!!!";
+            }
+            // サブプレイヤー勝利
+            else
+            {
+                ObjectManager.Result.PlayerAnim[0].SetBool("Lose", true);
+                ObjectManager.Result.PlayerAnim[1].SetBool("Win", true);
+                ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
+            }
 
             ObjectManager.Result.ResultText.SetActive(true);ObjectManager.Result.ResultText.transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
             ObjectManager.Result.ResultText.transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
@@ -242,7 +278,7 @@ namespace Result
         private async void endEvenet()
         {
             Debug.Log("end");
-
+            nowFinishFlag = true;
             await UniTask.Delay(1000);
         }  
     }
@@ -320,6 +356,24 @@ namespace Result
                 // 1ミリ秒待つ
                 await UniTask.Delay(1);
             }
+        }
+
+        /// <summary>
+        /// マスクパディング取得
+        /// </summary>
+        /// <returns>パディングの値</returns>
+        public Vector4 GetPlayerGageMaskPadding()
+        {
+            return playerGageMask.padding;
+        }
+
+        /// <summary>
+        /// マスクパディング取得
+        /// </summary>
+        /// <returns>パディングの値</returns>
+        public Vector4 GetSubPlayerGageMaskPadding()
+        {
+            return subPlayerGageMask.padding;
         }
     }
 
