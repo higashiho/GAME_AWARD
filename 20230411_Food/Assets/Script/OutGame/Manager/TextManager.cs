@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Constants;
-using UniRx.Triggers;
-using UniRx;
+using OutGame;
 
 
 namespace Title

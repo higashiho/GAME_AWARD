@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
@@ -9,6 +6,7 @@ using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
 using ObjectInterface;
 using Constants;
+using OutGame;
 
 namespace Title
 {

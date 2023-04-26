@@ -1,12 +1,10 @@
-using System.Collections;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniRx.Triggers;
 using UniRx;
 using Constants;
+using OutGame;
 
 namespace Title
 {

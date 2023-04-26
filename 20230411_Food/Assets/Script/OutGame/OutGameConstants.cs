@@ -40,7 +40,15 @@ namespace Constants
 
     public class ResultConstants
     {
-        
+        /// <summary>
+        /// テキスト初期位置
+        /// </summary>
+        public static readonly Vector3[] TEXT_START_POS = new Vector3[3]
+        {
+            new Vector3(250f, 700f, 0),
+            new Vector3(-1030f, 0, 0),
+            new Vector3(1500f, 0, 0)
+        };
     }
 }
 
