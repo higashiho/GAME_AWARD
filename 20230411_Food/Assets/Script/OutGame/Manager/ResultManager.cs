@@ -31,8 +31,8 @@ namespace Result
         private GameObject textsParent = default;
         public GameObject TextsParent{get => textsParent;}
         [SerializeField, Header("リザルトテキスト")]
-        private GameObject resulttText;
-        public GameObject ResultText{get => resulttText;}
+        private GameObject[] resultText = new GameObject[2];
+        public GameObject[] ResultText{get => resultText;}
         [SerializeField, Header("Player達のアニメーション配列")]
         private Animator[] playerAnim = new Animator[2];
         public Animator[] PlayerAnim{get => playerAnim;}
@@ -169,10 +169,10 @@ namespace Result
                 ).AddTo(ObjectManager.Result);
 
                 ObjectManager.Result.UpdateAsObservable()
-                .Where(_ => ObjectManager.Result.ResultText.activeSelf)
+                .Where(_ => ObjectManager.Result.ResultText[0].activeSelf)
                 .Subscribe(_ =>
                 {
-                    ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().color = Color.HSVToRGB(Time.time % 1, 1, 1);
+                    ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().color = Color.HSVToRGB(Time.time % 1, 1, 1);
                 
                     if(nowFinishFlag)
                     {
@@ -253,18 +253,18 @@ namespace Result
             {
                 ObjectManager.Result.PlayerAnim[0].SetBool("Win", true);
                 ObjectManager.Result.PlayerAnim[1].SetBool("Lose", true);
-                ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().text = "1P Win !!!!!!!!!!!!!!";
+                ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "1P Win !!!!!!!!!!!!!!";
             }
             // サブプレイヤー勝利
             else
             {
                 ObjectManager.Result.PlayerAnim[0].SetBool("Lose", true);
                 ObjectManager.Result.PlayerAnim[1].SetBool("Win", true);
-                ObjectManager.Result.ResultText.GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
+                ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
             }
 
-            ObjectManager.Result.ResultText.SetActive(true);ObjectManager.Result.ResultText.transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
-            ObjectManager.Result.ResultText.transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
+            ObjectManager.Result.ResultText[0].SetActive(true);ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
+            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
 
   
 
@@ -278,6 +278,11 @@ namespace Result
         private async void endEvenet()
         {
             Debug.Log("end");
+            if(!ObjectManager.Result.ResultText[1].activeSelf)
+            {
+                ObjectManager.Result.ResultText[1].SetActive(true);
+                ObjectManager.Result.ResultText[1].GetComponent<TextMeshProUGUI>().DOFade(1, 1).SetEase(Ease.Linear);
+            }
             nowFinishFlag = true;
             await UniTask.Delay(1000);
         }  
@@ -349,7 +354,7 @@ namespace Result
                     subPlayerGageMask.padding = subPlayerGagePadding;
 
                     // 2000ミリ秒待つ
-                    await UniTask.Delay(2000);
+                    await UniTask.Delay(1000);
                     break;
                 }
 
@@ -384,14 +389,14 @@ namespace Result
     {
         private TextMeshProUGUI[] texts = new TextMeshProUGUI[3];
 
-        private UIMoveTile moveTile = new UIMoveTile(1);
+        private UIMoveTile moveTile = new UIMoveTile(0.5f);
 
         private bool onMoveFlag = false;
 
         public TextMove(GameObject parent)
         {
             // 初期化
-            for(int i = 0; i < parent.transform.childCount; i++)
+            for(int i = 0; i < texts.Length; i++)
             {
                 texts[i] = parent.transform.GetChild(i).GetComponent<TextMeshProUGUI>();
                 texts[i].rectTransform.localPosition = ResultConstants.TEXT_START_POS[i];
