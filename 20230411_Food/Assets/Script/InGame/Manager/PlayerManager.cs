@@ -366,6 +366,7 @@ namespace Player
     {
         // プレイヤーが取得したポイントを保管しておく配列
         public Dictionary<string, int> Array{get; private set;} = new Dictionary<string, int>();
+        //public BaseFoodPoint[] HavePointArr{get; private set;} = new BaseFoodPoint[5];
         // 取得したアイテムの座標を返すイベント
         public event EventHandler<ReturnPresentPosEventArgs> ReturnPresentItemPos;
         /// <summary>
@@ -386,6 +387,7 @@ namespace Player
             // 何にもあたっていなければメソッドから抜ける
             if(!ObjectManager.Player.RayHitObject
             && !ObjectManager.Player.BoxRayHitObject) return;
+            
 
             // 初めてその種類の食材を獲得
             if(!Array.ContainsKey(getFoodName())
@@ -472,6 +474,7 @@ namespace Player
         {
             // 目の前にある食材の名前を返す
             return  ObjectManager.Player.RayHitObject.tag;
+            //return ObjectManager.Player.RayHitObject.GetComponent<IngredientData>().Type;
         }
     }
 

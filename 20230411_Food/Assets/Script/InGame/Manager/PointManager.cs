@@ -22,8 +22,6 @@ namespace FoodPoint
     // FoodDataと比較
     // 計算
 
-    // FoodDataからテキストメッセージを取得
-    // UIで料理を指定するときにメッセージを呼び出せるようにしておく 
 
     /// <summary>
     /// プレイヤーが取得したポイントを管理するクラス
@@ -32,18 +30,78 @@ namespace FoodPoint
     {
         // フードデータ
         private FoodData foodData;
-        // 料理データ
-        private DishData dishData;
+
         // プレイヤー
         private PlayerManager player;
+
+        private FoodPoint[] pointArr = new FoodPoint[5];
+
+        // 指定された料理のポイント配列
+        private BaseFoodPoint[] specifiedDishPoint = new BaseFoodPoint[5];
+
+        // FoodPoint
+        private Dictionary<Point, BaseFoodPoint> pointMap = new Dictionary<Point, BaseFoodPoint>(5);
+
+    
+        public enum Point
+        {
+            // 肉ポイント
+            MEATPOINT = 0,
+            // 魚ポイント
+            FISHPOINT = 1,
+            // 野菜ポイント
+            VEGPOINT = 2,
+            // 調味料ポイント
+            SEASOUSINGPOINT = 3,
+            // 満腹度ポイント
+            LEVELOFSATIETY = 4
+        }
 
         /// <summary>
         /// ポイントマネージャーのコンストラクタ
         /// </summary>
         /// <param name="data">料理の数値データ</param>
-        public PointManager(DishData data)
+        public PointManager()
         {
-            dishData = data;
+            pointMap.Add(Point.MEATPOINT, new MeatPoint(0));
+            pointMap.Add(Point.FISHPOINT, new FishPoint(0));
+            pointMap.Add(Point.VEGPOINT, new VegPoint(0));
+            pointMap.Add(Point.SEASOUSINGPOINT, new SeasousingPoint(0));
+            pointMap.Add(Point.LEVELOFSATIETY, new LevelOfSatiety(0));
+        }
+
+        // ポイントの取得メソッド
+        public void GetPoint(Point tmpPoint)
+        {
+            BaseFoodPoint foodPoint = pointMap[tmpPoint];
+        }
+
+        //private 
+
+        
+
+       
+
+        public void DetermineDish()
+        {
+            int rand = UnityEngine.Random.Range(0, DishData.DishPointData.Count);
+
+            // 料理を設定
+            foodData = new FoodData(rand);
+
+        }
+        /// <summary>
+        /// プレイヤーのFOODPOINTを取得するメソッド
+        /// </summary>
+        public void GetPlayerFoodPoint(PlayerManager tmpPlayer)
+        {
+            // 一旦羅列してます
+            // DishData設定時に値型を決定 => プレイヤーが取得時に型を判定するように変更する
+
+            
+            //pointArr[0] = CalcFoodPoint(new MeatPoint(tmpPlayer.FoodPoint.Array["MeatPoint"]), new MeatPoint(int.Parse(foodData.DishPoints[FoodData.DataIndex.MeatPoint])));
+            Debug.Log(pointArr[0]);
+            
         }
 
         /// <summary>
@@ -60,7 +118,7 @@ namespace FoodPoint
             }
 
             // 料理を生成
-            foodData = new FoodData(dishData, id);
+            //foodData = new FoodData(dishData, id);
         }
 
         /// <summary>

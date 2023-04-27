@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using FoodPoint;
 
-public class IngredientData : MonoBehaviour
+[CreateAssetMenu(fileName = "IngredientData", menuName = "ScriptableObjects/IngredientParamAsset")]
+public class IngredientData : ScriptableObject
 {
-    // FoodPoint
-    public BaseFoodPoint FoodPoint{get; private set;}
+    [Header("ポイントの量"), SerializeField]
+    private int pointAmount;
+    public int PointAmount{get;}
 
-    /// <summary>
-    /// 食材データのコンストラクタ
-    /// ポイントをコンストラクタで設定
-    /// </summary>
-    /// <param name="tmpFoodPoint">ポイント</param>
-    public void SetIngredientData(BaseFoodPoint tmpFoodPoint)
-    {
-        FoodPoint = tmpFoodPoint;
-    }
+    [Header("ポイントの種類"), SerializeField]
+    private string pointType;
+    public string PointType{get;}
 }
+
+

@@ -7,7 +7,7 @@ namespace FoodPoint
     /// <summary>
     /// 肉ポイントのVlueObject
     /// </summary>
-    public class MeatPoint : BaseFoodPoint
+    public class MeatPoint :  BaseFoodPoint
     {
         /// <summary>
         /// コンストラクタ
@@ -15,9 +15,13 @@ namespace FoodPoint
         /// <param name="tmpAmount">インスタンス化するポイント</param>
         public MeatPoint(int tmpAmount)
         {
+            if(tmpAmount < 0)
+            {
+                Debug.LogError("渡された値は負の値です。");
+                return;
+            }
             //値の初期値
             Amount = tmpAmount;
-            PointName = FoodPointName.MEAT;
         }
 
         /// <summary>
@@ -93,10 +97,10 @@ namespace FoodPoint
     /// <summary>
     /// 調味料ポイントのValueObject
     /// </summary>
-    public class SeasousingPoint
+    public class SeasousingPoint : BaseFoodPoint
     {
         // ポイント
-        public int Amount{get; private set;}
+        //public int Amount{get; private set;}
 
         /// <summary>
         /// コンストラクタ
@@ -140,13 +144,13 @@ namespace FoodPoint
     /// <summary>
     /// 満腹度ポイントのValueObject
     /// </summary>
-    public class LebelOfSatiety : BaseFoodPoint
+    public class LevelOfSatiety : BaseFoodPoint
     {
         /// <summary>
         /// 満腹度ポイントのコンストラクタ
         /// </summary>
         /// <param name="tmpAmount"></param>
-        public LebelOfSatiety(int tmpAmount)
+        public LevelOfSatiety(int tmpAmount)
         {
             if(tmpAmount < 0)
             {
@@ -162,9 +166,9 @@ namespace FoodPoint
         /// </summary>
         /// <param name="addAmount">追加する満腹度ポイント</param>
         /// <returns>加算後の値を持った満腹度ポイントのインスタンス</returns>
-        public LebelOfSatiety Add(LebelOfSatiety addAmount)
+        public LevelOfSatiety Add(LevelOfSatiety addAmount)
         {
-            return new LebelOfSatiety(this.Amount + addAmount.Amount);
+            return new LevelOfSatiety(this.Amount + addAmount.Amount);
         }
     }
 }
