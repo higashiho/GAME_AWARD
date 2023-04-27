@@ -28,6 +28,10 @@ namespace Player
         private Vector3 rotateLeftPos;
         public Vector3 RotateLeftPos{get{return rotateLeftPos;}}
 
+        [SerializeField, Header("プレイヤーの前向き座標")]
+        private Vector3 rotateForwardPos;
+        public Vector3 RotateForWardPos{get{return rotateForwardPos;}}
+
         [SerializeField, Header("プレイヤーの後回転座標")]
         private Vector3 rotateBackPos;
         public Vector3 RotateBackPos{get{return rotateBackPos;}}
@@ -35,5 +39,7 @@ namespace Player
         [SerializeField, Header("プレイヤーから出るRayの最大の長さ")]
         private float rayDirection;
         public float RayDirection{get{return rayDirection;}}
+
+
     }
 }
