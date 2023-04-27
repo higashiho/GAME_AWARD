@@ -1,14 +1,11 @@
-using System.Collections;
 using System.Threading;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UniRx.Triggers;
 using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
-using Constants;
+using OutGame;
 using FoodPoint;
 
 
@@ -34,7 +31,9 @@ namespace Title
         [SerializeField, Header("テキストイメージ")]
         private Image[] textImageCanvas = new Image[3];
         public Image[] TextImageCanvas{get{return textImageCanvas;}}
-
+        [SerializeField, Header("Playerのデータ")]
+        private TitlePlayerData playerData;
+        public TitlePlayerData PlayerData{get{return playerData;}}
         /// <summary>
         /// テキスト接近イベント
         /// </summary>
@@ -78,7 +77,7 @@ namespace Title
             }
             // インスタンス化
             ObjectManager.TitleScene = this;
-            ObjectManager.InputEvent = new InputEvent(this.gameObject);
+            ObjectManager.Events = new EventsManager(this.gameObject);
             ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
             ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
             textApproachEvent = new TextApproachEventManager();
@@ -86,7 +85,7 @@ namespace Title
             // テキストイベント設定
             textApproachEvent.TextApproachEvents();
             // イベント設定
-            ObjectManager.InputEvent.InputSetting.SetInputEvents();
+            ObjectManager.Events.InputSetting.SetEvents();
         }
 
         private void OnDestroy() 
@@ -130,47 +129,41 @@ namespace Title
         private static PlayerManager player;
         public static PlayerManager Player{
             get{return player;} 
-            // 再代入を防止
-            set{if(player == null) player = value;}
+            set{player = value;}
         }
         // サブプレイヤー
         private static PlayerManager subPlayer;
         public static PlayerManager SubPlayer{
             get{return subPlayer;}
-            // 再代入を防止
-            set{if(subPlayer == null) subPlayer = value;}
+            set{subPlayer = value;}
         }
 
         // タイトルマネージャー
         private static TitleManager titleScene;
         public static TitleManager TitleScene{
             get{return titleScene;} 
-            // 再代入を防止
-            set{if(titleScene == null) titleScene = value;} 
+            set{titleScene = value;} 
         }
 
         // UIコントローラー
         private static UIController ui;
         public static UIController Ui{
             get{return ui;}
-            // 再代入を防止
-            set{if(ui == null) ui = value;}
+            set{ui = value;}
         }
 
         // テキストマネージャー
         private static TextManager text;
         public static TextManager Text{
             get{return text;}
-            // 再代入を防止
-            set{if(text == null) text = value;}
+            set{text = value;}
         }
 
         // インプットイベント
-        private static InputEvent inputEvent;
-        public static InputEvent InputEvent{
-            get{return inputEvent;} 
-            // 再代入を防止
-            set{if(inputEvent == null) inputEvent = value;} 
+        private static EventsManager events;
+        public static EventsManager Events{
+            get{return events;} 
+            set{events = value;} 
         }
     }
 
