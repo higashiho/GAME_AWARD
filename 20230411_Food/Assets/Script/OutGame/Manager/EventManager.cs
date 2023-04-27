@@ -653,7 +653,7 @@ namespace Title
                     if(!Physics.BoxCast(
                         drawRayPos, 
                         drawRayScale * 0.5f, 
-                        ObjectManager.TitleScene.TextImageCanvas[i].transform.forward, 
+                        -ObjectManager.TitleScene.TextImageCanvas[i].transform.forward, 
                         out ObjectManager.Text.HitPlayerRay[i], Quaternion.identity, 
                         rayDistance.Amount))
                         {
