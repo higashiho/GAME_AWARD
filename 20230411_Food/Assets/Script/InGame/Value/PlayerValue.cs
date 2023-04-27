@@ -49,6 +49,17 @@ namespace Player
         }
     }
 
+    public sealed class PlayerRotateForwardPos
+    {
+        public Vector3 Amount{get; private set;}
+
+        // コンストラクタ
+        public PlayerRotateForwardPos(Vector3 tmpPos)
+        {
+            Amount = tmpPos;
+        }
+    }
+
 
     // プレイヤー右回転座標クラス
     public sealed class PlayerRotateRightPos
@@ -98,6 +109,87 @@ namespace Player
         public PlayerRayDirection(float tmpDirection)
         {
             Amount = tmpDirection;
+        }
+    }
+
+    // プレイヤーから出るカプセル型のレイの距離
+    public sealed class PlayerCapsuleRayDistance
+    {
+        public float Amount{get; private set;}
+
+        // コンストラクタ
+        public PlayerCapsuleRayDistance(float tmpDirection)
+        {
+            Amount = tmpDirection;
+        }
+    }
+
+    // 
+    public sealed class PlayerCapsuleRay
+    {
+        public bool Cast{get; private set;}
+
+        // コンストラクタ
+        public PlayerCapsuleRay(bool tmpCount)
+        {
+            Cast = tmpCount;
+        }
+    }
+
+    // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
+    public sealed class PlayerCapsuleRayStartPos
+    {
+        public Vector3 Amount{get; private set;}
+
+        // コンストラクタ
+        public PlayerCapsuleRayStartPos(Vector3 tmpPos)
+        {
+            Amount = tmpPos;
+        }
+    }
+
+    // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
+    public sealed class PlayerCapsuleRayEndPos
+    {
+        public Vector3 Amount{get; private set;}
+
+        // コンストラクタ
+        public PlayerCapsuleRayEndPos(Vector3 tmpPos)
+        {
+            Amount = tmpPos;
+        }
+    }
+
+    // プレイヤーから出る、カプセル型のレイの半径・太さ
+    public sealed class PlayerCapsuleRayRadiuse
+    {
+        public float Amount{get; private set;}
+
+        // コンストラクタ
+        public PlayerCapsuleRayRadiuse(float tmpValue)
+        {
+            Amount = tmpValue;
+        }
+    }
+
+    public sealed class RayCastHit
+    {
+        public RaycastHit hit{get; private set;}
+
+        // コンストラクタ
+        public RayCastHit(RaycastHit tmpHit)
+        {
+            hit = tmpHit;
+        }
+    }
+
+    public sealed class PlayerOverlapCapsule
+    {
+        public Collider[] Amount{get; private set;}
+
+        public PlayerOverlapCapsule(Collider[] tmpAmount)
+        {
+            Amount = tmpAmount;
         }
     }
 }
