@@ -32,8 +32,8 @@ namespace Title
         private Image[] textImageCanvas = new Image[3];
         public Image[] TextImageCanvas{get{return textImageCanvas;}}
         [SerializeField, Header("Playerのデータ")]
-        private TitlePlayerData playerData;
-        public TitlePlayerData PlayerData{get{return playerData;}}
+        private TitlePlayerDataList playerData;
+        public TitlePlayerDataList PlayerData{get{return playerData;}}
         /// <summary>
         /// テキスト接近イベント
         /// </summary>
@@ -66,20 +66,21 @@ namespace Title
                 dishData = new DishData(getData);
                 await dishData.LoadData();
                 dishData.GetDishData();
-                Debug.Log(DishData.DishPointData.Count);
             }
             if(TitleTextData.TextData.Count == 0)
             {
                 textData = new TitleTextData(getData);
                 await textData.LoadData();
                 textData.GetTextData();
-                Debug.Log(TitleTextData.TextData.Count);
             }
             // インスタンス化
             ObjectManager.TitleScene = this;
-            ObjectManager.Events = new EventsManager(this.gameObject);
-            ObjectManager.Player = new PlayerManager(PlayerManager.PlayerState.MAIN);
-            ObjectManager.SubPlayer = new PlayerManager(PlayerManager.PlayerState.SUB);
+            ObjectManager.Events = new EventsManager(this.gameObject, PlayerData);
+            // Playerの生成
+            for(int i = 0; i < ObjectManager.Player.Length; i++)
+            {
+                ObjectManager.Player[i] = new PlayerManager(playerData.PlayerDatas[i]);
+            }
             textApproachEvent = new TextApproachEventManager();
 
             // テキストイベント設定
@@ -115,7 +116,7 @@ namespace Title
                     TextImageCanvas[i].transform.position.z
                 );
                 Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(drawRayPos + TextImageCanvas[i].transform.forward, drawRayScale);
+                Gizmos.DrawWireCube(drawRayPos - TextImageCanvas[i].transform.forward, drawRayScale);
             }        
         }
     }
@@ -126,16 +127,10 @@ namespace Title
     public abstract class ObjectManager
     {
         // プレイヤー
-        private static PlayerManager player;
-        public static PlayerManager Player{
+        private static PlayerManager[] player = new PlayerManager[2];
+        public static PlayerManager[] Player{
             get{return player;} 
             set{player = value;}
-        }
-        // サブプレイヤー
-        private static PlayerManager subPlayer;
-        public static PlayerManager SubPlayer{
-            get{return subPlayer;}
-            set{subPlayer = value;}
         }
 
         // タイトルマネージャー

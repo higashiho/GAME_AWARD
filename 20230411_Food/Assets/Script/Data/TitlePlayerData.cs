@@ -4,20 +4,26 @@ using UnityEngine;
 
 namespace Title
 {
-    [CreateAssetMenu(fileName = "TitlePlayerData", menuName = "ScriptableObjects/TitlePlayerParamAsset")]
-    public class TitlePlayerData : ScriptableObject
+    [System.Serializable]
+    public class TitlePlayerData
     {
-        [SerializeField, Header("Player生成座標")]
-        private Vector3 instancePos;
-        public Vector3 InstancePos{get{return instancePos;}}
-
-        [SerializeField, Header("移動スピード")]
-        private float moveSpeed;
-        public float MoveSpeed{get{return moveSpeed;}}
-
-        [SerializeField, Header("Rayの長さ")]
-        private float rayDistance;
-        public float RayDistance{get{return rayDistance;}}
+        // PlayerのID
+        [Tooltip("PlayerのID")]
+        public int Id;
+        [Tooltip("Playerのアドレスキー")]
+        public string InstanceAddress;
+        [Tooltip("移動方向キー")]
+        public KeyCode[] MoveKey = new KeyCode[4];
+        [Tooltip("決定キー")]
+        public KeyCode DeterminationKey;
+        // Player生成座標
+        [Tooltip("Player生成座標")]
+        public Vector3 InstancePos;
+        // 移動スピード
+        [Tooltip("移動スピード")]
+        public float MoveSpeed;
+        // Rayの長さ
+        [Tooltip("Rayの長さ")]
+        public float RayDistance;
     }
-
 }
