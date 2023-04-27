@@ -54,7 +54,7 @@ namespace GameManager
             
             ObjectManager.Player = new PlayerManager();
             ObjectManager.ItemManager = new ItemManager();
-            pointManager = new PointManager();
+            pointManager = new PointManager(ObjectManager.Player);
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
             // 仮
@@ -95,7 +95,8 @@ namespace GameManager
                 case gameState.COOKING:
 
                     // プレイヤーが集めたポイント達を配列に入れていく
-                    pointManager.GetPlayerFoodPoint(ObjectManager.Player);
+                    //pointManager.GetPlayerFoodPoint(ObjectManager.Player);
+                    pointManager.GetPlayerPoint();
                     break;
                 
                 case gameState.END:

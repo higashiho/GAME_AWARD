@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4812843140638896961}
   - component: {fileID: 8459304654117534948}
   - component: {fileID: 5945186410367223854}
-  - component: {fileID: -5709547467996733419}
+  - component: {fileID: 4386961177814559479}
+  - component: {fileID: 657293878425709845}
   m_Layer: 0
   m_Name: Salmon skeleton
   m_TagString: Food
@@ -84,7 +85,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-5709547467996733419
+--- !u!114 &4386961177814559479
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,7 +94,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 5296646555204626939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ee1e2be02db0a64c9890ab4617791ad, type: 3}
+  m_Script: {fileID: 11500000, guid: ff03a8fab56e7294fa291cdc07528915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 5ec92f718c0a1b84ebb4857893eecbf1, type: 2}
+--- !u!135 &657293878425709845
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5296646555204626939}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.4673246
+  m_Center: {x: -0.013342217, y: 0.06576347, z: -0.0031021237}

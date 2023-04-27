@@ -81,7 +81,7 @@ namespace Item
             if(loadTask == null)
             {
                 // アイテムロードタスクにロード処理を入れる
-                //loadTask = load();
+                loadTask = load();
                 // ロードタスクが終わるのを待つ
                 await UniTask.WhenAny((UniTask)loadTask);
 
@@ -175,10 +175,13 @@ namespace Item
             var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
             
             await handle.Task;
+            GameObject pool = GameObject.Find("Item");
             foreach(var item in handle.Result)
             {   
                 MonoBehaviour.Instantiate(item);
+                
                 item.SetActive(false);
+                //item.transform.SetParent(pool.transform, true );
                 loadPrefab.Add(item);
             }
         }

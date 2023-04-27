@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1714540331363681661}
   - component: {fileID: 2334165113043176152}
   - component: {fileID: 540547972016684562}
-  - component: {fileID: -8330585474374433893}
+  - component: {fileID: 6654894361922242938}
+  - component: {fileID: 2888520009462481922}
   m_Layer: 0
   m_Name: Salami slice A
   m_TagString: Food
@@ -84,7 +85,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-8330585474374433893
+--- !u!114 &6654894361922242938
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,7 +94,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 2053806307276955591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1023a3a69575abb43b9e6eb13259e287, type: 3}
+  m_Script: {fileID: 11500000, guid: ff03a8fab56e7294fa291cdc07528915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: cc9e010f2178bb74ba7d7485297446c1, type: 2}
+--- !u!135 &2888520009462481922
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053806307276955591}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08204956
+  m_Center: {x: -0.0000018253922, y: 0.0076825777, z: 0.00000011920929}

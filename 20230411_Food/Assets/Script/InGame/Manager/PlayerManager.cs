@@ -365,7 +365,8 @@ namespace Player
     public class FoodPoint
     {
         // プレイヤーが取得したポイントを保管しておく配列
-        public Dictionary<string, int> Array{get; private set;} = new Dictionary<string, int>();
+        public Dictionary<string, int[]> Array{get; private set;} = new Dictionary<string, int[]>(4);
+        
         //public BaseFoodPoint[] HavePointArr{get; private set;} = new BaseFoodPoint[5];
         // 取得したアイテムの座標を返すイベント
         public event EventHandler<ReturnPresentPosEventArgs> ReturnPresentItemPos;
@@ -379,6 +380,20 @@ namespace Player
         // お野菜
         public VegPoint VegPoint{get; protected set;}
 
+        public FoodPoint()
+        {
+            int[] val = {0,0};
+            // Array.Add("MEAT", val);
+            // Array.Add("FISH", val);
+            // Array.Add("VEGETABLE", val);
+            // Array.Add("SEASOUSING", val);
+
+            // 取得ポイント配列初期化
+            for(int i = 0; i < InGameConst.PointName.Length - 1; i++)
+            {
+                Array.Add(InGameConst.PointName[i], val);
+            }
+        }
 
 
         // ポイント獲得メソッド
@@ -387,32 +402,6 @@ namespace Player
             // 何にもあたっていなければメソッドから抜ける
             if(!ObjectManager.Player.RayHitObject
             && !ObjectManager.Player.BoxRayHitObject) return;
-            
-
-            // 初めてその種類の食材を獲得
-            if(!Array.ContainsKey(getFoodName())
-            && Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                // アイテムの座標を取得するイベントインスタンス化
-                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
-                // 座標設定
-                args.presentPos = ObjectManager.Player.RayHitObject.transform.position;
-                // 座標を返す
-                ReturnPresentPos(args);
-
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.Player.RayHitObject);
-
-                // １回しか取得できない
-                deleteFood();
-
-                // Dictionaryに肉１点追加
-                Array.Add(getFoodName(), 1);
-                Debug.Log(Array.FirstOrDefault());
-
-                
-                return;
-            }
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName())
@@ -432,7 +421,7 @@ namespace Player
                 deleteFood();
 
                 // 肉に１点加算
-                incrimentDictionary(getFoodName(), 1);
+                incrimentDictionary(getFoodName(), getFoodPoint());
                 Debug.Log(Array.FirstOrDefault());
 
                 
@@ -457,15 +446,21 @@ namespace Player
         }
 
         // Dictionaryの特定のキーの値を加算する
-        private void incrimentDictionary(string food, int pointValue)
+        private void incrimentDictionary(string food, int[] pointValue)
         {
-            int tmpCount;
+            int[] tmpCount;
 
             // tmpCountにfoodの値を代入
             Array.TryGetValue(food, out tmpCount);
 
+            int[] val = 
+            {
+                tmpCount[0] + pointValue[0],
+                tmpCount[0] + pointValue[1]
+            };
+
             // 獲得ポイントを加算する
-            Array[food] = tmpCount + pointValue;
+            Array[food] = val;
         }
 
 
@@ -473,9 +468,21 @@ namespace Player
         private string getFoodName()
         {
             // 目の前にある食材の名前を返す
-            return  ObjectManager.Player.RayHitObject.tag;
-            //return ObjectManager.Player.RayHitObject.GetComponent<IngredientData>().Type;
+            //return  ObjectManager.Player.RayHitObject.tag;
+            return ObjectManager.Player.RayHitObject.GetComponent<GetValue>().Type;
         }
+
+        private int[] getFoodPoint()
+        {
+            int[] point = new int[2];
+            point[0] = ObjectManager.Player.RayHitObject.GetComponent<GetValue>().Point;
+            point[1] = ObjectManager.Player.RayHitObject.GetComponent<GetValue>().Amount;
+            return point;
+        }
+
+       
+
+        
     }
 
     // 台にめり込まないようにするクラス
