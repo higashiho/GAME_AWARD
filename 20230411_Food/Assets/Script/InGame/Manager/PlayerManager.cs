@@ -11,7 +11,6 @@ using FoodPoint;
 using Item;
 using Nomnom.RaycastVisualization;
 
-
 namespace Player
 {
     public class PlayerManager : IActor
@@ -24,8 +23,7 @@ namespace Player
         /// <summary>
         /// プレイヤーオブジェクト
         /// </summary>
-        public GameObject ObjectOne{get; private set;}
-        //public GameObject ObjectTwo{get; private set;}
+        public GameObject Object{get; private set;}
         
         /// <summary>
         /// プレイヤーのデータ
@@ -38,11 +36,6 @@ namespace Player
         private PlayerMove Move;
 
         /// <summary>
-        /// プレイヤー回転クラス
-        /// </summary>
-        private PlayerRotate Rotate;
-
-        /// <summary>
         /// 食べ物を取ってポイントを獲得するクラス
         /// </summary>
         public FoodPoint FoodPoint{get;} = new FoodPoint();
@@ -53,15 +46,28 @@ namespace Player
         public GameObject RayHitObject{get{return rayHitObject;} set{rayHitObject = value;}}
         private GameObject rayHitObject;
 
-        public GameObject BoxRayHitObject{get{return boxRayHitObject;} set{boxRayHitObject = value;}}
-        private GameObject boxRayHitObject;
-
         /// <summary>
         /// Rayを操作するクラス
         /// </summary>
         private RayController RayController;
 
-        private KeepOut keepOut;
+        public PlayerCapsuleRay PlayerCapsuleRay{get{return playerCapsuleRay;} set{playerCapsuleRay = value;}}
+        private PlayerCapsuleRay playerCapsuleRay;
+
+        public PlayerCapsuleRayStartPos PlayerCapsuleRayStartPos{get{return playerCapsuleRayStartPos;} set{playerCapsuleRayStartPos = value;}}
+        private PlayerCapsuleRayStartPos playerCapsuleRayStartPos;
+
+        public PlayerCapsuleRayDistance PlayerCapsuleRayDistance{get{return playerCapsuleRayDistance;} set{playerCapsuleRayDistance = value;}}
+        private PlayerCapsuleRayDistance playerCapsuleRayDistance;
+
+        public PlayerCapsuleRayEndPos PlayerCapsuleRayEndPos{get{return playerCapsuleRayEndPos;} set{playerCapsuleRayEndPos = value;}}
+        private PlayerCapsuleRayEndPos playerCapsuleRayEndPos;
+
+        public PlayerCapsuleRayRadiuse PlayerCapsuleRayRadiuse{get{return playerCapsuleRayRadiuse;} set{playerCapsuleRayRadiuse = value;}}
+        private PlayerCapsuleRayRadiuse playerCapsuleRayRadiuse;
+
+        public PlayerOverlapCapsule PlayerOverlapCapsule{get{return playerOverlapCapsule;} set{playerOverlapCapsule = value;}}
+        private PlayerOverlapCapsule playerOverlapCapsule;
 
         // コンストラクタ
         public PlayerManager()
@@ -91,194 +97,136 @@ namespace Player
 
             // 1Pプレイヤー生成
             var tmpObj = (GameObject)DataHandle.Result;
-            ObjectOne = MonoBehaviour.Instantiate(tmpObj
+            Object = MonoBehaviour.Instantiate(tmpObj
             , InstancePosOne.MainPos
             , Quaternion.identity);
 
-            Move = new PlayerMove();
 
-            Rotate = new PlayerRotate();
+            Move = new PlayerMove();
             
             RayController = new RayController();
 
-            keepOut = new KeepOut();
+            // カプセル型のレイの距離
+            PlayerCapsuleRayDistance = new PlayerCapsuleRayDistance(ObjectManager.Player.Data.RayDirection);
+
+            // カプセル型のレイの半径
+            PlayerCapsuleRayRadiuse = new PlayerCapsuleRayRadiuse(0.5f);
         }
 
         public void Update()
         {
+            // Rayで当たり判定を得る
+            RayController.RayUpdate();
+            
             // 各移動メソッド
             Move.MovementActor();
 
-            // 回転メソッド
-            Rotate.Rotate();
-            
-            // Rayで当たり判定を得る
-            RayController.RayCast();
-
-            RayController.BoxRayCast();
-
             // 食べ物を獲得してポイントゲット
             FoodPoint.AddPoint();
-
-            // 壁に侵入できないようにする
-            keepOut.KeepOutUpdate();
         }
     }
 
     /// <summary>
-    /// プレイヤーの移動クラス
+    /// プレイヤーの移動 と 回転クラス
     /// </summary>
     public class PlayerMove
     {
         private PlayerMoveSpeed moveSpeed;
+        private PlayerRotateRightPos playerRotateRightPos;
+        private PlayerRotateLeftPos playerRotateLeftPos;
+        private PlayerRotateForwardPos playerRotateForwardPos;
+        private PlayerRotateBackPos playerRotateBackPos;
 
         // コンストラクタ
         public PlayerMove()
         {
             moveSpeed = new PlayerMoveSpeed(ObjectManager.Player.Data.MoveSpeed);
+            playerRotateRightPos = new PlayerRotateRightPos(ObjectManager.Player.Data.RotateRightPos);
+            playerRotateLeftPos = new PlayerRotateLeftPos(ObjectManager.Player.Data.RotateLeftPos);
+            playerRotateBackPos = new PlayerRotateBackPos(ObjectManager.Player.Data.RotateBackPos);
+            playerRotateForwardPos = new PlayerRotateForwardPos(ObjectManager.Player.Data.RotateForWardPos);
         }
 
-        // 移動しているのがどのプレイヤーか
         public void MovementActor()
         {
-            if(Input.GetKey(KeyCode.A))
-            {
-                move(KeyCode.A, ObjectManager.Player.ObjectOne);
-            }
-            if(Input.GetKey(KeyCode.D))
-            {
-                move(KeyCode.D, ObjectManager.Player.ObjectOne);
-            }
-            if(Input.GetKey(KeyCode.W))
-            {
-                move(KeyCode.W, ObjectManager.Player.ObjectOne);
-            }
-            if(Input.GetKey(KeyCode.S))
-            {
-                move(KeyCode.S, ObjectManager.Player.ObjectOne);
-            }
-
-            // if(Input.GetKey(KeyCode.LeftArrow))
-            // {
-            //     move(ObjectManager.Player.ObjectOne);
-            // }
-            // else if(Input.GetKey(KeyCode.RightArrow))
-            // {
-            //     move(ObjectManager.Player.ObjectTwo);
-            // }
-
-            // if(Input.GetKey(KeyCode.UpArrow))
-            // {
-            //     move(ObjectManager.Player.ObjectOne);
-            // }
-            // else if(Input.GetKey(KeyCode.DownArrow))
-            // {
-            //     move(ObjectManager.Player.ObjectTwo);
-            // }
+            action(KeyCode.W,KeyCode.S,KeyCode.A,KeyCode.D, ObjectManager.Player.Object);
         }
 
         /// <summary>
         /// プレイヤーを移動させる
         /// </summary>
-        private void move(KeyCode key, GameObject player)
+        private void action(KeyCode upKey,KeyCode downKey,KeyCode leftKey,KeyCode rightKey, GameObject player)
         {
-            Vector3 leftDirection = new Vector3(-1, 0, 0);
-            Vector3 rightDirection = new Vector3(1, 0, 0);
-            Vector3 forwardDirection = new Vector3(0, 0, 1);
-            Vector3 backDirection = new Vector3(0, 0, -1);
+            Vector3 playerMovePos = Vector3.zero;
+            Vector3 playerRotateAmountLeftRight = player.transform.eulerAngles;
+            Vector3 playerRotateAmountForwardBack = player.transform.eulerAngles;
 
-            if(key == KeyCode.A)
+            if(Input.GetKey(leftKey))
             {
-                player.transform.localPosition +=
-                leftDirection * moveSpeed.Amount * Time.deltaTime;
+                playerMovePos += Vector3.left;
+                playerRotateAmountLeftRight = playerRotateLeftPos.Amount;
+                //playerRotateForwardPos = new PlayerRotateForwardPos(ObjectManager.Player.Data.RotateForWardPos);
             }
-            if(key == KeyCode.D)
+            else if(Input.GetKey(rightKey))
             {
-                player.transform.localPosition +=
-                rightDirection * moveSpeed.Amount * Time.deltaTime;
+                playerMovePos += Vector3.right;
+                playerRotateAmountLeftRight = playerRotateRightPos.Amount;
+                //playerRotateForwardPos = new PlayerRotateForwardPos(Vector3.zero);
             }
-            if(key == KeyCode.W)
+            else if(Input.GetKey(upKey))
             {
-                player.transform.localPosition +=
-                forwardDirection * moveSpeed.Amount * Time.deltaTime;
+                playerMovePos += Vector3.forward;
+                playerRotateAmountForwardBack = playerRotateForwardPos.Amount;
             }
-            if(key == KeyCode.S)
+            else if(Input.GetKey(downKey))
             {
+                playerMovePos += Vector3.back;
+                playerRotateAmountForwardBack = playerRotateBackPos.Amount;
+            }
+
+            // 移動中なら
+            // if(playerMovePos.x != 0 && playerMovePos.z != 0)
+            // {
+            //     // 斜め移動を単位ベクトル化
+            //     playerMovePos = normalization(playerMovePos);
+            // }
+
+            // 回転を計算する
+            player.transform.eulerAngles = (playerRotateAmountLeftRight + playerRotateAmountForwardBack) / 2;
+
+            if(ObjectManager.Player.PlayerCapsuleRay == null) return;
+
+            // プレイヤーが何かと当たっていなければ移動できる
+            if(!ObjectManager.Player.RayHitObject
+             && ObjectManager.Player.PlayerOverlapCapsule.Amount.Length <= 2)
+            {
+                // 移動を計算する
                 player.transform.localPosition +=
-                backDirection * moveSpeed.Amount * Time.deltaTime;
+                playerMovePos * moveSpeed.Amount * Time.deltaTime;
+            }
+            // 振り向きで壁にめり込むのを防ぐ
+            else if(ObjectManager.Player.PlayerOverlapCapsule.Amount.Length > 2)
+            {
+                if(Input.GetKeyDown(leftKey) || Input.GetKeyDown(rightKey) || Input.GetKeyDown(upKey) || Input.GetKeyDown(downKey))
+                {
+                    player.transform.localPosition -=
+                    playerMovePos * moveSpeed.Amount * Time.deltaTime;
+                }
             }
         }
 
-        // 1Pか2Pかを調べる
-        // public bool checkActor(GameObject player)
-        // {
-        //     if(player == ObjectManager.Player.ObjectOne)
-        //     {
-        //         return true;
-        //     }
-        //     else
-        //     {
-        //         return false;
-        //     }
-        // }   
-    }
-
-    /// <summary>
-    /// プレイヤー回転クラス
-    /// </summary>
-    public class PlayerRotate
-    {
-        private PlayerRotateRightPos PlayerRotateRightPos;
-
-        private PlayerRotateLeftPos PlayerRotateLeftPos;
-
-        private PlayerRotateBackPos PlayerRotateBackPos;
-
-        // コンストラクタ
-        public PlayerRotate()
+        // 正規化関数
+        private Vector3 normalization(Vector3 tmpPos)
         {
-            PlayerRotateRightPos = new PlayerRotateRightPos(ObjectManager.Player.Data.RotateRightPos);
-            PlayerRotateLeftPos = new PlayerRotateLeftPos(ObjectManager.Player.Data.RotateLeftPos);
-            PlayerRotateBackPos = new PlayerRotateBackPos(ObjectManager.Player.Data.RotateBackPos);
-        }
 
-        // 回転させる
-        public void Rotate()
-        {
-            if(Input.GetKey(KeyCode.D))
-            {
-                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateRightPos.Amount;
-            }
-            if(Input.GetKey(KeyCode.A))
-            {
-                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateLeftPos.Amount;
-            }
-            if(Input.GetKey(KeyCode.W))
-            {
-                ObjectManager.Player.ObjectOne.transform.eulerAngles = Vector3.zero;
-            }
-            if(Input.GetKey(KeyCode.S))
-            {
-                ObjectManager.Player.ObjectOne.transform.eulerAngles = PlayerRotateBackPos.Amount;
-            }
-
-            //2P--------------------------------
-            // if(Input.GetKey(KeyCode.RightArrow))
-            // {
-            //     ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateRightPos.Amount;
-            // }
-            // else if(Input.GetKey(KeyCode.LeftArrow))
-            // {
-            //     ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateLeftPos.Amount;
-            // }
-            // else if(Input.GetKey(KeyCode.UpArrow))
-            // {
-            //     ObjectManager.Player.ObjectTwo.transform.eulerAngles = Vector3.zero;
-            // }
-            // else if(Input.GetKey(KeyCode.DownArrow))
-            // {
-            //     ObjectManager.Player.ObjectTwo.transform.eulerAngles = PlayerRotateBackPos.Amount;
-            // }
+            float tmpNum = Mathf.Sqrt(tmpPos.x * tmpPos.x
+                                    + tmpPos.y * tmpPos.y
+                                    + tmpPos.z * tmpPos.z);
+            
+            Vector3 normalizePos = new Vector3(tmpPos.x / tmpNum
+                                             , tmpPos.y / tmpNum
+                                             , tmpPos.z / tmpNum);
+            return normalizePos;
         }
     }
     
@@ -290,70 +238,80 @@ namespace Player
         public Vector3 presentPos;
     }
 
-    // todo:プレイヤーの内側にも当たり判定をつける
     // Rayで当たり判定を得ているクラス
     public class RayController
     {
-        private PlayerRayDirection playerRayDirection;
-
-        // コンストラクタ
-        public RayController()
+        public void RayUpdate()
         {
-            playerRayDirection = new PlayerRayDirection(ObjectManager.Player.Data.RayDirection);
+            CapsuleRayCast();
         }
 
-        public void RayCast()
+        // 筒型のレイを飛ばす
+        private void CapsuleRayCast()
         {
-            // プレイヤーから出るRayの設定
-            var checkFoodRay = new Ray(ObjectManager.Player.ObjectOne.transform.localPosition
-                                    , ObjectManager.Player.ObjectOne.transform.forward);
+            // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
+            ObjectManager.Player.PlayerCapsuleRayStartPos = new PlayerCapsuleRayStartPos(new Vector3(
+                ObjectManager.Player.Object.transform.localPosition.x + ObjectManager.Player.Object.transform.forward.x / 10,
+                0.5f,
+                ObjectManager.Player.Object.transform.localPosition.z + ObjectManager.Player.Object.transform.forward.z / 10
+            ));
 
-            // Rayを可視化する
-            Debug.DrawRay(ObjectManager.Player.ObjectOne.transform.localPosition
-                        , ObjectManager.Player.ObjectOne.transform.forward, Color.red);
+            // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
+            ObjectManager.Player.PlayerCapsuleRayEndPos = new PlayerCapsuleRayEndPos(new Vector3(
+                ObjectManager.Player.Object.transform.localPosition.x + ObjectManager.Player.Object.transform.forward.x / 10,
+                3,
+                ObjectManager.Player.Object.transform.localPosition.z + ObjectManager.Player.Object.transform.forward.z / 10
+            ));
+
+            Vector3 overlapStartPos = new Vector3(
+                ObjectManager.Player.Object.transform.localPosition.x + ObjectManager.Player.Object.transform.forward.x / 5,
+                0.5f,
+                ObjectManager.Player.Object.transform.localPosition.z + ObjectManager.Player.Object.transform.forward.z / 5
+            );
+
+            Vector3 overlapEndPos = new Vector3(
+                ObjectManager.Player.Object.transform.localPosition.x + ObjectManager.Player.Object.transform.forward.x / 5,
+                3,
+                ObjectManager.Player.Object.transform.localPosition.z + ObjectManager.Player.Object.transform.forward.z / 5
+            );
 
             RaycastHit hit;
 
-            // Rayが当たったら
-            if(Physics.Raycast(checkFoodRay, out hit, playerRayDirection.Amount))
+            // カプセル型のレイを飛ばす
+            ObjectManager.Player.PlayerCapsuleRay = new PlayerCapsuleRay(Physics.CapsuleCast(
+                ObjectManager.Player.PlayerCapsuleRayStartPos.Amount,
+                ObjectManager.Player.PlayerCapsuleRayEndPos.Amount,
+                ObjectManager.Player.PlayerCapsuleRayRadiuse.Amount,
+                ObjectManager.Player.Object.transform.forward,
+                out hit,
+                ObjectManager.Player.PlayerCapsuleRayDistance.Amount));
+
+            // レイの内側を格納する
+            ObjectManager.Player.PlayerOverlapCapsule = new PlayerOverlapCapsule(Physics.OverlapCapsule(
+                overlapStartPos,
+                overlapEndPos,
+                ObjectManager.Player.PlayerCapsuleRayRadiuse.Amount
+            ));
+
+
+            // レイを見えるようにする
+            VisualPhysics.CapsuleCast(
+                ObjectManager.Player.PlayerCapsuleRayStartPos.Amount,
+                ObjectManager.Player.PlayerCapsuleRayEndPos.Amount,
+                ObjectManager.Player.PlayerCapsuleRayRadiuse.Amount,
+                ObjectManager.Player.Object.transform.forward,
+                out hit,
+                ObjectManager.Player.PlayerCapsuleRayDistance.Amount);
+
+            // レイが当たったら
+            if(ObjectManager.Player.PlayerCapsuleRay.Cast)
             {
-                // Rayが当たったオブジェクトを格納
                 ObjectManager.Player.RayHitObject = hit.collider.gameObject;
             }
             else
             {
+                // レイが外れたらnullにする
                 ObjectManager.Player.RayHitObject = null;
-            }
-        }
-
-        // 箱型のレイを飛ばす
-        public void BoxRayCast()
-        {
-            RaycastHit hit;
-            int playerSize = 3;
-            Vector3 boxSize = new Vector3(1, playerSize, 1);
-
-            // レイを見えるようにする
-            VisualPhysics.BoxCast(ObjectManager.Player.ObjectOne.transform.localPosition
-                                , boxSize / 2
-                                , new Vector3(0, 0, 0)
-                                , Quaternion.identity
-                                , playerRayDirection.Amount);
-
-            // 四角形のレイ
-            if(Physics.BoxCast(ObjectManager.Player.ObjectOne.transform.localPosition
-                               , boxSize / 2
-                               , new Vector3(0, 0, 0)
-                               , out hit
-                               , Quaternion.identity
-                               , playerRayDirection.Amount))
-            {
-                // 当たった相手を格納
-                ObjectManager.Player.BoxRayHitObject = hit.collider.gameObject;
-            }
-            else
-            {
-                ObjectManager.Player.BoxRayHitObject = null;
             }
         }
     }
@@ -384,8 +342,7 @@ namespace Player
         public void AddPoint()
         {
             // 何にもあたっていなければメソッドから抜ける
-            if(!ObjectManager.Player.RayHitObject
-            && !ObjectManager.Player.BoxRayHitObject) return;
+            if(!ObjectManager.Player.RayHitObject) return;
 
             // 初めてその種類の食材を獲得
             if(!Array.ContainsKey(getFoodName())
@@ -437,7 +394,10 @@ namespace Player
         // １回取得すると消える
         private void deleteFood()
         {
-            ObjectManager.Player.RayHitObject.SetActive(false);
+            if(ObjectManager.Player.RayHitObject.tag == "Food")
+            {
+                ObjectManager.Player.RayHitObject.SetActive(false);
+            }
         }
 
         private void ReturnPresentPos(ReturnPresentPosEventArgs e)
@@ -468,28 +428,6 @@ namespace Player
         {
             // 目の前にある食材の名前を返す
             return  ObjectManager.Player.RayHitObject.tag;
-        }
-    }
-
-    // 台にめり込まないようにするクラス
-    public class KeepOut
-    {
-        public void KeepOutUpdate()
-        {
-            colWall();
-        }
-
-        // 当たり判定
-        private void colWall()
-        {
-            // 何にもあたっていなければメソッドから抜ける
-            if(!ObjectManager.Player.BoxRayHitObject) return;
-
-            // 壁に当たったら後ろに押される
-            if(ObjectManager.Player.BoxRayHitObject.tag == ("Wall"))
-            {
-                ObjectManager.Player.ObjectOne.transform.localPosition -= ObjectManager.Player.ObjectOne.transform.forward;
-            }
         }
     }
 }
