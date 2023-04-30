@@ -8,17 +8,21 @@ namespace Player
     [CreateAssetMenu(fileName = "PlayerData", menuName = "ScriptableObjects/PlayerParamAsset")]
     public class DataPlayer : ScriptableObject
     {
-        [SerializeField, Header("1P生成座標")]
-        private Vector3 firstPlayerCreatePos;
-        public Vector3 FirstPlayerCreatePos{get{return firstPlayerCreatePos;}}
+        [SerializeField, Header("生成するプレイヤーのアドレスキー")]
+        private string adressKey;
+        public string AdressKey{get{return adressKey;}}
 
-        [SerializeField, Header("2P生成座標")]
-        private Vector3 secondPlayerCreatePos;
-        public Vector3 SecondPlayerCreatePos{get{return secondPlayerCreatePos;}}
+        [SerializeField, Header("生成座標")]
+        private Vector3 playerCreatePos;
+        public Vector3 PlayerCreatePos{get{return playerCreatePos;}}
 
         [SerializeField, Header("プレイヤー移動速度")]
         private float moveSpeed;
         public float MoveSpeed{get{return moveSpeed;}}
+
+        [SerializeField, Header("操作キー")]
+        private KeyCode[] controlleKey = new KeyCode[4];
+        public KeyCode[] ControlleKey{get{return controlleKey;}}
 
         [SerializeField, Header("プレイヤーの右回転座標")]
         private Vector3 rotateRightPos;
@@ -40,6 +44,21 @@ namespace Player
         private float rayDirection;
         public float RayDirection{get{return rayDirection;}}
 
+        [SerializeField, Header("レイの半径")]
+        private float rayRadiuse;
+        public float RayRadiuse{get{return rayRadiuse;}}
 
+        [SerializeField, Header("何人目か")]
+        private int number;
+        public int Number{get{
+            var tmpNum =  number - 1;
+            if(tmpNum < 0)
+            {
+                Debug.LogError("Num Error");
+                return 0;
+            }
+            else
+                return tmpNum;
+            }}
     }
 }

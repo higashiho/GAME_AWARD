@@ -61,6 +61,7 @@ namespace Item
 
         private int posRow = 4;
         private int posCol = 4;
+
         
         
         /// <summary>
@@ -109,10 +110,10 @@ namespace Item
                 }
                     
                 
-                        
-                    
-                ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
-
+                for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                {
+                    ObjectManager.PlayerManagers[i].FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
+                }
             }
         }
 
