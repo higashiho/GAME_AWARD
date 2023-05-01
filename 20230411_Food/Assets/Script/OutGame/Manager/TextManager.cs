@@ -95,7 +95,6 @@ namespace Title
         public void DisplayIngredientsListTextMovement(float distination)
         {
             textImageObject = ObjectManager.TitleScene.TextImageCanvas[1];
-            Debug.Log("Play");
             // ImageのTweenを削除
             DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[1].transform);
 

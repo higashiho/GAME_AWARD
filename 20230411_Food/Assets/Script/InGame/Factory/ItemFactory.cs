@@ -8,7 +8,6 @@ using System.Linq;
 using System;
 using Player;
 using GameManager;
-using FoodPoint;
 
 namespace Item
 {   
@@ -34,6 +33,9 @@ namespace Item
             // アイテムが出現しているか
             public bool attend;
         }
+
+        // 出現しているアイテムのリスト
+        private List<GameObject> dispObj = new List<GameObject>(8);
         
         /// <summary>
         /// アイテム出現座標リスト
@@ -44,21 +46,22 @@ namespace Item
 
         // ロードしたプレファブを入れるList
         // アイテムをプールしておく
-        private List<GameObject> loadPrefab = new List<GameObject>(10);
+        private List<GameObject> loadPrefab = new List<GameObject>(16);
 
         // プレファブをロードするタスク
         private UniTask? loadTask = null;
 
         // アイテムを生成する間隔
-        private float spaceX = 8.0f;
-        private float spaceZ = 2.4f;
+        private float spaceX = 10.0f;
+        private float spaceZ = 3.0f;
 
         // アイテムを生成する基準ライン
-        private float baseLineX = -12.0f;
-        private float baseLineZ = -6.0f;
+        private float baseLineX = -15.0f;
+        private float baseLineZ = -4.5f;
 
         private int posRow = 4;
         private int posCol = 4;
+
         
         
         /// <summary>
@@ -70,7 +73,6 @@ namespace Item
             makePopPosArr();
         }
 
-        
         /// <summary>
         /// ステージのアイテムをセットするメソッド
         /// ゲーム開始時の一度だけ呼ばれる
@@ -84,15 +86,34 @@ namespace Item
                 loadTask = load();
                 // ロードタスクが終わるのを待つ
                 await UniTask.WhenAny((UniTask)loadTask);
+            
+                // => ロードより先に呼ばれてる問題
+                // シャッフル
+                loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
 
-                // アイテム生成
+                // 生成座標リストをシャッフル
+                itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
+
+                // for(int i = 0; i < 8; i++)
+                // {
+                //     // 生成座標データ取得
+                //     ItemPosData data = itemPos[i];
+        
+                //     // アイテム生成フラグON
+                //     data.attend = true;
+                //     // アイテム生成
+                //     setItem(data.pos);
+                // }
                 for(int i = 0; i < 8; i++)
                 {
                     Create();
                 }
+                    
                 
-                ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
-
+                for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                {
+                    ObjectManager.PlayerManagers[i].FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
+                }
             }
         }
 
@@ -102,31 +123,44 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            int rand;
-            //loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
+            loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
             // 生成アイテムをアイテムリストから取得
             GameObject obj = loadPrefab[0];
             loadPrefab.RemoveAt(0);
 
             itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
-            do
-            {
-                rand = UnityEngine.Random.Range(0, itemPos.Count);
-            }
-            while(itemPos[rand].attend);
-
-            ItemPosData data = itemPos[rand];
-
+            // 座標リストから空座標のデータを取得
+            ItemPosData data = itemPos.Find(item => !item.attend);
+            Debug.Log(data.pos);
+            // 生成座標設定
             obj.transform.position = data.pos;
 
+            // アイテム生成フラグON
             data.attend = true;
 
-            itemPos[rand] = data;
-            
             // アクティブ化
             obj.SetActive(true);
+            
         }
 
+        /// <summary>
+        /// ゲーム開始時にアイテムをセットするメソッド
+        /// </summary>
+        /// <param name="pos">アイテムを生成する座標</param>
+        private void setItem(Vector3 pos)
+        {
+            // アイテムプレファブの先頭の要素を抽出
+            GameObject obj = loadPrefab[0];
+
+            // 生成座標設定
+            obj.transform.position = pos;
+            // FoodPoint設定
+
+            // 生成
+            obj.SetActive(true);
+            
+                
+        }
 
 
         /// <summary>
@@ -155,7 +189,6 @@ namespace Item
                 {
                     // インスタンス化
                     ItemPosData data = new ItemPosData();
-
                     // 座標設定
                     data.pos = new Vector3(baseLineX + i * spaceX, 1.0f, baseLineZ + j * spaceZ);
                     
@@ -175,13 +208,10 @@ namespace Item
             var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
             
             await handle.Task;
-            GameObject pool = GameObject.Find("Item");
             foreach(var item in handle.Result)
             {   
                 MonoBehaviour.Instantiate(item);
-                
                 item.SetActive(false);
-                //item.transform.SetParent(pool.transform, true );
                 loadPrefab.Add(item);
             }
         }

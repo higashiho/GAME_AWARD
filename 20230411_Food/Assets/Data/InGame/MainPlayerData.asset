@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2764b7e5736de4b45a7d32fe1133e1b0, type: 3}
   m_Name: MainPlayerData
   m_EditorClassIdentifier: 
-  firstPlayerCreatePos: {x: 10, y: 1.5, z: 0}
-  secondPlayerCreatePos: {x: 0, y: 0, z: 0}
+  adressKey: Player_1
+  playerCreatePos: {x: 10, y: 0, z: -5}
   moveSpeed: 4
+  controlleKey: 77000000610000007300000064000000
   rotateRightPos: {x: 0, y: 90, z: 0}
   rotateLeftPos: {x: 0, y: 270, z: 0}
   rotateForwardPos: {x: 0, y: 0, z: 0}
   rotateBackPos: {x: 0, y: 180, z: 0}
   rayDirection: 0.1
+  rayRadiuse: 0.5
+  number: 1

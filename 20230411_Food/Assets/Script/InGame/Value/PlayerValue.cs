@@ -11,12 +11,12 @@ namespace Player
     }
 
     // 1Pプレイヤー生成座標クラス
-    public sealed class FirstPlayerInstancePos
+    public sealed class PlayerInstancePos
     {
         public Vector3 MainPos{get; private set;}
 
         // コンストラクタ
-        public FirstPlayerInstancePos(Vector3 tmpPos)
+        public PlayerInstancePos(Vector3 tmpPos)
         {
             // 初期化
             MainPos = tmpPos;
@@ -190,6 +190,16 @@ namespace Player
         public PlayerOverlapCapsule(Collider[] tmpAmount)
         {
             Amount = tmpAmount;
+        }
+    }
+
+    public sealed class PlayerNumber
+    {
+        public int Index{get; private set;}
+
+        public PlayerNumber(int tmpNum)
+        {
+            Index = tmpNum;
         }
     }
 }

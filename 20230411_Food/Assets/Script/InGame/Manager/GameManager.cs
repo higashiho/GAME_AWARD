@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
-
 using FoodPoint;
 
 using Item;
@@ -32,18 +31,19 @@ namespace GameManager
         // ポイント管理クラス
         private PointManager pointManager;
         
-
         void Start()
         {
-            
-            
             objectManager = new ObjectManager();
-
-            
         }
 
 
         private ObjectManager objectManager;
+
+        [SerializeField]
+        private DataPlayer main;
+        
+        [SerializeField]
+        private DataPlayer sub;
 
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
@@ -51,8 +51,12 @@ namespace GameManager
         /// <returns></returns>
         private async UniTask InitGame()
         {
-            
-            ObjectManager.Player = new PlayerManager();
+            ObjectManager.PlayerManagers.Add(new PlayerManager(main));
+            ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
+
+            objectManager.DataPlayers.Add(main);
+            objectManager.DataPlayers.Add(sub);
+
             ObjectManager.ItemManager = new ItemManager();
             pointManager = new PointManager(ObjectManager.Player);
             // アイテム関係初期化
@@ -85,7 +89,7 @@ namespace GameManager
                     break;
 
                 case gameState.GAME:
-                    
+
                     objectManager.PlayerUpdate();
                     objectManager.ItemUpdate();
                         
@@ -127,19 +131,27 @@ namespace GameManager
             ItemManager.Update();
         }
 
-        // プレイヤー
-        private static PlayerManager player;
+        private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
 
-        public static PlayerManager Player
+        public static List<PlayerManager> PlayerManagers
         {
-            get{return player;}
-            set{player = value;}
+            get{return playerManagers;}
+        }
+
+        private List<DataPlayer> dataPlayers = new List<DataPlayer>(2);
+
+        public List<DataPlayer> DataPlayers
+        {
+            get{return dataPlayers;}
         }
 
         // インゲーム全体統括メソッド
         public void PlayerUpdate()
         {
-            Player.Update();
+            for(int i = 0; i < PlayerManagers.Count; i++)
+            {
+                ObjectManager.PlayerManagers[i].Update();
+            }
         }
     }
 }

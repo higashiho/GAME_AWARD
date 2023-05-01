@@ -15,15 +15,17 @@ namespace Title
     {
            
         /// <summary>インプットイベント管理クラスインスタンス化</summary>
-        public InputManager InputSetting{get;} = new InputManager();
+        public InputManager InputSetting{get; private set;}
 
         
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="tmpObj">イベント対象オブジェクト</param>
-        public EventsManager(GameObject manageObject)
+        /// <param name="manageObject">イベント対象オブジェクト</param>
+        /// <param name="tmpDataList">playerのデータリスト</param>
+        public EventsManager(GameObject manageObject, TitlePlayerDataList tmpDataList)
         {
+            InputSetting = new InputManager(tmpDataList);
             // 以下指定オブジェクトDestroy時にイベント破棄設定=========
             keyResetInput.AddTo(manageObject);
             FoodNicknamesTextPoint.AddTo(manageObject);
@@ -40,8 +42,7 @@ namespace Title
 
         // 以下入力イベント取得用変数==================================================
         // オブジェクト取得イベント
-        public IObservable<GameObject> HoldPlayerObject => HavePlayerObject;
-        public IObservable<GameObject> HoldSubPlayerObject => HaveSubPlayerObject;
+        public IObservable<GameObject>[] HoldPlayerObject => HavePlayerObject;
         // カメラリセットイベント
         public IReadOnlyReactiveProperty<bool> ResetCameraToStart => keyResetInput;
         public IObservable<uint> KeyPressed => keyPressed;
@@ -54,8 +55,10 @@ namespace Title
         // リセットボタン判断リアクティブプロパティ
         private readonly ReactiveProperty<bool> keyResetInput = new BoolReactiveProperty();
         // 所持オブジェクト判断サブジェクト
-        public Subject<GameObject> HavePlayerObject{get;} = new Subject<GameObject>();
-        public Subject<GameObject> HaveSubPlayerObject{get;} = new Subject<GameObject>();
+        public Subject<GameObject>[] HavePlayerObject{get;} = {
+            new Subject<GameObject>(),
+            new Subject<GameObject>()
+            };
         // キー入力判断サブジェクト
         private Subject<uint> keyPressed = new Subject<uint>();
 
@@ -116,6 +119,13 @@ namespace Title
         // カメラ移動時間
         private SceneMoveTime moveTime = new SceneMoveTime(2);
 
+        // Playerのデータ
+        private TitlePlayerDataList playerDataList;
+
+        public InputManager(TitlePlayerDataList tmpData)
+        {
+            playerDataList = tmpData;
+        }
 
         /// <summary>
         /// ゲームスタートイベント処理
@@ -124,22 +134,22 @@ namespace Title
         {
             // ゲームスタートイベント============================================
             // メインプレイヤー用イベント
-            ObjectManager.Events.HoldPlayerObject
+            ObjectManager.Events.HoldPlayerObject[0]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトを持っているか
                 .Where(x => x)
                 // スタート用のオブジェクトが入っているか
                 .Where(x => x.name == "GasBurner")
-                .Where(_ => Input.GetKeyDown(KeyCode.Space))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[0].DeterminationKey))
                 // シーン転移が可能か
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
                 .Subscribe(x =>
                 {
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
 
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
@@ -151,22 +161,22 @@ namespace Title
                 });
 
             // サブプレイヤー用イベント
-            ObjectManager.Events.HaveSubPlayerObject
+            ObjectManager.Events.HoldPlayerObject[1]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトを持っているか
                 .Where(x => x)
                 // スタート用のオブジェクトが入っているか
                 .Where(x => x.name == "GasBurner")
-                .Where(_ => Input.GetKeyDown(KeyCode.Return))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[1].DeterminationKey))
                 // シーン転移が可能か
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
                 .Subscribe(x =>
                 {                    
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
 
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
@@ -186,14 +196,14 @@ namespace Title
         {
             // 食材相性UI表示イベント==============================================
             // メインプレイヤー用イベント
-            ObjectManager.Events.HoldPlayerObject
+            ObjectManager.Events.HoldPlayerObject[0]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerかSubPlayerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "RecipeBook")
-                .Where(_ => Input.GetKeyDown(KeyCode.Space))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[0].DeterminationKey))
                 // 押されて指定秒経っていたら
                 // レシピ本は挙動が二つある為２倍する
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount * 2))
@@ -202,8 +212,8 @@ namespace Title
                 {
                     
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
 
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
@@ -215,14 +225,14 @@ namespace Title
                 });
 
             // サブプレイヤー用イベント
-            ObjectManager.Events.HaveSubPlayerObject
+            ObjectManager.Events.HoldPlayerObject[1]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerかSubPlayerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "RecipeBook")
-                .Where(_ => Input.GetKeyDown(KeyCode.Return))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[1].DeterminationKey))
                 // 押されて指定秒経っていたら
                 // レシピ本は挙動が二つある為２倍する
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount * 2))
@@ -231,8 +241,8 @@ namespace Title
                 {
                     
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
 
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
@@ -253,14 +263,14 @@ namespace Title
         {
             // 食材一覧表示イベント================================================
             // メインプレイヤー用イベント
-            ObjectManager.Events.HoldPlayerObject
+            ObjectManager.Events.HoldPlayerObject[0]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "Refrugerator")
-                .Where(_ => Input.GetKeyDown(KeyCode.Space))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[0].DeterminationKey))
                 // 押されて指定秒経っていたら
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
@@ -268,8 +278,8 @@ namespace Title
                 {
                     
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.MAIN, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
 
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
@@ -281,22 +291,22 @@ namespace Title
                 });
 
             // サブプレイヤー用イベント
-            ObjectManager.Events.HaveSubPlayerObject
+            ObjectManager.Events.HoldPlayerObject[1]
                 // イベントが処理されていなければ
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // イベント指定した入力がされているか
                 .Where(x => x)
                 // playerのRayにスタート用のオブジェクトが入っているか
                 .Where(x => x.name == "Refrugerator")
-                .Where(_ => Input.GetKeyDown(KeyCode.Return))
+                .Where(_ => Input.GetKeyDown(playerDataList.PlayerDatas[1].DeterminationKey))
                 // 押されて指定秒経っていたら
                 .ThrottleFirst(TimeSpan.FromSeconds(moveTime.Amount))
                 // 実施
                 .Subscribe(async x =>
                 {
                     // アシストUI非表示
-                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
-                        ObjectManager.Ui.SetAssistPlayerUIActive((int)PlayerManager.PlayerState.SUB, false);
+                    if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行
@@ -359,152 +369,139 @@ namespace Title
     /// </summary>
     public class InputMovementManager
     {
+        private TitlePlayerData playerData;
+        public InputMovementManager(TitlePlayerData tmpData)
+        {
+            playerData = tmpData;
+        }
 
 
         /// <summary>
-        /// 左移動イベント処理
+        /// 前方移動イベント処理
         /// </summary>
-        /// <param name="leftKey">左移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void leftMovementEvent(KeyCode leftKey, PlayerManager tmpPlayer)
+        private void forwardMovementEvent()
         {
             // 前方移動
-            tmpPlayer.Object.UpdateAsObservable()
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
                 // wが押されているか
-                .Where(_ => Input.GetKey(leftKey))
+                .Where(_ => Input.GetKey(playerData.MoveKey[0]))
                 // イベントが実行中でないか
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => TitleConstants.PLAYER_DIRECTION_LEFT != tmpPlayer.HitDistance)
+                .Where(_ => Vector3.zero != ObjectManager.Player[playerData.Id].HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
-                            tmpPlayer.MoveDis == Vector3.left)
+                .Where(_ => ObjectManager.Player[playerData.Id].MoveDis == Vector3.zero ||
+                            ObjectManager.Player[playerData.Id].MoveDis == Vector3.forward)
                 // 実行
-                .Subscribe(_ => tmpPlayer.Move.LeftMovement(tmpPlayer))
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.ForwardMovement())
                 // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
+
+        }
+        /// <summary>
+        /// 左移動イベント処理
+        /// </summary>
+        private void leftMovementEvent()
+        {
+            // 前方移動
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
+                // wが押されているか
+                .Where(_ => Input.GetKey(playerData.MoveKey[1]))
+                // イベントが実行中でないか
+                .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
+                // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_LEFT != ObjectManager.Player[playerData.Id].HitDistance)
+                // playerが待機中か同じ向きに動いているか
+                .Where(_ => ObjectManager.Player[playerData.Id].MoveDis == Vector3.zero ||
+                            ObjectManager.Player[playerData.Id].MoveDis == Vector3.left)
+                // 実行
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.LeftMovement())
+                // 指定のオブジェクトが消えるまで
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
+
+        }
+        /// <summary>
+        /// 後方移動イベント処理
+        /// </summary>
+        private void backMovementEvent()
+        {
+            // 前方移動
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
+                // wが押されているか
+                .Where(_ => Input.GetKey(playerData.MoveKey[2]))
+                // イベントが実行中でないか
+                .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
+                // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_BACK != ObjectManager.Player[playerData.Id].HitDistance)
+                // playerが待機中か同じ向きに動いているか
+                .Where(_ => ObjectManager.Player[playerData.Id].MoveDis == Vector3.zero ||
+                            ObjectManager.Player[playerData.Id].MoveDis == Vector3.back)
+                // 実行
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.BackMovement())
+                // 指定のオブジェクトが消えるまで
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
 
         }
 
         /// <summary>
         /// 右移動イベント処理
         /// </summary>
-        /// <param name="rightKey">右移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void rightMovementEvent(KeyCode rightKey, PlayerManager tmpPlayer)
+        private void rightMovementEvent()
         {
             // 前方移動
-            tmpPlayer.Object.UpdateAsObservable()
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
                 // wが押されているか
-                .Where(_ => Input.GetKey(rightKey))
+                .Where(_ => Input.GetKey(playerData.MoveKey[3]))
                 // イベントが実行中でないか
                 .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
                 // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => TitleConstants.PLAYER_DIRECTION_RIGHT != tmpPlayer.HitDistance)
+                .Where(_ => TitleConstants.PLAYER_DIRECTION_RIGHT != ObjectManager.Player[playerData.Id].HitDistance)
                 // playerが待機中か同じ向きに動いているか
-                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
-                            tmpPlayer.MoveDis == Vector3.right)
+                .Where(_ => ObjectManager.Player[playerData.Id].MoveDis == Vector3.zero ||
+                            ObjectManager.Player[playerData.Id].MoveDis == Vector3.right)
                 // 実行
-                .Subscribe(_ => tmpPlayer.Move.RightMovement(tmpPlayer))
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.RightMovement())
                 // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
 
         }
 
-        /// <summary>
-        /// 前方移動イベント処理
-        /// </summary>
-        /// <param name="forwardKey">前方移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void forwardMovementEvent(KeyCode forwardKey, PlayerManager tmpPlayer)
-        {
-            // 前方移動
-            tmpPlayer.Object.UpdateAsObservable()
-                // wが押されているか
-                .Where(_ => Input.GetKey(forwardKey))
-                // イベントが実行中でないか
-                .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
-                // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => Vector3.zero != tmpPlayer.HitDistance)
-                // playerが待機中か同じ向きに動いているか
-                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
-                            tmpPlayer.MoveDis == Vector3.forward)
-                // 実行
-                .Subscribe(_ => tmpPlayer.Move.ForwardMovement(tmpPlayer))
-                // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
 
-        }
-
-        /// <summary>
-        /// 後方移動イベント処理
-        /// </summary>
-        /// <param name="backkey">後方移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void backMovementEvent(KeyCode backkey, PlayerManager tmpPlayer)
-        {
-            // 前方移動
-            tmpPlayer.Object.UpdateAsObservable()
-                // wが押されているか
-                .Where(_ => Input.GetKey(backkey))
-                // イベントが実行中でないか
-                .Where(_ => !ObjectManager.TitleScene.NowPlayeEvents)
-                // オブジェクトに当たっている場合当たった向きが指定の向きじゃないか
-                .Where(_ => TitleConstants.PLAYER_DIRECTION_BACK != tmpPlayer.HitDistance)
-                // playerが待機中か同じ向きに動いているか
-                .Where(_ => tmpPlayer.MoveDis == Vector3.zero ||
-                            tmpPlayer.MoveDis == Vector3.back)
-                // 実行
-                .Subscribe(_ => tmpPlayer.Move.BackMovement(tmpPlayer))
-                // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
-
-        }
 
         /// <summary>
         /// アニメーション初期化イベント処理
         /// </summary>
-        /// <param name="forwardKey">前方移動Key</param>
-        /// <param name="leftKey">左移動Key</param>
-        /// <param name="backkey">後方移動Key</param>
-        /// <param name="rightKey">右移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void resetAnimEvents(KeyCode forwardKey, KeyCode leftKey, KeyCode backkey, KeyCode rightKey, PlayerManager tmpPlayer)
+        private void resetAnimEvents()
         {
             // アニメーション初期化
-            tmpPlayer.Object.UpdateAsObservable()
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
                 // どの移動ボタンも押されていないとき
-                .Where(_ => !Input.GetKey(forwardKey)&& 
-                            !Input.GetKey(leftKey)&&
-                            !Input.GetKey(backkey)&&
-                            !Input.GetKey(rightKey))
+                .Where(_ => !Input.GetKey(playerData.MoveKey[0])&& 
+                            !Input.GetKey(playerData.MoveKey[1])&&
+                            !Input.GetKey(playerData.MoveKey[2])&&
+                            !Input.GetKey(playerData.MoveKey[3]))
                 // 実行
-                .Subscribe(_ => tmpPlayer.Move.ResetAnim(tmpPlayer))
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.ResetAnim())
                 // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
         }
 
         /// <summary>
         /// 挙動初期化イベント処理
         /// </summary>
-        /// <param name="forwardKey">前方移動Key</param>
-        /// <param name="leftKey">左移動Key</param>
-        /// <param name="backkey">後方移動Key</param>
-        /// <param name="rightKey">右移動Key</param>
-        /// <param name="tmpPlayer">動かす対象マネージャー</param>
-        private void resetMovementEvents(KeyCode forwardKey, KeyCode leftKey, KeyCode backkey, KeyCode rightKey, PlayerManager tmpPlayer)
+        private void resetMovementEvents()
         {
             // 挙動初期化
-            tmpPlayer.Object.UpdateAsObservable()
-                // どの移動ボタンも押されていないとき
-                .Where(_ => Input.GetKeyUp(forwardKey)|| 
-                            Input.GetKeyUp(leftKey)||
-                            Input.GetKeyUp(backkey)||
-                            Input.GetKeyUp(rightKey))
+            ObjectManager.Player[playerData.Id].Object.UpdateAsObservable()
+                // どれかのボタンが離された時
+                .Where(_ => Input.GetKeyUp(playerData.MoveKey[0])|| 
+                            Input.GetKeyUp(playerData.MoveKey[1])||
+                            Input.GetKeyUp(playerData.MoveKey[2])||
+                            Input.GetKeyUp(playerData.MoveKey[3]))
                 // 実行
-                .Subscribe(_ => tmpPlayer.Move.ResetMovement(tmpPlayer))
+                .Subscribe(_ => ObjectManager.Player[playerData.Id].Move.ResetMovement())
                 // 指定のオブジェクトが消えるまで
-                .AddTo(tmpPlayer.Object);
+                .AddTo(ObjectManager.Player[playerData.Id].Object);
         }
 
         /// <summary>
@@ -513,47 +510,24 @@ namespace Title
         public void SetMovementLoops()
         {
             // 前方移動
-            forwardMovementEvent(KeyCode.W, ObjectManager.Player);
+            forwardMovementEvent();
             
             // 左移動
-            leftMovementEvent(KeyCode.A, ObjectManager.Player);
+            leftMovementEvent();
 
             // 後方移動
-            backMovementEvent(KeyCode.S, ObjectManager.Player);
+            backMovementEvent();
 
             // 右移動
-            rightMovementEvent(KeyCode.D, ObjectManager.Player);
+            rightMovementEvent();
 
             // アニメーション初期化
-            resetAnimEvents(KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, ObjectManager.Player);
+            resetAnimEvents();
 
             // 挙動初期化
-            resetMovementEvents(KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, ObjectManager.Player);
+            resetMovementEvents();
         }
 
-        /// <summary>
-        /// ２P用移動関数
-        /// </summary>
-        public void SetSubPlayerMovementLoops()
-        {
-            // 前方移動
-            forwardMovementEvent(KeyCode.UpArrow, ObjectManager.SubPlayer);
-            
-            // 左移動
-            leftMovementEvent(KeyCode.LeftArrow, ObjectManager.SubPlayer);
-
-            // 後方移動
-            backMovementEvent(KeyCode.DownArrow, ObjectManager.SubPlayer);
-
-            // 右移動
-            rightMovementEvent(KeyCode.RightArrow, ObjectManager.SubPlayer);
-
-            // アニメーション初期化
-            resetAnimEvents(KeyCode.UpArrow, KeyCode.LeftArrow, KeyCode.DownArrow, KeyCode.RightArrow, ObjectManager.SubPlayer);
-
-            // 挙動初期化
-            resetMovementEvents(KeyCode.UpArrow, KeyCode.LeftArrow, KeyCode.DownArrow, KeyCode.RightArrow, ObjectManager.SubPlayer);
-        }
     }
 
     /// <summary>
@@ -580,8 +554,8 @@ namespace Title
             // 食材一覧表示テキスト接近処理イベント設定
             ObjectManager.Events.FoodNicknamesTextPoint
                 // どちらかの取得オブジェクトが冷蔵庫の場合
-                .Where(_ => ObjectManager.Player.HitObject?.name == ("Refrugerator") ||
-                            ObjectManager.SubPlayer.HitObject?.name == ("Refrugerator"))
+                .Where(_ => ObjectManager.Player[0].HitObject?.name == ("Refrugerator") ||
+                            ObjectManager.Player[1].HitObject?.name == ("Refrugerator"))
                 // 目標座標が接近座標の場合
                 .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
@@ -602,8 +576,8 @@ namespace Title
             // 食材相性表示テキスト接近処理イベント設定
             ObjectManager.Events.DisplayIngredientsListTextPoint
                 // どちらかの取得オブジェクトがレシピブックの場合
-                .Where(_ => ObjectManager.Player.HitObject?.name == ("RecipeBook") ||
-                            ObjectManager.SubPlayer.HitObject?.name == ("RecipeBook"))
+                .Where(_ => ObjectManager.Player[0].HitObject?.name == ("RecipeBook") ||
+                            ObjectManager.Player[1].HitObject?.name == ("RecipeBook"))
                 // 目標座標が接近座標の場合
                 .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
@@ -624,8 +598,8 @@ namespace Title
             // ゲームスタートテキスト接近処理イベント設定
             ObjectManager.Events.GameStartTextPoint
                 // どちらかの取得オブジェクトがガスバーナーの場合
-                .Where(_ => ObjectManager.Player.HitObject?.name == ("GasBurner") ||
-                            ObjectManager.SubPlayer.HitObject?.name == ("GasBurner"))
+                .Where(_ => ObjectManager.Player[0].HitObject?.name == ("GasBurner") ||
+                            ObjectManager.Player[1].HitObject?.name == ("GasBurner"))
                 // 目標座標が接近座標の場合
                 .Where(x => x == TitleConstants.TEXT_IMAGE_APPROACH_POS_Y)
                 // 実施
@@ -679,7 +653,7 @@ namespace Title
                     if(!Physics.BoxCast(
                         drawRayPos, 
                         drawRayScale * 0.5f, 
-                        ObjectManager.TitleScene.TextImageCanvas[i].transform.forward, 
+                        -ObjectManager.TitleScene.TextImageCanvas[i].transform.forward, 
                         out ObjectManager.Text.HitPlayerRay[i], Quaternion.identity, 
                         rayDistance.Amount))
                         {

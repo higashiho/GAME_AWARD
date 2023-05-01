@@ -38,6 +38,7 @@ namespace Title
         // インスタンス化
         private RefrigeratorUIMove refrigeratorUIMove;
         private PlayerAssistUIMove assistUIMove;
+        private TitlePlayerDataList playerDataList;
 
         // Start is called before the first frame update
         async void Start()
@@ -50,6 +51,8 @@ namespace Title
 
             // インプットイベントがインスタンス化されるまで待つ
             await UniTask.WaitWhile(() => ObjectManager.Events == null);
+
+            playerDataList = ObjectManager.TitleScene.PlayerData;
             // イベント設定
             refrigeratorUIMove.InputUIEvent();
 
@@ -64,12 +67,12 @@ namespace Title
         {
             // アシストUI挙動設定
             this.UpdateAsObservable()
-                .Where(_ => ObjectManager.Player.HitObject || ObjectManager.SubPlayer.HitObject)
+                .Where(_ => ObjectManager.Player[0].HitObject || ObjectManager.Player[1].HitObject)
                 .Subscribe(_ => {
-                    assistUIMove.Display((int)PlayerManager.PlayerState.MAIN);
-                    assistUIMove.Display((int)PlayerManager.PlayerState.SUB);
-                    assistUIMove.MainMovement();
-                    assistUIMove.SubMovement();
+                    assistUIMove.Display(playerDataList.PlayerDatas[0].Id);
+                    assistUIMove.Display(playerDataList.PlayerDatas[1].Id);
+                    for(int i = 0; i < playerDataList.PlayerDatas.Count; i++)
+                        assistUIMove.MainMovement(i);
                 }).AddTo(this);
         }
 
@@ -127,20 +130,20 @@ namespace Title
         {
             if(canvas.transform.GetChild(num).gameObject.activeSelf)
             {
-                if(num == (int)PlayerManager.PlayerState.MAIN)
+                if(num == ObjectManager.TitleScene.PlayerData.PlayerDatas[0].Id)
                 {
                     var tmpPos = new Vector3(
-                        ObjectManager.Player.Object.transform.position.x,
+                        ObjectManager.Player[num].Object.transform.position.x,
                         canvas.transform.GetChild(num).position.y,
                         canvas.transform.GetChild(num).position.z
                     );
 
                     canvas.transform.GetChild(num).position = tmpPos;
                 }
-                else if(num == (int)PlayerManager.PlayerState.SUB)
+                else if(num == ObjectManager.TitleScene.PlayerData.PlayerDatas[1].Id)
                 {
                     var tmpPos = new Vector3(
-                        ObjectManager.SubPlayer.Object.transform.position.x,
+                        ObjectManager.Player[num].Object.transform.position.x,
                         canvas.transform.GetChild(num).position.y,
                         canvas.transform.GetChild(num).position.z
                     );
@@ -151,34 +154,19 @@ namespace Title
         }
 
         /// <summary>
-        /// メインキャラ用アシスト挙動関数
+        /// アシスト挙動関数
         /// </summary>
-        public void MainMovement()
+        public void MainMovement(int num)
         {
-            if(mainMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf)
+            if(mainMoveTween == null && canvas.transform.GetChild(num).gameObject.activeSelf)
             {
-                mainMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).DOLocalMoveY(
-                    canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).localPosition.y + TitleConstants.ASSISTUI_MOVE_Y,
+                mainMoveTween = canvas.transform.GetChild(num).DOLocalMoveY(
+                    canvas.transform.GetChild(num).localPosition.y + TitleConstants.ASSISTUI_MOVE_Y,
                     moveTile.Amount
                 ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => mainMoveTween = null);
             }
-            else if(!canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN).gameObject.activeSelf) 
-                DOTween.Kill(canvas.transform.GetChild((int)PlayerManager.PlayerState.MAIN));
-        }
-        /// <summary>
-        /// サブキャラ用アシスト挙動関数
-        /// </summary>
-        public void SubMovement()
-        {
-            if(subMoveTween == null && canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf)
-            {
-                subMoveTween = canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).DOLocalMoveY(
-                    canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).localPosition.y + TitleConstants.ASSISTUI_MOVE_Y,
-                    moveTile.Amount
-                ).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).OnKill(() => subMoveTween = null);
-            }
-            else if(!canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB).gameObject.activeSelf) 
-                DOTween.Kill(canvas.transform.GetChild((int)PlayerManager.PlayerState.SUB));
+            else if(!canvas.transform.GetChild(num).gameObject.activeSelf) 
+                DOTween.Kill(canvas.transform.GetChild(num));
         }
     }
 
