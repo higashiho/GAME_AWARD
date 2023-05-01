@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e415b509c75f8949a261aaa98db3c39, type: 3}
   m_Name: SalamiSlice
   m_EditorClassIdentifier: 
-  pointAmount: 1
-  pointType: MEAT
+  point: 1
+  amount: 1
+  type: MEAT

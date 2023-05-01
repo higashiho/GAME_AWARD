@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e415b509c75f8949a261aaa98db3c39, type: 3}
   m_Name: TomatoHalf
   m_EditorClassIdentifier: 
-  pointAmount: 3
-  pointType: VEGEABLE
+  point: 3
+  amount: 3
+  type: VEGETABLE

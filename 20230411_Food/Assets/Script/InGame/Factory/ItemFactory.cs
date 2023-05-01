@@ -50,12 +50,12 @@ namespace Item
         private UniTask? loadTask = null;
 
         // アイテムを生成する間隔
-        private float spaceX = 10.0f;
-        private float spaceZ = 3.0f;
+        private float spaceX = 8.0f;
+        private float spaceZ = 2.4f;
 
         // アイテムを生成する基準ライン
-        private float baseLineX = -15.0f;
-        private float baseLineZ = -4.5f;
+        private float baseLineX = -12.0f;
+        private float baseLineZ = -6.0f;
 
         private int posRow = 4;
         private int posCol = 4;

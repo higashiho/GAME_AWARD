@@ -341,11 +341,7 @@ namespace Player
         public FoodPoint()
         {
             int[] val = {0,0};
-            // Array.Add("MEAT", val);
-            // Array.Add("FISH", val);
-            // Array.Add("VEGETABLE", val);
-            // Array.Add("SEASOUSING", val);
-
+            
             // 取得ポイント配列初期化
             for(int i = 0; i < InGameConst.PointName.Length - 1; i++)
             {
