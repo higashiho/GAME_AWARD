@@ -54,9 +54,6 @@ namespace GameManager
             ObjectManager.PlayerManagers.Add(new PlayerManager(main));
             ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
 
-            objectManager.DataPlayers.Add(main);
-            objectManager.DataPlayers.Add(sub);
-
             ObjectManager.ItemManager = new ItemManager();
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
@@ -134,13 +131,6 @@ namespace GameManager
         public static List<PlayerManager> PlayerManagers
         {
             get{return playerManagers;}
-        }
-
-        private List<DataPlayer> dataPlayers = new List<DataPlayer>(2);
-
-        public List<DataPlayer> DataPlayers
-        {
-            get{return dataPlayers;}
         }
 
         // インゲーム全体統括メソッド
