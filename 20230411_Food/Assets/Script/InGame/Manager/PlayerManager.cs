@@ -81,7 +81,7 @@ namespace Player
     public class FoodPoint
     {
         // プレイヤーが取得したポイントを保管しておく配列
-        public Dictionary<string, int> Array{get; private set;} = new Dictionary<string, int>();
+        public Dictionary<string, int[]> Array{get; private set;} = new Dictionary<string, int[]>(4);
         // 取得したアイテムの座標を返すイベント
         public event EventHandler<ReturnPresentPosEventArgs> ReturnPresentItemPos;
         /// <summary>
@@ -106,6 +106,11 @@ namespace Player
         public FoodPoint(DataPlayer tmpData)
         {
             Move = new PlayerMove(tmpData);
+            int[] val = {0,0};
+            Array.Add("MEAT", val);
+            Array.Add("FISH", val);
+            Array.Add("VEGETABLE", val);
+            Array.Add("SEASOUSING", val);
         }
 
         public void addPointUpdate()
@@ -120,29 +125,29 @@ namespace Player
             if(!Move.RayController.RayHitObject) return;
 
             // 初めてその種類の食材を獲得
-            if(!Array.ContainsKey(getFoodName(data))
-            && Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                // アイテムの座標を取得するイベントインスタンス化
-                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
-                // 座標設定
-                args.presentPos = Move.RayController.RayHitObject.transform.position;
-                // 座標を返す
-                ReturnPresentPos(args);
+            // if(!Array.ContainsKey(getFoodName(data))
+            // && Input.GetKeyDown(KeyCode.LeftShift))
+            // {
+            //     // アイテムの座標を取得するイベントインスタンス化
+            //     ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+            //     // 座標設定
+            //     args.presentPos = Move.RayController.RayHitObject.transform.position;
+            //     // 座標を返す
+            //     ReturnPresentPos(args);
 
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+            //     // 目の前の食材をキューに追加
+            //     ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
 
-                // １回しか取得できない
-                deleteFood(data);
+            //     // １回しか取得できない
+            //     deleteFood(data);
 
-                // Dictionaryに肉１点追加
-                Array.Add(getFoodName(data), 1);
-                //Debug.Log(Array.FirstOrDefault());
+            //     // Dictionaryに肉１点追加
+            //     Array.Add(getFoodName(data), 1);
+            //     //Debug.Log(Array.FirstOrDefault());
 
                 
-                return;
-            }
+            //     return;
+            // }
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName(data))
@@ -162,7 +167,7 @@ namespace Player
                 deleteFood(data);
 
                 // 肉に１点加算
-                incrimentDictionary(getFoodName(data), 1);
+                incrimentDictionary(getFoodName(data), getFoodPoint(data));
                 //Debug.Log(Array.FirstOrDefault());
 
                 
@@ -190,15 +195,22 @@ namespace Player
         }
 
         // Dictionaryの特定のキーの値を加算する
-        private void incrimentDictionary(string food, int pointValue)
+        private void incrimentDictionary(string type, int[] pointValue)
         {
-            int tmpCount;
+            int[] tmpCount;
 
             // tmpCountにfoodの値を代入
-            Array.TryGetValue(food, out tmpCount);
+            Array.TryGetValue(type, out tmpCount);
+
+            // 追加するポイントの配列をつくる
+            int[] val = 
+            {
+                tmpCount[0] + pointValue[0],
+                tmpCount[1] + pointValue[1]
+            };
 
             // 獲得ポイントを加算する
-            Array[food] = tmpCount + pointValue;
+            Array[type] = val;
         }
 
 
@@ -206,7 +218,19 @@ namespace Player
         private string getFoodName(DataPlayer data)
         {
             // 目の前にある食材の名前を返す
-            return  Move.RayController.RayHitObject.tag;
+            return  Move.RayController.RayHitObject.GetComponent<GetValue>().Type;
+        }
+
+        // 獲得した食材のポイントと量を取得する
+        private int[] getFoodPoint(DataPlayer data)
+        {
+            int[] val = 
+            {
+                Move.RayController.RayHitObject.GetComponent<GetValue>().Point,
+                Move.RayController.RayHitObject.GetComponent<GetValue>().Amount
+            };
+
+            return val;
         }
     }
 

@@ -13,20 +13,6 @@ using Food;
 
 namespace FoodPoint
 {
-    // プレイヤー => MeatPoint, FishPoint, VegetablePoint => 三点の比を計算する      =>５割
-    //           => 調味料ポイントを計算する                                         =>４割
-    //           => 量の割合を計算する                                               =>１割
-
-
-    // プレイヤーのDictionaryを参照
-    // FoodDataと比較
-    // 計算
-
-    // Food
-    // Seasousing
-    // Amount
-    // 別々に値を算出
-
     /// <summary>
     /// プレイヤーが取得したポイントを管理するクラス
     /// </summary>
@@ -35,17 +21,16 @@ namespace FoodPoint
         // フードデータ
         private FoodData foodData;
 
-        
+        // 満腹度ポイント
         public LevelOfSatiety Amount;
+        // 食料ポイント
         public FoodPoint Points;
-
+        // 調味料ポイント
         public SeasousingPoint SeasPoint;
 
-        
         // プレイヤー
         private PlayerManager player;
 
-        private FoodPoint[] pointArr = new FoodPoint[5];
 
         // 指定された料理のポイント配列
         private BaseFoodPoint[] specifiedDishPoint = new BaseFoodPoint[5];
@@ -84,7 +69,7 @@ namespace FoodPoint
         /// プレイヤーのポイントを取得するメソッド
         /// </summary>
         /// <returns></returns>
-        public void GetPlayerPoint()
+        public void GetPlayerPoint(PlayerManager player)
         {
             int vegetablePoint = 0;
             int meatPoint = 0;
@@ -113,8 +98,10 @@ namespace FoodPoint
             playerPercentageArr[2] = fishPoint;
             playerPercentageArr[3] = seasousing;
             playerPercentageArr[4] = amount;
-            
-        
+            for(int i = 0; i < playerPercentageArr.Length; i++)
+            {
+                Debug.Log(playerPercentageArr[i]);
+            }
         }
 
         /// <summary>

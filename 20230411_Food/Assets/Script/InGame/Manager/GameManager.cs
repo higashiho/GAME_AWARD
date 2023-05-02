@@ -29,7 +29,7 @@ namespace GameManager
         private gameState phase;
 
         // ポイント管理クラス
-        private PointManager pointManager;
+        private PointManager[] pointManager = new PointManager[2];
         
         void Start()
         {
@@ -58,7 +58,12 @@ namespace GameManager
             objectManager.DataPlayers.Add(sub);
 
             ObjectManager.ItemManager = new ItemManager();
-            pointManager = new PointManager(ObjectManager.Player);
+            // ポイントマネージャー作成
+            for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+            {
+                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i]);
+            }
+            
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
             // 仮
@@ -100,7 +105,11 @@ namespace GameManager
 
                     // プレイヤーが集めたポイント達を配列に入れていく
                     //pointManager.GetPlayerFoodPoint(ObjectManager.Player);
-                    pointManager.GetPlayerPoint();
+                    for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                    {
+                        pointManager[i].GetPlayerPoint(ObjectManager.PlayerManagers[i]);
+                    }
+                    phase = gameState.END;
                     break;
                 
                 case gameState.END:
