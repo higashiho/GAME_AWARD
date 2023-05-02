@@ -10,4 +10,6 @@ public class ItemData : ScriptableObject
     [Header("アイテムがステージに出現する数"), SerializeField]
     private int itemPopNum;
     public int ItemPopNum{get{return itemPopNum;}}
+
+    
 }

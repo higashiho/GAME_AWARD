@@ -13,18 +13,6 @@ using Food;
 
 namespace FoodPoint
 {
-    // プレイヤー => MeatPoint, FishPoint, VegetablePoint => 三点の比を計算する      =>５割
-    //           => 調味料ポイントを計算する                                         =>４割
-    //           => 量の割合を計算する                                               =>１割
-
-
-    // プレイヤーのDictionaryを参照
-    // FoodDataと比較
-    // 計算
-
-    // FoodDataからテキストメッセージを取得
-    // UIで料理を指定するときにメッセージを呼び出せるようにしておく 
-
     /// <summary>
     /// プレイヤーが取得したポイントを管理するクラス
     /// </summary>
@@ -32,91 +20,118 @@ namespace FoodPoint
     {
         // フードデータ
         private FoodData foodData;
-        // 料理データ
-        private DishData dishData;
+
+        // 満腹度ポイント
+        public LevelOfSatiety Amount;
+        // 食料ポイント
+        public FoodPoint Points;
+        // 調味料ポイント
+        public SeasousingPoint SeasPoint;
+
         // プレイヤー
         private PlayerManager player;
 
+
+        // 指定された料理のポイント配列
+        private BaseFoodPoint[] specifiedDishPoint = new BaseFoodPoint[5];
+
+
+        static public int[] playerPercentageArr = new int[5];
+
+
+        static public int[] arr = new int[3];
+
+    
+        public enum Point
+        {
+            // 肉ポイント
+            MEATPOINT = 0,
+            // 魚ポイント
+            FISHPOINT = 1,
+            // 野菜ポイント
+            VEGPOINT = 2,
+            // 調味料ポイント
+            SEASOUSINGPOINT = 3,
+            // 満腹度ポイント
+            LEVELOFSATIETY = 4
+        }
+        public Point PointType;
         /// <summary>
         /// ポイントマネージャーのコンストラクタ
         /// </summary>
         /// <param name="data">料理の数値データ</param>
-        public PointManager(DishData data)
+        public PointManager(PlayerManager tmpPlayer)
         {
-            dishData = data;
+            player = tmpPlayer;
         }
 
         /// <summary>
-        /// 料理を指定するメソッド
-        /// Openingなどで呼び出す
+        /// プレイヤーのポイントを取得するメソッド
         /// </summary>
-        /// <param name="id">料理ID</param>
-        public void SetFood(int id)
+        /// <returns></returns>
+        public void GetPlayerPoint(PlayerManager player)
         {
-            if(id < 0)
-            {
-                Debug.LogError("指定された料理のIDは負の値で存在しません");
-                return;
-            }
-
-            // 料理を生成
-            foodData = new FoodData(dishData, id);
-        }
-
-        /// <summary>
-        /// 調味料ポイントを計算するメソッド
-        /// プレイヤーが取得した調味料ポイントを計算して
-        /// 得点化する
-        /// 10点中何点みたいな。。。
-        /// </summary>
-        public void CalcSeasoningPoint()
-        {
-
-        }
-
-        /// <summary>
-        /// FoodPointに換算するメソッド
-        /// ポイントは同じ型のものを渡してください
-        /// </summary>
-        /// <param name="tmpPoint">プレイヤーが取得したポイント</param>
-        /// <param name="perfectPoint">指定された料理のポイント</param>
-        /// <returns>各パラメータポイントをFoodPointに変換した数値</returns>
-       public FoodPoint CalcFoodPoint(BaseFoodPoint tmpPoint, BaseFoodPoint perfectPoint)
-       {
-            // 指定された料理のポイントが０だった場合
-            if(perfectPoint.Amount == 0)
-            {
-                return new FoodPoint(0);
-            }
+            int vegetablePoint = 0;
+            int meatPoint = 0;
+            int fishPoint = 0;
+            int amount = 0;
+            int seasousing = 0;
             
-            // 取得したポイントの名前に相違がある場合
-            if(tmpPoint.PointName != perfectPoint.PointName)
+            int[] val = player.FoodPoint.Array["VEGETABLE"];
+            vegetablePoint = val[0];
+            amount += val[1];
+
+            val = player.FoodPoint.Array["MEAT"];
+            meatPoint = val[0];
+            amount += val[1];
+
+            val = player.FoodPoint.Array["FISH"];
+            fishPoint = val[0];
+            amount += val[1];
+
+            val = player.FoodPoint.Array["SEASOUSING"];
+            seasousing = val[0];
+            amount += val[1];
+
+            playerPercentageArr[0] = meatPoint;
+            playerPercentageArr[1] = vegetablePoint;
+            playerPercentageArr[2] = fishPoint;
+            playerPercentageArr[3] = seasousing;
+            playerPercentageArr[4] = amount;
+            for(int i = 0; i < playerPercentageArr.Length; i++)
             {
-                Debug.LogError("渡されたポイントと指定された料理のポイントの型が一致していません");
-                return new FoodPoint(0);
+                Debug.Log(playerPercentageArr[i]);
             }
+        }
 
-            float resultRate;
-            // ポイント取得
-            int rate = tmpPoint.Amount / perfectPoint.Amount;
+        /// <summary>
+        /// 割合計算メソッド
+        /// </summary>
+        /// <param name="getPoint">プレイヤーが取得したポイント</param>
+        /// <param name="targetPoint">目標のポイント</param>
+        /// <returns>得点率</returns>
+        public int CalcThePercentage(int getPoint, int targetPoint)
+        {
+            int percent = 0;
+            // 割合を計算
+            int rate = getPoint / targetPoint;
 
+            // 割合が1より大きい場合
             if(rate > 1)
             {
-                resultRate = rate % 1;
+                percent = (1 - (rate % 1) ) * 100;
+            }
+            else if(rate >= 0)
+            {
+                percent = rate * 100;
             }
             else
             {
-                resultRate = rate;
+                Debug.LogError("結果が負になっています");
             }
 
-            return new FoodPoint(perfectPoint.Amount * rate);
-       }
-
-        // 例)  fishPoint
-        //
-        // 指定された料理のfishPointと比較して割合を取得する
-        // 割合 < 1　指定された料理のfishPoint * 割合  => FoodPointに加算
-        // 割合 > 1  指定された料理のfishpoint * (割合 - 1)  => FoodPointに加算
+            return percent;
+        }
 
     }
 }

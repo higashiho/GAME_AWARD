@@ -20,9 +20,8 @@ namespace Food
 
         public Dictionary<DataIndex, string> DishPoints{get; private set;} = new Dictionary<DataIndex,string>(6);
         private string[] getData = new string[6]; 
-        public FoodData (DishData Data, int dishId)
+        public FoodData (int dishId)
         {
-            dishData = Data;
 
             GetDishData(dishId);
         }
