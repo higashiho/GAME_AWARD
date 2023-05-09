@@ -37,13 +37,6 @@ namespace FollowCamera
             {
                 followCameras.Add(MonoBehaviour.Instantiate(item));
             }
-            // for(int i = 0; i < count; i++)
-            // {
-            //     // 追従カメラ生成
-            //     followCameras[i] = MonoBehaviour.Instantiate(handle.Result);
-            // }
-            
-           
         }
 
         /// <summary>
@@ -95,7 +88,7 @@ namespace FollowCamera
 
                 // カメラの座標調整(各プレイヤーのX,Z座標を追従)
                 followCameras[i].transform.position = new Vector3(x, offsetY, z + offsetZ);
-                Debug.Log(followCameras[i].transform.position);
+               
 
             }
         }
