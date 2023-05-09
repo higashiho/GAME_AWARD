@@ -36,6 +36,10 @@ namespace Result
         [SerializeField, Header("Player達のアニメーション配列")]
         private Animator[] playerAnim = new Animator[2];
         public Animator[] PlayerAnim{get => playerAnim;}
+
+        [SerializeField]
+        private GameObject audioController;
+        public GameObject AudioController{get => audioController;}
         
 
         // Start is called before the first frame update
@@ -208,6 +212,11 @@ namespace Result
             await text.Movement();
 
             await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 80f, 100f);
+            
+            // ゲージ音停止
+            ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
+                GageSource.Stop();
+            
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.FOOD_AMOUNT);
         }
@@ -223,6 +232,11 @@ namespace Result
             await text.Movement();
 
             await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 80f, 100f);
+
+            // ゲージ音停止
+            ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
+                GageSource.Stop();
+            
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.SEASONING);
         }
@@ -238,6 +252,12 @@ namespace Result
             await text.Movement();
 
             await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 80f, 100f);
+
+            
+            // ゲージ音停止
+            ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
+                GageSource.Stop();
+            
             // 次の状態を代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.JUDGMENT);
         }
@@ -246,7 +266,12 @@ namespace Result
         /// </summary>
         private async void judgmentEvenet()
         {
-            Debug.Log("judgment");
+            // 勝利音再生
+            
+            // ゲージ音停止
+            ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
+                WinSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClipsList[(int)ResultSoundController.SoundPatternEnum.WIN_SE]);
+            
 
             // Player勝利
             if(gage.GetPlayerGageMaskPadding().w <= gage.GetSubPlayerGageMaskPadding().w)
@@ -310,6 +335,10 @@ namespace Result
         /// <param name="subPlayerPoint">サブプレイヤーの得点</param>
         public async UniTask Increase(int rate, float playerPoint, float subPlayerPoint)
         {
+            // ゲージ音再生
+            ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
+                GageSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClipsList[(int)ResultSoundController.SoundPatternEnum.GAGE_SE]);
+            
             // ゲージ減算最大値     (割合を取る為10分の1)
             var gageAmount = ObjectManager.Result.GageImages[0].GetComponent<RectTransform>().sizeDelta.y * (rate * 0.1f);
             // 0.001秒に対して減算する量        (400%ずつ減算するため400で除算)

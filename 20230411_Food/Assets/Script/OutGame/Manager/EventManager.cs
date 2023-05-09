@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UniRx.Triggers;
 using UniRx;
@@ -147,6 +148,17 @@ namespace Title
                 // 実施
                 .Subscribe(x =>
                 {
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    // ゲームスタートBGM再生
+                    sound.MainSource.
+                        DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
+                    sound.OnGamePlaySource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.GAME_PLAY_SE]);
+                    sound.OnGamePlaySource.
+                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
@@ -173,7 +185,18 @@ namespace Title
                 .Where(_ => OnSceneMoveFlag)
                 // 実施
                 .Subscribe(x =>
-                {                    
+                {          
+                    // ゲームスタートBGM再生
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
+                    sound.OnGamePlaySource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.GAME_PLAY_SE]);
+                    sound.OnGamePlaySource.
+                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                        
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
@@ -210,7 +233,13 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
-                    
+                    // sound再生
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
+
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
@@ -240,6 +269,13 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     
+                    // sound再生
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
+
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
@@ -276,6 +312,12 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
+                    // sound再生
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
@@ -304,6 +346,12 @@ namespace Title
                 // 実施
                 .Subscribe(async x =>
                 {
+                    // sound再生
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
@@ -335,6 +383,10 @@ namespace Title
                 // 実施
                 .Subscribe(async _ =>
                 {
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
+                    sound.MainSource.
+                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+
                     // イベント実行フラグを折る
                     ObjectManager.TitleScene.NowPlayeEvents = false;
                     // カメラリセット関数実行

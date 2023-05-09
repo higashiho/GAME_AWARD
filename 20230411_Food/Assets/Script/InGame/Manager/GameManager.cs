@@ -1,12 +1,16 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using FoodPoint;
+using System.Linq;
+using UniRx;
+
 
 using Item;
 using Player;
+using InGame;
 
 namespace GameManager
 {
@@ -31,19 +35,42 @@ namespace GameManager
         // ポイント管理クラス
         private PointManager[] pointManager = new PointManager[2];
         
-        void Start()
+        async void Start()
         {
-            objectManager = new ObjectManager();
+             if(!cutInCanvas.gameObject.activeSelf)
+                cutInCanvas.gameObject.SetActive(true);
+            // スタートアニメーション
+            // ロードなどの処理
+
+            // ゲームシーン初期化処理
+            if(initTask == null)
+            {
+                initTask = InitGame();
+
+                await (UniTask)initTask;
+            }
+
+            await UniTask.WaitWhile(() => !Input.GetKeyDown(KeyCode.Return));
+            ChangeState();
+               
+
         }
 
-
-        private ObjectManager objectManager;
-
         [SerializeField]
-        private DataPlayer main;
+        private DataPlayer mainPlayerData;
         
         [SerializeField]
-        private DataPlayer sub;
+        private DataPlayer subPlayerData;
+
+        [SerializeField]
+        private FoodThemeDataList foodThemeData;
+
+        [SerializeField]
+        private Canvas cutInCanvas;
+
+        public Subject<bool> NowCountDownFlag{get;} = new Subject<bool>();
+        [SerializeField]
+        private UIController uiController;
 
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
@@ -51,8 +78,9 @@ namespace GameManager
         /// <returns></returns>
         private async UniTask InitGame()
         {
-            ObjectManager.PlayerManagers.Add(new PlayerManager(main));
-            ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
+            ObjectManager.GameManager = this;
+            ObjectManager.PlayerManagers.Add(new PlayerManager(mainPlayerData));
+            ObjectManager.PlayerManagers.Add(new PlayerManager(subPlayerData));
 
             ObjectManager.ItemManager = new ItemManager();
             // ポイントマネージャー作成
@@ -65,35 +93,36 @@ namespace GameManager
             ObjectManager.ItemManager.Init();
             // 仮
             await UniTask.Delay(5);
+
+            setSubscribe();
+        }
+
+        private void setSubscribe()
+        {
+            NowCountDownFlag
+                .Where(x => x)
+                .Subscribe(_ =>
+                    {
+                        if(!uiController.gameObject.activeSelf)
+                            uiController.gameObject.SetActive(true);
+                    }
+                ).AddTo(this.gameObject);
         }
        
         
-        async void Update()
+        void Update()
         {
             switch(phase)
             {
-                case gameState.OPENING:
-                    // スタートアニメーション
-                    // ロードなどの処理
-
-                    // ゲームシーン初期化処理
-                    if(initTask == null)
-                    {
-                        initTask = InitGame();
-
-                        await (UniTask)initTask;
-                    }
-
-                    break;
                 
                 case gameState.COUNTDOWM:
                     // ゲームスタート時のカウントダウン処理
+                    NowCountDownFlag.OnNext(true);
                     break;
-
                 case gameState.GAME:
 
-                    objectManager.PlayerUpdate();
-                    objectManager.ItemUpdate();
+                    ObjectManager.PlayerUpdate();
+                    ObjectManager.ItemUpdate();
                         
                     
                     break;
@@ -106,22 +135,39 @@ namespace GameManager
                     {
                         pointManager[i].GetPlayerPoint(ObjectManager.PlayerManagers[i]);
                     }
-                    phase = gameState.END;
+                    ChangeState();
                     break;
                 
                 case gameState.END:
 
                     // リザルトシーンへ
                     SceneManager.LoadScene("ResultScene");
-                    phase = gameState.OPENING;
+                    ChangeState();
                     break;
 
             }
+        }
+
+        /// <summary>
+        /// 次のステートへ変更メソッド
+        /// </summary>
+        public void ChangeState()
+        {
+            if((int)phase <= Enum.GetValues(typeof(gameState)).Cast<int>().Max())
+                phase++;
+            else
+                phase = (gameState)Enum.GetValues(typeof(gameState)).Cast<int>().Min();
         }
     }
 
     public class ObjectManager
     {
+        private static GameManager gameManager;
+        public static GameManager GameManager
+        {
+            get => gameManager;
+            set => gameManager = value;
+        }
         
         // アイテム管理クラス
         private static ItemManager itemManager;
@@ -132,9 +178,9 @@ namespace GameManager
             set{itemManager = value;}
         }
 
-        public void ItemUpdate()
+        public static void ItemUpdate()
         {
-            ItemManager.Update();
+            //ItemManager.Update();
         }
 
         private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
@@ -145,7 +191,7 @@ namespace GameManager
         }
 
         // インゲーム全体統括メソッド
-        public void PlayerUpdate()
+        public static void PlayerUpdate()
         {
             for(int i = 0; i < PlayerManagers.Count; i++)
             {
