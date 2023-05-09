@@ -180,7 +180,7 @@ namespace GameManager
 
         public static void ItemUpdate()
         {
-            ItemManager.Update();
+            //ItemManager.Update();
         }
 
         private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
