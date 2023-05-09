@@ -270,7 +270,7 @@ namespace Result
             
             // ゲージ音停止
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
-                WinSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClips[1]);
+                WinSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClipsList[(int)ResultSoundController.SoundPatternEnum.WIN_SE]);
             
 
             // Player勝利
@@ -337,7 +337,7 @@ namespace Result
         {
             // ゲージ音再生
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
-                GageSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClips[0]);
+                GageSource.PlayOneShot(ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().AudioClipsList[(int)ResultSoundController.SoundPatternEnum.GAGE_SE]);
             
             // ゲージ減算最大値     (割合を取る為10分の1)
             var gageAmount = ObjectManager.Result.GageImages[0].GetComponent<RectTransform>().sizeDelta.y * (rate * 0.1f);

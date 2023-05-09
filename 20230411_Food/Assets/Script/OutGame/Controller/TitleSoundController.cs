@@ -6,6 +6,10 @@ namespace Title
 {
     public class TitleSoundController : MonoBehaviour
     {
+        public enum SoundPatternEnum
+        {
+            MAIN_BGM, GAME_PLAY_SE, SELECT_SE, CURSOR_SE
+        }
         [SerializeField]
         private AudioSource mainSource;
         public AudioSource MainSource{get => mainSource;}
@@ -23,14 +27,14 @@ namespace Title
         private AudioSource cursorSource;
         public AudioSource CursorSource{get => cursorSource;}
 
-        [SerializeField, Header("再生するオーディオクリップ配列")]
-        private AudioClip[] audioClips = new AudioClip[6];
-        public AudioClip[] AudioClips{get => audioClips;}
+        [SerializeField, Header("再生するオーディオクリップ配列"), EnumIndex(typeof(SoundPatternEnum))]
+        private AudioClip[] audioClipsList = new AudioClip[4];
+        public AudioClip[] AudioClipsList{get => audioClipsList;}
 
         // Start is called before the first frame update
         void Start()
         {
-            mainSource.PlayOneShot(audioClips[0]);
+            mainSource.PlayOneShot(AudioClipsList[(int)SoundPatternEnum.MAIN_BGM]);
         }
 
     }
