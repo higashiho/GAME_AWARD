@@ -47,7 +47,7 @@ namespace Item
         public async void Update()
         {
             
-            
+            //itemFactory.CreateItem();
         }
 
         
