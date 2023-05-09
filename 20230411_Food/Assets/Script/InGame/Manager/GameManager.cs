@@ -34,18 +34,17 @@ namespace GameManager
         
         void Start()
         {
-            objectManager = new ObjectManager();
         }
 
 
-        private ObjectManager objectManager;
         private FollowingCameraManager followingCameraManager;
 
+
         [SerializeField]
-        private DataPlayer main;
+        private DataPlayer mainPlayerData;
         
         [SerializeField]
-        private DataPlayer sub;
+        private DataPlayer subPlayerData;
 
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
@@ -53,9 +52,10 @@ namespace GameManager
         /// <returns></returns>
         private async UniTask InitGame()
         {
-            ObjectManager.PlayerManagers.Add(new PlayerManager(main));
-            ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
+
             followingCameraManager = new FollowingCameraManager();
+            ObjectManager.PlayerManagers.Add(new PlayerManager(mainPlayerData));
+            ObjectManager.PlayerManagers.Add(new PlayerManager(subPlayerData));
 
             ObjectManager.ItemManager = new ItemManager();
             // ポイントマネージャー作成
@@ -99,10 +99,12 @@ namespace GameManager
 
                 case gameState.GAME:
 
-                    objectManager.PlayerUpdate();
-                    objectManager.ItemUpdate();
+
                     // 追従カメラ更新
                     followingCameraManager.Update();
+
+                    ObjectManager.PlayerUpdate();
+                    ObjectManager.ItemUpdate();
                         
                     
                     break;
@@ -141,20 +143,15 @@ namespace GameManager
             set{itemManager = value;}
         }
 
-        public void ItemUpdate()
+        public static void ItemUpdate()
         {
             //ItemManager.Update();
         }
 
-        private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
-
-        public static List<PlayerManager> PlayerManagers
-        {
-            get{return playerManagers;}
-        }
+        public static List<PlayerManager> PlayerManagers{ get; } = new List<PlayerManager>(2);
 
         // インゲーム全体統括メソッド
-        public void PlayerUpdate()
+        public static void PlayerUpdate()
         {
             for(int i = 0; i < PlayerManagers.Count; i++)
             {
