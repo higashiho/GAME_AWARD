@@ -486,8 +486,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   phase: 0
-  main: {fileID: 11400000, guid: fde2eb3cf2fe0ad4b8c2897d9c7008fa, type: 2}
-  sub: {fileID: 11400000, guid: 64db00604bf740043baa3ef0c24b5099, type: 2}
+  mainPlayerData: {fileID: 11400000, guid: fde2eb3cf2fe0ad4b8c2897d9c7008fa, type: 2}
+  subPlayerData: {fileID: 11400000, guid: 64db00604bf740043baa3ef0c24b5099, type: 2}
 --- !u!4 &1768716176
 Transform:
   m_ObjectHideFlags: 0
