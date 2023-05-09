@@ -54,7 +54,7 @@ namespace Title
 
             playerDataList = ObjectManager.TitleScene.PlayerData;
             // イベント設定
-            refrigeratorUIMove.InputUIEvent();
+            refrigeratorUIMove.InputUISubscribe();
 
             // ループ設定
             setRoop();
@@ -204,7 +204,7 @@ namespace Title
         /// <summary>
         /// 各インプットイベント設定関数
         /// </summary>
-        public void InputUIEvent()
+        public void InputUISubscribe()
         {    
             cursorUp();
             cursorDown();
@@ -218,7 +218,7 @@ namespace Title
         {
             ObjectManager.Events.KeyPressed
                 // カーソルが表示されているときのみ判断
-                .Where(_ => cursor.gameObject.activeSelf)
+                .Where(_ => cursor.transform.parent.gameObject.activeSelf)
                 .Where(x => (KeyCode)x == KeyCode.W || (KeyCode)x == KeyCode.UpArrow)
                 .Subscribe(_ => {
                     upMove();
@@ -281,7 +281,7 @@ namespace Title
         {
              ObjectManager.Events.KeyPressed
                 // カーソルが表示されているときのみ判断
-                .Where(_ => cursor.gameObject.activeSelf)
+                .Where(_ => cursor.transform.parent.gameObject.activeSelf)
                 .Where(x => (KeyCode)x == KeyCode.S || (KeyCode)x == KeyCode.DownArrow)
                 .Subscribe(_ => {
                     downMove();
