@@ -218,7 +218,7 @@ namespace Player
         private string getFoodName(DataPlayer data)
         {
             // 目の前にある食材の名前を返す
-            return  Move.RayController.RayHitObject.GetComponent<GetValue>().Type;
+            return Move.RayController.RayHitObject.GetComponent<GetValue>().Type;
         }
 
         // 獲得した食材のポイントと量を取得する
