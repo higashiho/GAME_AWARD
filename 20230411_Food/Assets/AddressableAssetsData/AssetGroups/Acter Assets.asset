@@ -26,11 +26,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Player_2
-  - m_GUID: 0438078d550dc3547a10b4efca3fb680
-    m_Address: Assets/Prefab/InGame/Player/InPlayer.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - InPlayer
   - m_GUID: 7577e3de9babd604d9880ded032d1752
     m_Address: Assets/Player Avatar/Prefabs/Player_1.prefab
     m_ReadOnly: 0
