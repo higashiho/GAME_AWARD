@@ -21,6 +21,16 @@ MonoBehaviour:
     m_Address: Assets/Data/InGame/MainPlayerData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 6499442be693df8468974b9984bdff85
+    m_Address: 1p
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - FollowingCamera
+  - m_GUID: e2a74dda7f10fe248afe06e927000dc5
+    m_Address: 2p
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - FollowingCamera
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
