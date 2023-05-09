@@ -55,6 +55,10 @@ namespace Title
         private TitleTextData textData;
 
         public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
+
+        [SerializeField]
+        private GameObject audioController;
+        public GameObject AudioController{get => audioController;}
         async void Awake()
         {
             // インスタンス化
