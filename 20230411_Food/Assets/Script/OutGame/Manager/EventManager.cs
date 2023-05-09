@@ -236,7 +236,7 @@ namespace Title
                     // sound再生
                     var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
-                        DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
                         PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
 
@@ -272,7 +272,7 @@ namespace Title
                     // sound再生
                     var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
-                        DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
                         PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
 
@@ -315,7 +315,7 @@ namespace Title
                     // sound再生
                     var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
-                        DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
                         PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     
@@ -349,7 +349,7 @@ namespace Title
                     // sound再生
                     var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
-                        DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                        DOFade(0.1f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
                         PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     // アシストUI非表示
