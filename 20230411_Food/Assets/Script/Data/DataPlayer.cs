@@ -48,6 +48,14 @@ namespace Player
         private float rayRadiuse;
         public float RayRadiuse{get{return rayRadiuse;}}
 
+        [SerializeField, Header("効果音まとめ")]
+        private AudioClip[] actionSE;
+        public AudioClip[] ActionSE{get{return actionSE;}}
+
+        [SerializeField, Header("音源を流すもの")]
+        private AudioSource playerAudioSource;
+        public AudioSource PlayerAudioSource{get{return playerAudioSource;}}
+
         [SerializeField, Header("何人目か")]
         private int number;
         public int Number{get{

@@ -20,6 +20,8 @@ MonoBehaviour:
   rotateLeftPos: {x: 0, y: 270, z: 0}
   rotateForwardPos: {x: 0, y: 0, z: 0}
   rotateBackPos: {x: 0, y: 180, z: 0}
-  rayDirection: 0.1
+  rayDirection: 0.25
   rayRadiuse: 0.5
+  actionSE: []
+  playerAudioSource: {fileID: 0}
   number: 2
