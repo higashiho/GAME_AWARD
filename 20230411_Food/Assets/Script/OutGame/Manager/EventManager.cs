@@ -148,7 +148,7 @@ namespace Title
                 // 実施
                 .Subscribe(x =>
                 {
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     // ゲームスタートBGM再生
                     sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
@@ -187,7 +187,7 @@ namespace Title
                 .Subscribe(x =>
                 {          
                     // ゲームスタートBGM再生
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
@@ -234,7 +234,7 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
@@ -270,7 +270,7 @@ namespace Title
                 {
                     
                     // sound再生
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
@@ -313,7 +313,7 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
@@ -347,7 +347,7 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
@@ -383,7 +383,7 @@ namespace Title
                 // 実施
                 .Subscribe(async _ =>
                 {
-                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Title
 {
-    public class SoundController : MonoBehaviour
+    public class TitleSoundController : MonoBehaviour
     {
         [SerializeField]
         private AudioSource mainSource;
