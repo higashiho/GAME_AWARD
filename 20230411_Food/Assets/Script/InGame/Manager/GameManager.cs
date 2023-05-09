@@ -137,12 +137,7 @@ namespace GameManager
             ItemManager.Update();
         }
 
-        private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
-
-        public static List<PlayerManager> PlayerManagers
-        {
-            get{return playerManagers;}
-        }
+        public static List<PlayerManager> PlayerManagers{ get; } = new List<PlayerManager>(2);
 
         // インゲーム全体統括メソッド
         public void PlayerUpdate()
