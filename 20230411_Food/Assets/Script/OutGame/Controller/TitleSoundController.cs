@@ -27,7 +27,7 @@ namespace Title
         private AudioSource cursorSource;
         public AudioSource CursorSource{get => cursorSource;}
 
-        [SerializeField, Header("再生するオーディオクリップ配列")]
+        [SerializeField, Header("再生するオーディオクリップ配列"), EnumIndex(typeof(SoundPatternEnum))]
         private AudioClip[] audioClipsList = new AudioClip[4];
         public AudioClip[] AudioClipsList{get => audioClipsList;}
 

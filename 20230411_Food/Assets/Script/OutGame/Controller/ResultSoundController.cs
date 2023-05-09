@@ -6,7 +6,7 @@ namespace Result
 {
     public class ResultSoundController : MonoBehaviour
     {
-        public enum soundPatternEnum
+        public enum SoundPatternEnum
         {
             GAGE_SE, WIN_SE
         }
@@ -17,7 +17,7 @@ namespace Result
         private AudioSource winSource;
         public AudioSource WinSource{get => winSource;}
 
-        [SerializeField]
+        [SerializeField, EnumIndex(typeof(SoundPatternEnum))]
         private AudioClip[] audioClipsList = new AudioClip[2];
         public AudioClip[] AudioClipsList{get => audioClipsList;}
         // Start is called before the first frame update
