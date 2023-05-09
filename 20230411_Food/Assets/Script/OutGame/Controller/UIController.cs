@@ -233,7 +233,7 @@ namespace Title
         {
             // カーソル音再生
             var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
-            sound.CursorSource.PlayOneShot(sound.AudioClips[3]);
+            sound.CursorSource.PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.CURSOR_SE]);
             
             // 移動pos
             Vector3 movePos = Vector3.zero;
@@ -295,7 +295,7 @@ namespace Title
         {
             // カーソル音再生
             var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
-            sound.CursorSource.PlayOneShot(sound.AudioClips[3]);
+            sound.CursorSource.PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.CURSOR_SE]);
             // 移動pos
             Vector3 movePos = Vector3.zero;
             // カーソルがどこにいるか判断して次のポイントに移動
@@ -360,7 +360,7 @@ namespace Title
         {
             // 決定音再生
             var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
-            sound.SelectSource.PlayOneShot(sound.AudioClips[2]);
+            sound.SelectSource.PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
 
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)

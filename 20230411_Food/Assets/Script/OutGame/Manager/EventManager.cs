@@ -153,9 +153,9 @@ namespace Title
                     sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     sound.OnGamePlaySource.
-                        PlayOneShot(sound.AudioClips[1]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.GAME_PLAY_SE]);
                     sound.OnGamePlaySource.
                         DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
 
@@ -191,9 +191,9 @@ namespace Title
                     sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     sound.OnGamePlaySource.
-                        PlayOneShot(sound.AudioClips[1]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.GAME_PLAY_SE]);
                     sound.OnGamePlaySource.
                         DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                         
@@ -238,7 +238,7 @@ namespace Title
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
@@ -274,7 +274,7 @@ namespace Title
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
@@ -317,7 +317,7 @@ namespace Title
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
@@ -351,7 +351,7 @@ namespace Title
                     sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                     sound.SelectSource.
-                        PlayOneShot(sound.AudioClips[2]);
+                        PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
