@@ -14,16 +14,17 @@ namespace Title
         private AudioSource onGamePlaySource;
         public AudioSource OnGamePlaySource{get => onGamePlaySource;}
 
-        [SerializeField]
-        private AudioSource recipeSource;
-        public AudioSource RecipeSource{get => recipeSource;}
 
         [SerializeField]
-        private AudioSource foodListSource;
-        public AudioSource FoodListSource{get => foodListSource;}
+        private AudioSource selectSource;
+        public AudioSource SelectSource{get => selectSource;}
+
+        [SerializeField]
+        private AudioSource cursorSource;
+        public AudioSource CursorSource{get => cursorSource;}
 
         [SerializeField, Header("再生するオーディオクリップ配列")]
-        private AudioClip[] audioClips = new AudioClip[4];
+        private AudioClip[] audioClips = new AudioClip[6];
         public AudioClip[] AudioClips{get => audioClips;}
 
         // Start is called before the first frame update

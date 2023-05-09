@@ -152,6 +152,8 @@ namespace Title
                     // ゲームスタートBGM再生
                     sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
                     sound.OnGamePlaySource.
                         PlayOneShot(sound.AudioClips[1]);
                     sound.OnGamePlaySource.
@@ -185,12 +187,14 @@ namespace Title
                 .Subscribe(x =>
                 {          
                     // ゲームスタートBGM再生
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
                         DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    suond.OnGamePlaySource.
-                        PlayOneShot(suond.AudioClips[1]);
-                    suond.OnGamePlaySource.
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
+                    sound.OnGamePlaySource.
+                        PlayOneShot(sound.AudioClips[1]);
+                    sound.OnGamePlaySource.
                         DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
                         
                     // アシストUI非表示
@@ -230,13 +234,11 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    suond.RecipeSource.
-                        PlayOneShot(suond.AudioClips[2]);
-                    suond.OnGamePlaySource.
-                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
@@ -268,13 +270,11 @@ namespace Title
                 {
                     
                     // sound再生
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    suond.RecipeSource.
-                        PlayOneShot(suond.AudioClips[2]);
-                    suond.OnGamePlaySource.
-                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
@@ -313,13 +313,11 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    suond.FoodListSource.
-                        PlayOneShot(suond.AudioClips[3]);
-                    suond.OnGamePlaySource.
-                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
                     
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
@@ -349,13 +347,11 @@ namespace Title
                 .Subscribe(async x =>
                 {
                     // sound再生
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
                         DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    suond.FoodListSource.
-                        PlayOneShot(suond.AudioClips[3]);
-                    suond.OnGamePlaySource.
-                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+                    sound.SelectSource.
+                        PlayOneShot(sound.AudioClips[2]);
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
@@ -387,19 +383,10 @@ namespace Title
                 // 実施
                 .Subscribe(async _ =>
                 {
-                    var suond = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
-                    suond.MainSource.
-                        DOFade(0.5f, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    if(nowOpenRefrugerator)
-                    {
-                        suond.FoodListSource.
-                            DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    }
-                    else if(nowOpenRecipeBook)
-                    {
-                        suond.RecipeSource.
-                            DOFade(0, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
-                    }
+                    var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+                    sound.MainSource.
+                        DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+
                     // イベント実行フラグを折る
                     ObjectManager.TitleScene.NowPlayeEvents = false;
                     // カメラリセット関数実行

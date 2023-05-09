@@ -231,6 +231,10 @@ namespace Title
         /// </summary>
         private void upMove()
         {
+            // カーソル音再生
+            var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+            sound.CursorSource.PlayOneShot(sound.AudioClips[3]);
+            
             // 移動pos
             Vector3 movePos = Vector3.zero;
             // カーソルがどこにいるか判断して次のポイントに移動
@@ -289,6 +293,9 @@ namespace Title
         /// </summary>
         private void downMove()
         {
+            // カーソル音再生
+            var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+            sound.CursorSource.PlayOneShot(sound.AudioClips[3]);
             // 移動pos
             Vector3 movePos = Vector3.zero;
             // カーソルがどこにいるか判断して次のポイントに移動
@@ -351,6 +358,9 @@ namespace Title
         /// </summary>
         private void decisionMove()
         {
+            // 決定音再生
+            var sound = ObjectManager.TitleScene.AudioController.GetComponent<SoundController>();
+            sound.SelectSource.PlayOneShot(sound.AudioClips[2]);
 
             // カーソルがどこにいるか判断して次のポイントに移動
             switch(cursor.transform.localPosition.y)
