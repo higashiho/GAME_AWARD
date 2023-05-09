@@ -7,6 +7,7 @@ using FoodPoint;
 
 using Item;
 using Player;
+using FollowCamera;
 
 namespace GameManager
 {
@@ -38,6 +39,7 @@ namespace GameManager
 
 
         private ObjectManager objectManager;
+        private FollowingCameraManager followingCameraManager;
 
         [SerializeField]
         private DataPlayer main;
@@ -53,6 +55,7 @@ namespace GameManager
         {
             ObjectManager.PlayerManagers.Add(new PlayerManager(main));
             ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
+            followingCameraManager = new FollowingCameraManager();
 
             ObjectManager.ItemManager = new ItemManager();
             // ポイントマネージャー作成
@@ -63,6 +66,10 @@ namespace GameManager
             
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
+            // 追従カメラクラスがプレイヤーマネージャーを取得
+            followingCameraManager.SetFollowingPlayer(ObjectManager.PlayerManagers);
+            // 追従カメラ初期化
+            followingCameraManager.Init();
             // 仮
             await UniTask.Delay(5);
         }
@@ -94,6 +101,8 @@ namespace GameManager
 
                     objectManager.PlayerUpdate();
                     objectManager.ItemUpdate();
+                    // 追従カメラ更新
+                    followingCameraManager.Update();
                         
                     
                     break;
@@ -134,7 +143,7 @@ namespace GameManager
 
         public void ItemUpdate()
         {
-            ItemManager.Update();
+            //ItemManager.Update();
         }
 
         private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);

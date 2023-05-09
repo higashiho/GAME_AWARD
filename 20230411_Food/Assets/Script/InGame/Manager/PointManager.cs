@@ -98,10 +98,16 @@ namespace FoodPoint
             playerPercentageArr[2] = fishPoint;
             playerPercentageArr[3] = seasousing;
             playerPercentageArr[4] = amount;
-            for(int i = 0; i < playerPercentageArr.Length; i++)
-            {
-                Debug.Log(playerPercentageArr[i]);
-            }
+            
+            Debug.Log("MEAT" + playerPercentageArr[0]);
+            Debug.Log("VEG" + playerPercentageArr[1]);
+            Debug.Log("FISH" + playerPercentageArr[2]);
+            Debug.Log("SEAS" + playerPercentageArr[3]);
+            Debug.Log("AMOUNT" + playerPercentageArr[4]);
+
+
+            
+
         }
 
         /// <summary>

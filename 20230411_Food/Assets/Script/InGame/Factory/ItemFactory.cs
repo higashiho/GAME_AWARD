@@ -42,11 +42,12 @@ namespace Item
         private UniTask? loadTask = null;
 
         // アイテムを生成する間隔
-        private float spaceX = 10.0f;
+        private float spaceX = 8.0f;
         private float spaceZ = 3.0f;
 
+        // 11.5, 4.0, 4.0, 11.5
         // アイテムを生成する基準ライン
-        private float baseLineX = -15.0f;
+        private float baseLineX = -12.0f;
         private float baseLineZ = -4.5f;
 
         private int posRow = 4;
@@ -83,7 +84,7 @@ namespace Item
                 itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
 
                 
-                for(int i = 0; i < 4; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     Create();
                 }
@@ -196,7 +197,7 @@ namespace Item
         {
             // 表示されているアイテムが8個未満の場合
             int num = itemPos.Count(item => item.attend);
-            if(num < 2)
+            if(num < 8)
             {
                 // アイテム生成
                 Create();
