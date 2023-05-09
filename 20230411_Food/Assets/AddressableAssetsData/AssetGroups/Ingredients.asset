@@ -15,91 +15,71 @@ MonoBehaviour:
   m_GroupName: Ingredients
   m_Data:
     m_SerializedData: []
-  m_GUID: c98f54dd23ece7d41ac32d020b575091
+  m_GUID: f04199be09f3a1547b169eb51a6fe10b
   m_SerializeEntries:
-  - m_GUID: 8eff8a74d50f3f34eb40306707efc95e
-    m_Address: Assets/Prefab/InGame/Food/Cube 2.prefab
+  - m_GUID: c148768ae1a8a4645956aa0420ab4c7c
+    m_Address: Assets/Prefab/InGame/Food/DrumstickRaw.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Meat
     - Ingredients
-  - m_GUID: c18d5ad0c1e354047be3a99e52b0f23e
-    m_Address: Assets/Prefab/InGame/Food/Cube 1.prefab
+  - m_GUID: 553af17d0f7e9254db93c1973bc117b4
+    m_Address: Assets/Prefab/InGame/Food/WholeBirdRaw.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Meat
     - Ingredients
-  - m_GUID: 288107d6dc9649d44b53dfd43d0dfa2c
-    m_Address: Assets/Prefab/InGame/Food/Cube 3.prefab
+  - m_GUID: 0600d470ba5d7634dba6f5779c58bc46
+    m_Address: Assets/Prefab/InGame/Food/Salami slice A.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Meat
     - Ingredients
-  - m_GUID: b1b6445d9dfd4a04abce30c4e221c691
-    m_Address: Assets/Prefab/InGame/Food/Cube 4.prefab
+  - m_GUID: 0fa33df476abd9b4c9b7eeb1e30258ea
+    m_Address: Assets/Prefab/InGame/Food/Tomato Half.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Vegitable
     - Ingredients
-  - m_GUID: e3f95f5aa87a601469ba737956f7bc5c
-    m_Address: Assets/Prefab/InGame/Food/Cube 5.prefab
+  - m_GUID: 03b65c849daf58940860f51bf5156fa6
+    m_Address: Assets/Prefab/InGame/Food/Tomato Quarter.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Vegitable
     - Ingredients
-  - m_GUID: 813135980d7e74a48b2d3c85a1a9d0d0
-    m_Address: Assets/Prefab/InGame/Food/Cube 6.prefab
+  - m_GUID: 5c646ab406c852145843d2babd6641ed
+    m_Address: Assets/Prefab/InGame/Food/Tomato.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Vegitable
     - Ingredients
-  - m_GUID: 16c975a065fb6e247b5ea85437712c61
-    m_Address: Assets/Prefab/InGame/Food/Cube 7.prefab
+  - m_GUID: 87dad528adfbd484fa5fe4db182c7dc3
+    m_Address: Assets/Prefab/InGame/Food/Salmon fillet.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Fish
     - Ingredients
-  - m_GUID: 1fb4a230b7800b743a8f72f9fea0aaff
-    m_Address: Assets/Prefab/InGame/Food/Cube 8.prefab
+  - m_GUID: caca480bf0f0fb24db2a849d084b8724
+    m_Address: Assets/Prefab/InGame/Food/Salmon skeleton.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Fish
     - Ingredients
-  - m_GUID: 465e332b49d6c3b42afe1d40178ebca7
-    m_Address: Assets/Prefab/InGame/Food/Cube 9.prefab
+  - m_GUID: 4b705523db26bf549b032db0d2bfbeb6
+    m_Address: Assets/Prefab/InGame/Food/Salmon.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Fish
     - Ingredients
-  - m_GUID: 557e0ddadd7e78746b57282f645bbad8
-    m_Address: Assets/Prefab/InGame/Food/Cube 10.prefab
+  - m_GUID: f541c31d7acf87f43929056c7084e497
+    m_Address: Assets/Prefab/InGame/Food/Sauce1.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Ingredients
-  - m_GUID: 57f9385fae9339a4c90c54f46b31c645
-    m_Address: Assets/Prefab/InGame/Food/Cube 11.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredients
-  - m_GUID: 1eb5011441255a040984fc47533d54ba
-    m_Address: Assets/Prefab/InGame/Food/Cube 12.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredients
-  - m_GUID: fa2241874b10ef84398187aab25b0474
-    m_Address: Assets/Prefab/InGame/Food/Cube 13.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredients
-  - m_GUID: 1c217bf5c1ac83149a73fb87bcaf4ad5
-    m_Address: Assets/Prefab/InGame/Food/Cube.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredients
-  - m_GUID: 4fd07609e4588bc46819a672d2c2c7ee
-    m_Address: Assets/Prefab/InGame/Food/FoodExample.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Ingredients
-  - m_GUID: c1f2872f40c221542906244f00723b34
-    m_Address: Assets/Prefab/InGame/Food/Sphere.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
+    - Seasousing
     - Ingredients
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: a457e678188293a4c9373f32b4250de5, type: 2}
-    - {fileID: 11400000, guid: c3e94d87f0b7db949a7b12fc384552f3, type: 2}
+    - {fileID: 11400000, guid: 39f0fe9a0375ad34db53ed2b7ba366bd, type: 2}
+    - {fileID: 11400000, guid: 8a86777a7271c574f91a3813e075ff56, type: 2}

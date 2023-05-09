@@ -29,7 +29,7 @@ namespace GameManager
         private gameState phase;
 
         // ポイント管理クラス
-        private PointManager pointManager;
+        private PointManager[] pointManager = new PointManager[2];
         
         void Start()
         {
@@ -54,10 +54,13 @@ namespace GameManager
             ObjectManager.PlayerManagers.Add(new PlayerManager(main));
             ObjectManager.PlayerManagers.Add(new PlayerManager(sub));
 
-            objectManager.DataPlayers.Add(main);
-            objectManager.DataPlayers.Add(sub);
-
             ObjectManager.ItemManager = new ItemManager();
+            // ポイントマネージャー作成
+            for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+            {
+                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i]);
+            }
+            
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
             // 仮
@@ -98,7 +101,12 @@ namespace GameManager
                 case gameState.COOKING:
 
                     // プレイヤーが集めたポイント達を配列に入れていく
-                    
+                    //pointManager.GetPlayerFoodPoint(ObjectManager.Player);
+                    for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                    {
+                        pointManager[i].GetPlayerPoint(ObjectManager.PlayerManagers[i]);
+                    }
+                    phase = gameState.END;
                     break;
                 
                 case gameState.END:
@@ -134,13 +142,6 @@ namespace GameManager
         public static List<PlayerManager> PlayerManagers
         {
             get{return playerManagers;}
-        }
-
-        private List<DataPlayer> dataPlayers = new List<DataPlayer>(2);
-
-        public List<DataPlayer> DataPlayers
-        {
-            get{return dataPlayers;}
         }
 
         // インゲーム全体統括メソッド

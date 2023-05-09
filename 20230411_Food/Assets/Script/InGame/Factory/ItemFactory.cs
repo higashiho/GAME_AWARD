@@ -11,13 +11,6 @@ using GameManager;
 
 namespace Item
 {   
-    // 座標配列 => ランダム座標に〇個生成
-    // 出現アイテムが取得される => 空座標からランダムに生成座標を決定
-    // 生成座標にランダムなアイテムを表示
-
-    // アイテム全部をインスタンス化してない問題
-
-
     /// <summary>
     /// アイテムの生成を担当するクラス
     /// </summary>
@@ -33,14 +26,11 @@ namespace Item
             // アイテムが出現しているか
             public bool attend;
         }
-
-        // 出現しているアイテムのリスト
-        private List<GameObject> dispObj = new List<GameObject>(8);
         
         /// <summary>
         /// アイテム出現座標リスト
         /// </summary>
-        /// <typeparam name="ItemPosData"></typeparam>
+        /// <typeparam name="ItemPosData">アイテムの座標データ</typeparam>
         /// <returns></returns>
         private List<ItemPosData> itemPos = new List<ItemPosData>(16);
 
@@ -62,8 +52,6 @@ namespace Item
         private int posRow = 4;
         private int posCol = 4;
 
-        
-        
         /// <summary>
         /// ItemFactoryのコンストラクタ
         /// </summary>
@@ -94,17 +82,8 @@ namespace Item
                 // 生成座標リストをシャッフル
                 itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
 
-                // for(int i = 0; i < 8; i++)
-                // {
-                //     // 生成座標データ取得
-                //     ItemPosData data = itemPos[i];
-        
-                //     // アイテム生成フラグON
-                //     data.attend = true;
-                //     // アイテム生成
-                //     setItem(data.pos);
-                // }
-                for(int i = 0; i < 8; i++)
+                
+                for(int i = 0; i < 4; i++)
                 {
                     Create();
                 }
@@ -123,7 +102,7 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
+            //loadPrefab = loadPrefab.OrderBy(a => Guid.NewGuid()).ToList();
             // 生成アイテムをアイテムリストから取得
             GameObject obj = loadPrefab[0];
             loadPrefab.RemoveAt(0);
@@ -131,7 +110,7 @@ namespace Item
             itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
             // 座標リストから空座標のデータを取得
             ItemPosData data = itemPos.Find(item => !item.attend);
-            Debug.Log(data.pos);
+
             // 生成座標設定
             obj.transform.position = data.pos;
 
@@ -144,36 +123,12 @@ namespace Item
         }
 
         /// <summary>
-        /// ゲーム開始時にアイテムをセットするメソッド
-        /// </summary>
-        /// <param name="pos">アイテムを生成する座標</param>
-        private void setItem(Vector3 pos)
-        {
-            // アイテムプレファブの先頭の要素を抽出
-            GameObject obj = loadPrefab[0];
-
-            // 生成座標設定
-            obj.transform.position = pos;
-            // FoodPoint設定
-
-            // 生成
-            obj.SetActive(true);
-            
-                
-        }
-
-
-        /// <summary>
         /// アイテムをプーリングするメソッド
         /// </summary>
         public void Storing(GameObject obj)
         {
             // プールのQueueに入れる
             loadPrefab.Add(obj);
-
-            // プレイヤーがアイテムを取得したときのイベントを登録
-            //ObjectManager.Player.FoodPoint.ReturnPresentItemPos += ReturnEmptyItemPos;
-            
         }
 
 
@@ -220,7 +175,7 @@ namespace Item
         /// アイテムが取得された時にそのアイテムの座標を保管Queueに返すメソッド
         /// </summary>
         /// <param name="pos">アイテムの座標</param>
-        public async void ReturnEmptyItemPos(object sender, ReturnPresentPosEventArgs e)
+        public void ReturnEmptyItemPos(object sender, ReturnPresentPosEventArgs e)
         {
             
             // プレイヤーが取得したアイテムの座標データ取得
@@ -229,7 +184,6 @@ namespace Item
             // アイテム出現フラグOFF
             index.attend = false;
 
-            //await Task.Delay(5 * 1000);
             CreateItem();
         }
 
@@ -242,8 +196,7 @@ namespace Item
         {
             // 表示されているアイテムが8個未満の場合
             int num = itemPos.Count(item => item.attend);
-            // Debug.Log(num);
-            if(num < 8)
+            if(num < 2)
             {
                 // アイテム生成
                 Create();

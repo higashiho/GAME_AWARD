@@ -7,7 +7,7 @@ namespace FoodPoint
     public class FoodPoint
     {
         // FoodPoint
-        private int foodPoint;
+        public int Point{get; private set;}
 
         // コンストラクタ => FoodPointの初期化
         public FoodPoint(int point)
@@ -17,7 +17,7 @@ namespace FoodPoint
                 Debug.LogError("FoodPointに渡された数値が負の値です。");
                 return;
             }
-            this.foodPoint = point;
+            this.Point = point;
         }
     }
 }
