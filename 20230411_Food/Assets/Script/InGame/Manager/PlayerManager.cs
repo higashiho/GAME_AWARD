@@ -68,6 +68,7 @@ namespace Player
 
             // 食べ物を獲得してポイントゲット
             FoodPoint.addPointUpdate();
+
         }
 
         public void Initialization()
@@ -101,7 +102,12 @@ namespace Player
         public PlayerMove Move{get{return move;} set{move = value;}}
         private PlayerMove move;
 
-
+        /// <summary>
+        /// 効果音クラス
+        /// </summary>
+        /// <value></value>
+        public PlayerAudio PlayerAudio{get{return playerAudio;} set{playerAudio = value;}}
+        private PlayerAudio playerAudio;
 
         public FoodPoint(DataPlayer tmpData)
         {
@@ -111,6 +117,8 @@ namespace Player
             Array.Add("FISH", val);
             Array.Add("VEGETABLE", val);
             Array.Add("SEASOUSING", val);
+
+            PlayerAudio = new PlayerAudio();
         }
 
         public void addPointUpdate()
@@ -123,6 +131,8 @@ namespace Player
         {
             // 何にもあたっていなければメソッドから抜ける
             if(!Move.RayController.RayHitObject) return;
+
+            if(Move.RayController.RayHitObject.tag != "Food") return;
 
             // 初めてその種類の食材を獲得
             // if(!Array.ContainsKey(getFoodName(data))
@@ -170,6 +180,8 @@ namespace Player
                 incrimentDictionary(getFoodName(data), getFoodPoint(data));
                 //Debug.Log(Array.FirstOrDefault());
 
+                // 獲得音を鳴らす
+                PlayerAudio.GetFood(data);
                 
                 return;
             }
@@ -285,12 +297,12 @@ namespace Player
             {
                 playerMovePos += Vector3.forward;
                 playerRotateAmountForwardBack = playerRotateForwardPos.Amount;
+                
             }
             else if(Input.GetKey(tmpData.ControlleKey[1]))
             {
                 playerMovePos += Vector3.left;
                 playerRotateAmountLeftRight = playerRotateLeftPos.Amount;
-                //playerRotateForwardPos = new PlayerRotateForwardPos(ObjectManager.Player.Data.RotateForWardPos);
             }
             else if(Input.GetKey(tmpData.ControlleKey[2]))
             {
@@ -301,56 +313,32 @@ namespace Player
             {
                 playerMovePos += Vector3.right;
                 playerRotateAmountLeftRight = playerRotateRightPos.Amount;
-                //playerRotateForwardPos = new PlayerRotateForwardPos(Vector3.zero);
             }
 
-            // 移動中なら
-            // if(playerMovePos.x != 0 && playerMovePos.z != 0)
-            // {
-            //     // 斜め移動を単位ベクトル化
-            //     playerMovePos = normalization(playerMovePos);
-            // }
 
             // 回転を計算する
             players.transform.eulerAngles = (playerRotateAmountLeftRight + playerRotateAmountForwardBack) / 2;
 
-                if(RayController.PlayerCapsuleRay == null) return;
+            if(RayController.PlayerCapsuleRay == null) return;
 
-                // プレイヤーが何かと当たっていなければ移動できる
-                if(!RayController.RayHitObject
-                && RayController.PlayerOverlapCapsule.Amount.Length <= 2)
-                {
-                    // 移動を計算する
-                    players.transform.localPosition +=
-                    playerMovePos * moveSpeed.Amount * Time.deltaTime;
-                }
-                // 振り向きで壁にめり込むのを防ぐ
-                else if(RayController.PlayerOverlapCapsule.Amount.Length > 2)
-                {
-                    if(Input.GetKeyDown(tmpData.ControlleKey[0]) 
-                    || Input.GetKeyDown(tmpData.ControlleKey[1]) 
-                    || Input.GetKeyDown(tmpData.ControlleKey[2]) 
-                    || Input.GetKeyDown(tmpData.ControlleKey[3]))
-                    {
-                        players.transform.localPosition -=
-                        playerMovePos * moveSpeed.Amount * Time.deltaTime;
-                    }
-                }
-        }
-
-        // 正規化関数
-        private Vector3 normalization(Vector3 tmpPos)
-        {
-
-            float tmpNum = Mathf.Sqrt(tmpPos.x * tmpPos.x
-                                    + tmpPos.y * tmpPos.y
-                                    + tmpPos.z * tmpPos.z);
+            // プレイヤーが何かと当たっていなければ移動できる
+            // プレイヤー自身とレイに必ず当たるので2以下になっている
+            if(!RayController.RayHitObject
+            && RayController.PlayerOverlapCapsule.Amount.Length <= 2)
+            {
+                // 移動を計算する
+                players.transform.localPosition +=
+                playerMovePos * moveSpeed.Amount * Time.deltaTime;
+            }
+            else
+            {
+                // 後ろに移動する
+                players.transform.localPosition -=
+                playerMovePos * moveSpeed.Amount * Time.deltaTime;
+            }
             
-            Vector3 normalizePos = new Vector3(tmpPos.x / tmpNum
-                                             , tmpPos.y / tmpNum
-                                             , tmpPos.z / tmpNum);
-            return normalizePos;
         }
+
     }
     
     /// <summary>
@@ -396,6 +384,7 @@ namespace Player
 
         public DataPlayer Data{get{return data;} set{data  = value;}}
         private DataPlayer data;
+
         public RayController(DataPlayer data)
         {
             // カプセル型のレイの距離
@@ -453,7 +442,7 @@ namespace Player
                 PlayerCapsuleRayDistance.Amount));
 
             // レイの内側を格納する
-            playerOverlapCapsule = new PlayerOverlapCapsule(Physics.OverlapCapsule(
+            PlayerOverlapCapsule = new PlayerOverlapCapsule(Physics.OverlapCapsule(
                 overlapStartPos,
                 overlapEndPos,
                 PlayerCapsuleRayRadiuse.Amount
@@ -462,8 +451,8 @@ namespace Player
 
             // レイを見えるようにする
             VisualPhysics.CapsuleCast(
-                PlayerCapsuleRayStartPos.Amount,
-                PlayerCapsuleRayEndPos.Amount,
+                overlapStartPos,
+                overlapEndPos,
                 PlayerCapsuleRayRadiuse.Amount,
                 players.transform.forward,
                 out hit,
@@ -483,7 +472,18 @@ namespace Player
     }
 
 
-    
-
+    /// <summary>
+    /// プレイヤーが発する効果音
+    /// </summary>
+    public class PlayerAudio
+    {
+        public void GetFood(DataPlayer data)
+        {
+            if(data.PlayerAudioSource.isPlaying)
+            {
+                data.PlayerAudioSource.PlayOneShot(data.ActionSE[0]);
+            }
+        }
+    }
     
 }
