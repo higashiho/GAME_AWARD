@@ -1473,7 +1473,7 @@ MonoBehaviour:
   cursorSource: {fileID: 1314486865}
   audioClipsList:
   - {fileID: 8300000, guid: 230ed8ec191ecb84cad7f9524e69a334, type: 3}
-  - {fileID: 8300000, guid: a35f8965e9a3bcd48906895df5a7c53a, type: 3}
+  - {fileID: 8300000, guid: f42a2b8b0ad6a0f4ca12f8845bf68240, type: 3}
   - {fileID: 8300000, guid: 1e5bfedfd29375242a31a94827d63613, type: 3}
   - {fileID: 8300000, guid: 6db7664557a694f41a215aa9f5449a51, type: 3}
 --- !u!1 &579662953
@@ -4774,7 +4774,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a35f8965e9a3bcd48906895df5a7c53a, type: 3}
+  m_audioClip: {fileID: 8300000, guid: f42a2b8b0ad6a0f4ca12f8845bf68240, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0
   m_Pitch: 1
