@@ -6,6 +6,7 @@ using UniRx;
 using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
 using TMPro;
+using DG.Tweening;
 
 using GameManager;
 
@@ -14,36 +15,50 @@ namespace InGame
     public class UIController : MonoBehaviour
     {
         private bool cutInFlag = true;
-        private CountDownMove countDownMove;
+        private UIMove uiMove;
+
+        [SerializeField]
+        private Canvas cutInCanvas = default;
 
         
         // Start is called before the first frame update
         void Start()
         {
-            countDownMove = new CountDownMove(this.gameObject);
+            uiMove = new UIMove(this.transform.GetChild(1));
             this.UpdateAsObservable()
-                .Where(_ => cutInFlag && this.gameObject.activeSelf)
+                .Where(_ => cutInFlag && this.transform.GetChild(1).gameObject.activeSelf)
                 .Subscribe(_ =>{
                     cutInFlag = false;
-                    countDownMove.Movement();
+
+                    cutInCanvas.transform.GetChild(0).GetComponent<RawImage>().DOFade(0,1).SetEase(Ease.Linear)
+                        .SetLink(this.gameObject).OnComplete(uiMove.Movement);
                 }).AddTo(this.gameObject);
         }
 
     }
 
-    public class CountDownMove
+    public class UIMove
     {
         private TextMeshProUGUI countdownText;
-        public CountDownMove(GameObject obj)
+        public UIMove(Transform obj)
         {
-            countdownText = obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            countdownText = obj.GetChild(0).GetComponent<TextMeshProUGUI>();
+        }
+
+        /// <summary>
+        /// UI全体挙動メソッド
+        /// </summary>
+        /// <returns></returns>
+        public void Movement()
+        {
+            countdownAsync();
         }
 
         /// <summary>
         /// Countdown挙動メソッド
         /// </summary>
         /// <returns></returns>
-        public async void Movement()
+        private async void countdownAsync()
         {
             await changeText("3");
 
