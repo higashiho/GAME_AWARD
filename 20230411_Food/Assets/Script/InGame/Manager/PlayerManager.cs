@@ -167,14 +167,15 @@ namespace Player
                 ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
                 // 座標設定
                 args.presentPos = Move.RayController.RayHitObject.transform.position;
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
                 // 座標を返す
                 ReturnPresentPos(args);
 
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+                
                 
                 // １回取得すると消える
-                deleteFood(data);
+                //deleteFood(data);
 
                 // 肉に１点加算
                 incrimentDictionary(getFoodName(data), getFoodPoint(data));

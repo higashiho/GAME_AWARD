@@ -44,10 +44,11 @@ namespace Item
         /// <summary>
         /// アイテム関連の更新メソッド
         /// </summary>
-        // public async void Update()
-        // {
-            
-        // }
+        public void Update()
+        {
+            //itemFactory.CreateItem();
+            itemFactory.DebugText();
+        }
 
         
         

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 
 using Player;
+using System;
+using System.Linq;
 
 namespace FollowCamera
 {
@@ -80,6 +82,8 @@ namespace FollowCamera
                     // x軸45°に設定する
                     followCameras[i].transform.localEulerAngles = new Vector3(45, 0, 0);
                     offsetZ[i] = -3f;
+                    // カメラをそれぞれ担当のプレイヤーの子にセット
+                    followCameras[i].transform.parent = player[i].FoodPoint.Move.RayController.Object.transform;
                 }
 
 
@@ -92,24 +96,48 @@ namespace FollowCamera
         {
             if(Input.GetKeyDown("q"))
             {
-                
-                followCameras[0].transform.localEulerAngles = new Vector3(135, 0, 180);
+                changeState();
+                cameraMove(followCameras[0]);
                 offsetZ[0] *= -1f;
                 
             }
             else if(Input.GetKeyDown("p"))
             {
-                followCameras[1].transform.localEulerAngles = new Vector3(135, 0, 180);
+                changeState();
+                cameraMove(followCameras[1]);
                 offsetZ[1] *= -1f;
             }
         }
 
-        private void cameraMove()
+        /// <summary>
+        /// カメラの移動メソッド
+        /// </summary>
+        private void cameraMove(GameObject camera)
         {
-            
+            switch(RotatePhase)
+            {
+                case CameraRotate.NORMAL:
+                    camera.transform.localEulerAngles = new Vector3(45, 0, 0);
+                    break;
+
+                case CameraRotate.REVERSE:
+                    camera.transform.localEulerAngles = new Vector3(135, 0, 180);
+
+                    break;
+                
+            }
         }
 
-        
+        /// <summary>
+        /// ステートを次のフェーズに進めるメソッド
+        /// </summary>
+        private void changeState()
+        {
+            if((int)RotatePhase <= Enum.GetValues(typeof(CameraRotate)).Cast<int>().Max())
+                RotatePhase++;
+            else
+                RotatePhase = (CameraRotate)Enum.GetValues(typeof(CameraRotate)).Cast<int>().Min();
+        }
 
         private void followObject()
         {
