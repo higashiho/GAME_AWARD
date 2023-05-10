@@ -103,8 +103,8 @@ namespace GameManager
                 .Where(x => x)
                 .Subscribe(_ =>
                     {
-                        if(!uiController.gameObject.activeSelf)
-                            uiController.gameObject.SetActive(true);
+                        if(!uiController.transform.GetChild(1).gameObject.activeSelf)
+                            uiController.transform.GetChild(1).gameObject.SetActive(true);
                     }
                 ).AddTo(this.gameObject);
         }
