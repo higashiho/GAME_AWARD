@@ -11,6 +11,7 @@ using UniRx;
 using Item;
 using Player;
 using InGame;
+using FollowCamera;
 
 namespace GameManager
 {
@@ -83,6 +84,8 @@ namespace GameManager
             ObjectManager.PlayerManagers.Add(new PlayerManager(subPlayerData));
 
             ObjectManager.ItemManager = new ItemManager();
+            ObjectManager.FollowCamera = new FollowingCameraManager();
+            ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
@@ -91,6 +94,8 @@ namespace GameManager
             
             // アイテム関係初期化
             ObjectManager.ItemManager.Init();
+            // 追従カメラ初期化
+            ObjectManager.FollowCamera.Init();
             // 仮
             await UniTask.Delay(5);
 
@@ -180,7 +185,7 @@ namespace GameManager
 
         public static void ItemUpdate()
         {
-            //ItemManager.Update();
+            ItemManager.Update();
         }
 
         private static List<PlayerManager> playerManagers = new List<PlayerManager>(2);
@@ -197,6 +202,14 @@ namespace GameManager
             {
                 ObjectManager.PlayerManagers[i].Update();
             }
+        }
+
+        // 追従カメラ管理クラス
+        private static FollowingCameraManager followCamera;
+        public static FollowingCameraManager FollowCamera
+        {
+            get{return followCamera;}
+            set{followCamera = value;}
         }
     }
 }
