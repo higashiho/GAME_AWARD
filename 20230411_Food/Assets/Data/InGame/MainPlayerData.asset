@@ -16,12 +16,9 @@ MonoBehaviour:
   playerCreatePos: {x: 10, y: 0, z: -5}
   moveSpeed: 4
   controlleKey: 77000000610000007300000064000000
-  rotateRightPos: {x: 0, y: 90, z: 0}
-  rotateLeftPos: {x: 0, y: 270, z: 0}
-  rotateForwardPos: {x: 0, y: 0, z: 0}
-  rotateBackPos: {x: 0, y: 180, z: 0}
-  rayDirection: 0.25
-  rayRadiuse: 0.5
+  rayDirection: 0.75
+  rayRadiuse: {x: 0.5, y: 0.9, z: 0.25}
+  defaultAngle: {x: 0, y: 0, z: 0, w: 1}
   actionSE: []
   playerAudioSource: {fileID: 1409451924862225583, guid: 845d5aeabc540694aaa48762841b8782, type: 3}
   number: 1
