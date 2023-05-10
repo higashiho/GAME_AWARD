@@ -24,29 +24,17 @@ namespace Player
         private KeyCode[] controlleKey = new KeyCode[4];
         public KeyCode[] ControlleKey{get{return controlleKey;}}
 
-        [SerializeField, Header("プレイヤーの右回転座標")]
-        private Vector3 rotateRightPos;
-        public Vector3 RotateRightPos{get{return rotateRightPos;}}
-
-        [SerializeField, Header("プレイヤーの左回転座標")]
-        private Vector3 rotateLeftPos;
-        public Vector3 RotateLeftPos{get{return rotateLeftPos;}}
-
-        [SerializeField, Header("プレイヤーの前向き座標")]
-        private Vector3 rotateForwardPos;
-        public Vector3 RotateForWardPos{get{return rotateForwardPos;}}
-
-        [SerializeField, Header("プレイヤーの後回転座標")]
-        private Vector3 rotateBackPos;
-        public Vector3 RotateBackPos{get{return rotateBackPos;}}
-
         [SerializeField, Header("プレイヤーから出るRayの最大の長さ")]
         private float rayDirection;
         public float RayDirection{get{return rayDirection;}}
 
         [SerializeField, Header("レイの半径")]
-        private float rayRadiuse;
-        public float RayRadiuse{get{return rayRadiuse;}}
+        private Vector3 rayRadiuse;
+        public Vector3 RayRadiuse{get{return rayRadiuse;}}
+
+        [SerializeField, Header("ステージオブジェクト")]
+        private GameObject[] table;
+        public GameObject[] Table{get{return table;}}
 
         [SerializeField, Header("効果音まとめ")]
         private AudioClip[] actionSE;
