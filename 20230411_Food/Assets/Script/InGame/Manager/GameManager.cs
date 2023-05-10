@@ -38,8 +38,8 @@ namespace GameManager
         
         async void Start()
         {
-             if(!cutInCanvas.gameObject.activeSelf)
-                cutInCanvas.gameObject.SetActive(true);
+            // if(!cutInCanvas.gameObject.activeSelf)
+            //     cutInCanvas.gameObject.SetActive(true);
             // スタートアニメーション
             // ロードなどの処理
 
@@ -108,8 +108,8 @@ namespace GameManager
                 .Where(x => x)
                 .Subscribe(_ =>
                     {
-                        if(!uiController.gameObject.activeSelf)
-                            uiController.gameObject.SetActive(true);
+                        if(!uiController.transform.GetChild(1).gameObject.activeSelf)
+                            uiController.transform.GetChild(1).gameObject.SetActive(true);
                     }
                 ).AddTo(this.gameObject);
         }
