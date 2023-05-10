@@ -288,36 +288,35 @@ namespace Player
         /// プレイヤーを移動させる
         /// </summary>
         private void action(GameObject players, DataPlayer tmpData)
-        {
+        {//todo:移動は前後のみ左右は回転のみ
             Vector3 playerMovePos = Vector3.zero;
-            Vector3 playerRotateAmountLeftRight = players.transform.eulerAngles;
-            Vector3 playerRotateAmountForwardBack = players.transform.eulerAngles;
+            Vector3 playerRotateAmount = players.transform.eulerAngles;
 
             if(Input.GetKey(tmpData.ControlleKey[0]))
             {
-                playerMovePos += Vector3.forward;
-                playerRotateAmountForwardBack = playerRotateForwardPos.Amount;
-                
+                playerMovePos = players.transform.forward;
             }
             else if(Input.GetKey(tmpData.ControlleKey[1]))
             {
-                playerMovePos += Vector3.left;
-                playerRotateAmountLeftRight = playerRotateLeftPos.Amount;
+                playerRotateAmount = -players.transform.up;
             }
             else if(Input.GetKey(tmpData.ControlleKey[2]))
             {
-                playerMovePos += Vector3.back;
-                playerRotateAmountForwardBack = playerRotateBackPos.Amount;
+                playerMovePos -= players.transform.forward;
+                playerRotateAmount = -players.transform.forward;
             }
             else if(Input.GetKey(tmpData.ControlleKey[3]))
             {
-                playerMovePos += Vector3.right;
-                playerRotateAmountLeftRight = playerRotateRightPos.Amount;
+                playerRotateAmount = players.transform.up;
             }
 
-
-            // 回転を計算する
-            players.transform.eulerAngles = (playerRotateAmountLeftRight + playerRotateAmountForwardBack) / 2;
+            if(Input.GetKey(tmpData.ControlleKey[1])
+            || Input.GetKey(tmpData.ControlleKey[3]))
+            {
+                // 回転を計算する
+                players.transform.eulerAngles += playerRotateAmount;
+            }
+            
 
             if(RayController.PlayerCapsuleRay == null) return;
 

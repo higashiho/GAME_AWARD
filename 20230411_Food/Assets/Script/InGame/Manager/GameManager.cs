@@ -37,8 +37,8 @@ namespace GameManager
         
         async void Start()
         {
-             if(!cutInCanvas.gameObject.activeSelf)
-                cutInCanvas.gameObject.SetActive(true);
+            // if(!cutInCanvas.gameObject.activeSelf)
+            //     cutInCanvas.gameObject.SetActive(true);
             // スタートアニメーション
             // ロードなどの処理
 
