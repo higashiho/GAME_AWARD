@@ -61,44 +61,7 @@ namespace Player
     }
 
 
-    // プレイヤー右回転座標クラス
-    public sealed class PlayerRotateRightPos
-    {
-        public Vector3 Amount{get; private set;}
-
-        // コンストラクタ
-        public PlayerRotateRightPos(Vector3 tmpPos)
-        {
-            // 初期化
-            Amount = tmpPos;
-        }
-    }
-
-    // プレイヤー左回転座標クラス
-    public sealed class PlayerRotateLeftPos
-    {
-        public Vector3 Amount{get; private set;}
-
-        // コンストラクタ
-        public PlayerRotateLeftPos(Vector3 tmpPos)
-        {
-            // 初期化
-            Amount = tmpPos;
-        }
-    }
-
-    // プレイヤー後ろ回転座標クラス
-    public sealed class PlayerRotateBackPos
-    {
-        public Vector3 Amount{get; private set;}
-
-        // コンストラクタ
-        public PlayerRotateBackPos(Vector3 tmpPos)
-        {
-            // 初期化
-            Amount = tmpPos;
-        }
-    }
+    
 
     // プレイヤーから出るRayの長さの最大値のクラス
     public sealed class PlayerRayDirection
@@ -113,83 +76,48 @@ namespace Player
     }
 
     // プレイヤーから出るカプセル型のレイの距離
-    public sealed class PlayerCapsuleRayDistance
+    public sealed class PlayerBoxRayDistance
     {
         public float Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerCapsuleRayDistance(float tmpDirection)
+        public PlayerBoxRayDistance(float tmpDirection)
         {
             Amount = tmpDirection;
         }
     }
 
-    // 
-    public sealed class PlayerCapsuleRay
-    {
-        public bool Cast{get; private set;}
-
-        // コンストラクタ
-        public PlayerCapsuleRay(bool tmpCount)
-        {
-            Cast = tmpCount;
-        }
-    }
-
-    // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
-    public sealed class PlayerCapsuleRayStartPos
+    // プレイヤーから出る、矩形のレイの半径
+    public sealed class PlayerBoxRayHalfExtents
     {
         public Vector3 Amount{get; private set;}
 
         // コンストラクタ
-        public PlayerCapsuleRayStartPos(Vector3 tmpPos)
+        public PlayerBoxRayHalfExtents(Vector3 tmpPos)
         {
             Amount = tmpPos;
         }
     }
 
-    // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
-    public sealed class PlayerCapsuleRayEndPos
+    // ステージの大きさクラス
+    public sealed class Stage
     {
-        public Vector3 Amount{get; private set;}
+        public Vector3[] Scale{get; private set;}
 
-        // コンストラクタ
-        public PlayerCapsuleRayEndPos(Vector3 tmpPos)
+        public Stage(Vector3[] tmpScale)
         {
-            Amount = tmpPos;
+            Scale = tmpScale;
         }
     }
 
-    // プレイヤーから出る、カプセル型のレイの半径・太さ
-    public sealed class PlayerCapsuleRayRadiuse
+    // 机オブジェクトの外枠の座標
+    public sealed class OutSide
     {
-        public float Amount{get; private set;}
+        public Vector3 Pos{get; private set;}
 
-        // コンストラクタ
-        public PlayerCapsuleRayRadiuse(float tmpValue)
+        public OutSide(Vector3 tmpPos)
         {
-            Amount = tmpValue;
-        }
-    }
-
-    public sealed class RayCastHit
-    {
-        public RaycastHit hit{get; private set;}
-
-        // コンストラクタ
-        public RayCastHit(RaycastHit tmpHit)
-        {
-            hit = tmpHit;
-        }
-    }
-
-    public sealed class PlayerOverlapCapsule
-    {
-        public Collider[] Amount{get; private set;}
-
-        public PlayerOverlapCapsule(Collider[] tmpAmount)
-        {
-            Amount = tmpAmount;
+            Pos = tmpPos;
         }
     }
 

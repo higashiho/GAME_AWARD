@@ -253,10 +253,6 @@ namespace Player
     public class PlayerMove
     {
         private PlayerMoveSpeed moveSpeed;
-        private PlayerRotateRightPos playerRotateRightPos;
-        private PlayerRotateLeftPos playerRotateLeftPos;
-        private PlayerRotateForwardPos playerRotateForwardPos;
-        private PlayerRotateBackPos playerRotateBackPos;
         
 
         /// <summary>
@@ -266,65 +262,76 @@ namespace Player
         private RayController rayController;
 
 
+        public Stage Stage{get{return stage;} set{stage = value;}}
+        private Stage stage;
+
+        public OutSide OutSide{get{return outSide;} set{outSide = value;}}
+        private OutSide outSide;
+
         // コンストラクタ
         public PlayerMove(DataPlayer tmpData)
         {
+            Vector3[] tmpVector3 = {};
+
+            Vector3 tmpPos = new Vector3(0, 0, 0);
 
             RayController = new RayController(tmpData);
             
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);
-            playerRotateRightPos = new PlayerRotateRightPos(tmpData.RotateRightPos);
-            playerRotateLeftPos = new PlayerRotateLeftPos(tmpData.RotateLeftPos);
-            playerRotateBackPos = new PlayerRotateBackPos(tmpData.RotateBackPos);
-            playerRotateForwardPos = new PlayerRotateForwardPos(tmpData.RotateForWardPos);
+
+            for(int i = 0; i < tmpData.Table.Length; i++)
+            {
+                tmpVector3[i] = tmpData.Table[i].transform.localScale;
+                
+                // オブジェクトの外側の座標を求める
+                tmpPos = tmpData.Table[i].transform.position - getTableScale(tmpData)[i];
+            }
+            
+            Stage = new Stage(tmpVector3);
+
+            OutSide = new OutSide(tmpPos);
             
         }
 
         public void MovementActor()
         {
             action(RayController.Object, RayController.Data);
-        }
+        }// todo:移動を壁にめり込まないような処理にする
 
         /// <summary>
         /// プレイヤーを移動させる
         /// </summary>
         private void action(GameObject players, DataPlayer tmpData)
-        {//todo:移動は前後のみ左右は回転のみ
+        {
             Vector3 playerMovePos = Vector3.zero;
-            Vector3 playerRotateAmount = players.transform.eulerAngles;
+            Vector3 playerRotateAmount = Vector3.zero;
 
             if(Input.GetKey(tmpData.ControlleKey[0]))
             {
                 playerMovePos = players.transform.forward;
             }
-            else if(Input.GetKey(tmpData.ControlleKey[1]))
+            if(Input.GetKey(tmpData.ControlleKey[1]))
             {
                 playerRotateAmount = -players.transform.up;
             }
-            else if(Input.GetKey(tmpData.ControlleKey[2]))
+            if(Input.GetKey(tmpData.ControlleKey[2]))
             {
                 playerMovePos -= players.transform.forward;
-                playerRotateAmount = -players.transform.forward;
             }
-            else if(Input.GetKey(tmpData.ControlleKey[3]))
+            if(Input.GetKey(tmpData.ControlleKey[3]))
             {
                 playerRotateAmount = players.transform.up;
             }
 
-            if(Input.GetKey(tmpData.ControlleKey[1])
-            || Input.GetKey(tmpData.ControlleKey[3]))
+            if(playerRotateAmount != Vector3.zero)
             {
                 // 回転を計算する
                 players.transform.eulerAngles += playerRotateAmount;
             }
             
 
-            if(RayController.PlayerCapsuleRay == null) return;
-
             // プレイヤーが何かと当たっていなければ移動できる
-            // プレイヤー自身とレイに必ず当たるので2以下になっている
-            if(!RayController.RayHitObject
-            && RayController.PlayerOverlapCapsule.Amount.Length <= 2)
+            if(RayController.RayHitObject == null)
             {
                 // 移動を計算する
                 players.transform.localPosition +=
@@ -332,9 +339,71 @@ namespace Player
             }
             else
             {
-                // 後ろに移動する
-                players.transform.localPosition -=
-                playerMovePos * moveSpeed.Amount * Time.deltaTime;
+
+            }
+        }
+
+        // 机オブジェクトを取得
+        private Vector3[] getTableScale(DataPlayer tmpData)
+        {
+            Vector3[] tmpPlayerPos;
+
+            for(int i = 0; i < tmpData.Table.Length; i++)
+            {
+                // 机の半径を取得
+                Stage.Scale[i] /= 2;
+            }
+
+            return tmpPlayerPos = Stage.Scale;
+        }
+
+        // プレイヤーが壁にめり込んだら横にスライドする
+        private void returnPlayer(DataPlayer tmpData, GameObject tmpPlayer)
+        {
+            for(int i = 0; i < tmpData.Table.Length; i++)
+            {
+                if(RayController.RayHitObject == tmpData.Table[i])
+                {
+                    // プレイヤーは当たったオブジェクトより奥か手前か
+                    // 右上
+                    if(tmpPlayer.transform.position.x > RayController.RayHitObject.transform.position.x
+                    && tmpPlayer.transform.position.z > RayController.RayHitObject.transform.position.z)
+                    {
+                        // 右移動か左移動か
+                        
+                    }
+
+                    // 左上
+                    if(tmpPlayer.transform.position.x < RayController.RayHitObject.transform.position.x
+                    && tmpPlayer.transform.position.z > RayController.RayHitObject.transform.position.z)
+                    {
+
+                    }
+
+                    // 右下
+                    if(tmpPlayer.transform.position.x > RayController.RayHitObject.transform.position.x
+                    && tmpPlayer.transform.position.z < RayController.RayHitObject.transform.position.z)
+                    {
+                        
+                    }
+
+                    // 左下
+                    if(tmpPlayer.transform.position.x < RayController.RayHitObject.transform.position.x
+                    && tmpPlayer.transform.position.z < RayController.RayHitObject.transform.position.z)
+                    {
+                        
+                    }
+
+
+                    // オブジェクトの内側か判断
+                    if(tmpPlayer.transform.position.x > OutSide.Pos.x
+                    || tmpPlayer.transform.position.z > OutSide.Pos.z)
+                    {
+                        tmpPlayer.transform.position = OutSide.Pos;
+                        break;
+                    }
+                    
+                }
             }
             
         }
@@ -359,28 +428,18 @@ namespace Player
         public GameObject Object{get{return playerobj;} set{playerobj = value;}}
         private GameObject playerobj;
 
-        public PlayerCapsuleRayStartPos PlayerCapsuleRayStartPos{get{return playerCapsuleRayStartPos;} set{playerCapsuleRayStartPos = value;}}
-        private PlayerCapsuleRayStartPos playerCapsuleRayStartPos;
+        public PlayerBoxRayHalfExtents PlayerBoxRayHalfExtents{get{return playerBoxRayHalfExtents;} set{playerBoxRayHalfExtents = value;}}
+        private PlayerBoxRayHalfExtents playerBoxRayHalfExtents;
 
-        public PlayerCapsuleRayEndPos PlayerCapsuleRayEndPos{get{return playerCapsuleRayEndPos;} set{playerCapsuleRayEndPos = value;}}
-        private PlayerCapsuleRayEndPos playerCapsuleRayEndPos;
+        public PlayerBoxRayDistance PlayerBoxRayDistance{get{return playerBoxRayDistance;} set{playerBoxRayDistance = value;}}
+        private PlayerBoxRayDistance playerBoxRayDistance;
 
-        public PlayerCapsuleRayRadiuse PlayerCapsuleRayRadiuse{get{return playerCapsuleRayRadiuse;} set{playerCapsuleRayRadiuse = value;}}
-        private PlayerCapsuleRayRadiuse playerCapsuleRayRadiuse;
 
-        public PlayerCapsuleRayDistance PlayerCapsuleRayDistance{get{return playerCapsuleRayDistance;} set{playerCapsuleRayDistance = value;}}
-        private PlayerCapsuleRayDistance playerCapsuleRayDistance;
-
-        public PlayerOverlapCapsule PlayerOverlapCapsule{get{return playerOverlapCapsule;} set{playerOverlapCapsule = value;}}
-        private PlayerOverlapCapsule playerOverlapCapsule;
         /// <summary>
         /// Rayが当たったオブジェクト
         /// </summary>
         public GameObject RayHitObject{get{return rayHitObject;} set{rayHitObject = value;}}
         private GameObject rayHitObject;
-
-        public PlayerCapsuleRay PlayerCapsuleRay{get{return playerCapsuleRay;} set{playerCapsuleRay = value;}}
-        private PlayerCapsuleRay playerCapsuleRay;
 
         public DataPlayer Data{get{return data;} set{data  = value;}}
         private DataPlayer data;
@@ -388,83 +447,71 @@ namespace Player
         public RayController(DataPlayer data)
         {
             // カプセル型のレイの距離
-            PlayerCapsuleRayDistance = new PlayerCapsuleRayDistance(data.RayDirection);
+            PlayerBoxRayDistance = new PlayerBoxRayDistance(data.RayDirection);
 
             // カプセル型のレイの半径
-            PlayerCapsuleRayRadiuse = new PlayerCapsuleRayRadiuse(data.RayRadiuse);
+            PlayerBoxRayHalfExtents = new PlayerBoxRayHalfExtents(data.RayRadiuse);
 
             Data = data;
         }
 
         public void RayUpdate()
         {
-            CapsuleRayCast(Object);
+            BoxCast(Object);
         }
 
         // 筒型のレイを飛ばす
-        private void CapsuleRayCast(GameObject players)
+        private void BoxCast(GameObject players)
         {
-            // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
-            PlayerCapsuleRayStartPos = new PlayerCapsuleRayStartPos(new Vector3(
-                players.transform.localPosition.x + players.transform.forward.x / 10,
-                0.5f,
-                players.transform.localPosition.z + players.transform.forward.z / 10
-            ));
-
-            // プレイヤーから出る、カプセル型のレイの端の球の中心の座標
-            PlayerCapsuleRayEndPos = new PlayerCapsuleRayEndPos(new Vector3(
-                players.transform.localPosition.x + players.transform.forward.x / 10,
-                3,
-                players.transform.localPosition.z + players.transform.forward.z / 10
-            ));
-
-            Vector3 overlapStartPos = new Vector3(
-                players.transform.localPosition.x + players.transform.forward.x / 5,
-                0.5f,
-                players.transform.localPosition.z + players.transform.forward.z / 5
-            );
-
-            Vector3 overlapEndPos = new Vector3(
-                players.transform.localPosition.x + players.transform.forward.x / 5,
-                3,
-                players.transform.localPosition.z + players.transform.forward.z / 5
-            );
 
             RaycastHit hit;
 
-            // カプセル型のレイを飛ばす
-            PlayerCapsuleRay = new PlayerCapsuleRay(Physics.CapsuleCast(
-                PlayerCapsuleRayStartPos.Amount,
-                PlayerCapsuleRayEndPos.Amount,
-                PlayerCapsuleRayRadiuse.Amount,
-                players.transform.forward,
-                out hit,
-                PlayerCapsuleRayDistance.Amount));
-
-            // レイの内側を格納する
-            PlayerOverlapCapsule = new PlayerOverlapCapsule(Physics.OverlapCapsule(
-                overlapStartPos,
-                overlapEndPos,
-                PlayerCapsuleRayRadiuse.Amount
-            ));
+            Vector3 BoxCenter = new Vector3(
+                players.transform.localPosition.x,
+                1,
+                players.transform.localPosition.z
+            );
 
 
             // レイを見えるようにする
-            VisualPhysics.CapsuleCast(
-                overlapStartPos,
-                overlapEndPos,
-                PlayerCapsuleRayRadiuse.Amount,
+            VisualPhysics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
                 out hit,
-                PlayerCapsuleRayDistance.Amount);
+                Quaternion.identity,
+                data.RayDirection);
 
-            // レイが当たったら
-            if(PlayerCapsuleRay.Cast)
+
+            // レイを飛ばしてレイが当たったら
+            if(Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                players.transform.forward,
+                out hit,
+                Quaternion.identity,
+                data.RayDirection))
             {
-                RayHitObject = hit.collider.gameObject;
+                if(hit.collider != null)
+                {
+                    RayHitObject = hit.collider.gameObject;
+                }
+
             }
             else
             {
+                // 埋もれている
+                if(Physics.CheckBox(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                Quaternion.identity))
+                {
+                    if(hit.collider != null)
+                    {
+                        RayHitObject = hit.collider.gameObject;
+                    }
+                }
+
                 // レイが外れたらnullにする
                 RayHitObject = null;
             }
