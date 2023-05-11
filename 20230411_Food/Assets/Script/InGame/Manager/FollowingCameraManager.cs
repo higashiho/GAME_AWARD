@@ -20,9 +20,8 @@ namespace FollowCamera
         private GameObject followCamera;
         //private GameObject[] followCameras;
         private List<GameObject> followCameras;
-        private float offsetY = 7f;
-        //private float offsetZ = -3f;
-        private float[] offsetZ;
+        private float offsetY = 6f;
+        private float offsetZ = -2f;
 
         // カメラの回転状態
         public enum CameraRotate
@@ -44,8 +43,7 @@ namespace FollowCamera
             int count = player.Count;
             //followCameras = new GameObject[count];
             followCameras = new List<GameObject>(count);
-            // offset生成
-            offsetZ = new float[count];
+            
             foreach(var item in handle.Result)
             {
                 followCameras.Add(MonoBehaviour.Instantiate(item));
@@ -79,87 +77,23 @@ namespace FollowCamera
                 {
                     // viewPort設定
                     followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
-                    // x軸45°に設定する
-                    followCameras[i].transform.localEulerAngles = new Vector3(45, 0, 0);
-                    offsetZ[i] = -3f;
+                    
+                    // カメラの座標調整
+                    followCameras[i].transform.position = 
+                    player[i].FoodPoint.Move.RayController.Object.transform.position + new Vector3(0f, offsetY, offsetZ);
+                    
                     // カメラをそれぞれ担当のプレイヤーの子にセット
                     followCameras[i].transform.parent = player[i].FoodPoint.Move.RayController.Object.transform;
+                    
+                    // 視野角調整
+                    followCameras[i].transform.localEulerAngles = new Vector3(45, 0, 0);
                 }
 
 
             }  
         }
+
         
-        // カメラ回転キーが入力されるとフェーズをひとつ進める
-        // それに応じた位置にカメラが移動する
-        private void input()
-        {
-            if(Input.GetKeyDown("q"))
-            {
-                changeState();
-                cameraMove(followCameras[0]);
-                offsetZ[0] *= -1f;
-                
-            }
-            else if(Input.GetKeyDown("p"))
-            {
-                changeState();
-                cameraMove(followCameras[1]);
-                offsetZ[1] *= -1f;
-            }
-        }
-
-        /// <summary>
-        /// カメラの移動メソッド
-        /// </summary>
-        private void cameraMove(GameObject camera)
-        {
-            switch(RotatePhase)
-            {
-                case CameraRotate.NORMAL:
-                    camera.transform.localEulerAngles = new Vector3(45, 0, 0);
-                    break;
-
-                case CameraRotate.REVERSE:
-                    camera.transform.localEulerAngles = new Vector3(135, 0, 180);
-
-                    break;
-                
-            }
-        }
-
-        /// <summary>
-        /// ステートを次のフェーズに進めるメソッド
-        /// </summary>
-        private void changeState()
-        {
-            if((int)RotatePhase <= Enum.GetValues(typeof(CameraRotate)).Cast<int>().Max())
-                RotatePhase++;
-            else
-                RotatePhase = (CameraRotate)Enum.GetValues(typeof(CameraRotate)).Cast<int>().Min();
-        }
-
-        private void followObject()
-        {
-            // X, Z 平面でプレイヤーを追従させる
-            for(int i = 0; i < player.Count; i++)
-            {
-                // 各プレイヤーのX, Y座標取得
-                float x = player[i].FoodPoint.Move.RayController.Object.transform.position.x;
-                float z = player[i].FoodPoint.Move.RayController.Object.transform.position.z;
-                
-
-                // カメラの座標調整(各プレイヤーのX,Z座標を追従)
-                followCameras[i].transform.position = new Vector3(x, offsetY, z + offsetZ[i]);
-               
-            }
-        }
-
-        public void Update()
-        {
-            input();
-            followObject();
-        }
     }
 }
 
