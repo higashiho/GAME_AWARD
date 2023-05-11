@@ -456,7 +456,7 @@ namespace Result
                 texts[i] = parent.transform.GetChild(i).GetComponent<TextMeshProUGUI>();
                 texts[i].rectTransform.localPosition = ResultConstants.TEXT_START_POS[i];
                 
-                texts[i].color = new Color(1,1,1,1);
+                texts[i].color = Color.white;
             }
         }
 
@@ -524,15 +524,15 @@ namespace Result
             switch(ObjectManager.Result.Move.ResultPattern)
             {
                 case EventsManager.ResultPatternEnum.FOOD_RATE:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 0].ToString();
-                    for(int i = 1; i < 3; i++)
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.MEATPOINT].ToString();
+                    for(int i = (int)FoodPoint.PointManager.Point.FISHPOINT; i <= (int)FoodPoint.PointManager.Point.VEGPOINT; i++)
                         text += "・" + FoodPoint.PointManager.PlayerPercentageArr[number, i].ToString();
                     break;
                 case EventsManager.ResultPatternEnum.FOOD_AMOUNT:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 3].ToString();
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.AMOUNTPOINT].ToString();
                     break;
                 case EventsManager.ResultPatternEnum.SEASONING:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 4].ToString();
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.SEASOUSINGPOINT].ToString();
                     break;
                 default:   
                     break;
