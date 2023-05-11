@@ -211,7 +211,11 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[0], 80f, 100f);
+
+            await gage.Increase(
+                ObjectManager.Result.FoodPointRate.Rate[0], 
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,0], 100), 
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[1,0], 100));
             
             // ゲージ音停止
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
@@ -231,7 +235,10 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[1], 80f, 100f);
+            await gage.Increase(
+                ObjectManager.Result.FoodPointRate.Rate[1],
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,1], 100), 
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[1,1], 100));
 
             // ゲージ音停止
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
@@ -251,7 +258,10 @@ namespace Result
 
             await text.Movement();
 
-            await gage.Increase(ObjectManager.Result.FoodPointRate.Rate[2], 80f, 100f);
+            await gage.Increase(
+                ObjectManager.Result.FoodPointRate.Rate[2], 
+            FoodPoint.PointManager.FoodScoreValues[0,2], 
+            FoodPoint.PointManager.FoodScoreValues[0,2]);
 
             
             // ゲージ音停止

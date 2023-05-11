@@ -40,9 +40,9 @@ namespace FoodPoint
         /// ３: SeasousingPoint
         /// ４: AmountRate
         /// </value>
-        public int[,] PlayerPercentageArr{get; private set;} = new int[2,5];
+        public static int[,] PlayerPercentageArr{get; private set;} = new int[2,5];
  
-        public int[] FoodScoreValues{get; private set;} = new int[3];
+        public static int[,] FoodScoreValues{get; private set;} = new int[2,3];
 
         public enum Point
         {
@@ -110,20 +110,20 @@ namespace FoodPoint
         /// <param name="getPoint">プレイヤーが取得したポイント</param>
         /// <param name="targetPoint">目標のポイント</param>
         /// <returns>得点率(100点中?)</returns>
-        public static int CalcThePercentage(int getPoint, int targetPoint)
+        public static int CalcThePercentage(float getPoint, float targetPoint)
         {
             int percent = 0;
             // 割合を計算
-            int rate = getPoint / targetPoint;
+            float rate = getPoint / targetPoint;
 
             // 割合が1より大きい場合
             if(rate > 1)
             {
-                percent = (1 - (rate % 1) ) * 100;
+                percent = (int)((1 - (rate % 1) ) * 100);
             }
-            else if(rate >= 0)
+            else if(rate <= 1)
             {
-                percent = rate * 100;
+                percent = (int)(rate * 100);
             }
             else
             {
@@ -157,11 +157,11 @@ namespace FoodPoint
         {
             for(int i = 0; i < GameManager.ObjectManager.PlayerManagers.Count; i++)
             {
-                FoodScoreValues[0] = calcFoodPoint(i).Point;
+                FoodScoreValues[i,0] = calcFoodPoint(i).Point;
 
                 //*****************要修正
-                FoodScoreValues[1] = PlayerPercentageArr[i, 3];
-                FoodScoreValues[2] = PlayerPercentageArr[i, 4];
+                FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
+                FoodScoreValues[i,2] = PlayerPercentageArr[i, 4];
             }
             
         }
