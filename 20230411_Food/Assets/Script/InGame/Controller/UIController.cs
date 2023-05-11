@@ -29,9 +29,16 @@ namespace InGame
                 .Where(_ => cutInFlag && this.transform.GetChild(1).gameObject.activeSelf)
                 .Subscribe(_ =>{
                     cutInFlag = false;
-
-                    cutInCanvas.transform.GetChild(0).GetComponent<RawImage>().DOFade(0,1).SetEase(Ease.Linear)
-                        .SetLink(this.gameObject).OnComplete(uiMove.Movement);
+                    
+                    var panelImage = cutInCanvas.transform.GetChild(0).GetComponent<RawImage>();
+                    panelImage.DOFade(0,1).SetEase(Ease.Linear)
+                        .SetLink(this.gameObject).OnComplete(() => {
+                            uiMove.Movement();
+                            panelImage.gameObject.SetActive(false);
+                            }).OnUpdate(() => {
+                            panelImage.transform.GetChild(0).GetComponent<Image>().color = panelImage.color;
+                            panelImage.transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = panelImage.color;
+                        });
                 }).AddTo(this.gameObject);
         }
 
