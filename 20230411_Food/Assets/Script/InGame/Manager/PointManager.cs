@@ -116,6 +116,7 @@ namespace FoodPoint
             // 割合を計算
             float rate = getPoint / targetPoint;
 
+            Debug.Log("rate :" + rate);
             // 割合が1より大きい場合
             if(rate > 1)
             {

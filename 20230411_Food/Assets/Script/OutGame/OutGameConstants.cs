@@ -53,7 +53,7 @@ namespace Constants
         /// <summary>
         /// テキスト目的地
         /// </summary>
-        public const float TARGET_POS_X = 660f;
+        public static readonly float[]TARGET_POS_X = {660f, -660f};
         public static readonly float[] TARGET_POS_Y = {200f,350f};
     }
 }

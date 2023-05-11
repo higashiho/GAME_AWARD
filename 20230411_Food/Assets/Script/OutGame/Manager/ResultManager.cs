@@ -16,7 +16,7 @@ namespace Result
     public class ResultManager : MonoBehaviour
     {
         // インスタンス化
-        private ResultUIMove move;
+        public ResultUIMove Move{get; private set;}
 
         [SerializeField, Header("Gageイメージのマスク")]
         private GameObject[] gageImages = new GameObject[2];
@@ -40,7 +40,6 @@ namespace Result
         [SerializeField]
         private GameObject audioController;
         public GameObject AudioController{get => audioController;}
-        
 
         // Start is called before the first frame update
         void Start()
@@ -48,10 +47,10 @@ namespace Result
             // インスタンス化
             ObjectManager.Result = this;
             ObjectManager.Events = new EventsManager(this.gameObject);
-            move = new ResultUIMove();
+            Move = new ResultUIMove();
 
             // 購読設定
-            move.SetSubscribe();
+            Move.SetSubscribe();
 
             
             // 初期サブジェクト代入
@@ -112,6 +111,9 @@ namespace Result
             setEvenet();
         }
 
+        public EventsManager.ResultPatternEnum ResultPattern{get; private set;}
+        
+
         /// <summary>
         /// イベント設定
         /// </summary>
@@ -132,28 +134,42 @@ namespace Result
         {
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.START)
-                .Subscribe(_ => onEventMountingFlag[0] = true);
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
 
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.FOOD_RATE)
-                .Subscribe(_ => onEventMountingFlag[1] = true);
-
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.FOOD_AMOUNT)
-                .Subscribe(_ => onEventMountingFlag[2] = true);
-
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.SEASONING)
-                .Subscribe(_ => onEventMountingFlag[3] = true);
-
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.JUDGMENT)
-                .Subscribe(_ => onEventMountingFlag[4] = true);
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
                 
             ObjectManager.Events.ResultPattern
                 .Where(x => x == EventsManager.ResultPatternEnum.END)
-                .Subscribe(_ => onEventMountingFlag[5] = true);
-
+                .Subscribe(x => {
+                    ResultPattern = x;
+                    onEventMountingFlag[(int)x] = true;
+                });
                 
             ObjectManager.Result.UpdateAsObservable()
                 .Subscribe(_ =>
@@ -211,7 +227,7 @@ namespace Result
 
             await text.Movement();
 
-
+            Debug.Log("CalcThePercentage" + FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,0], 100));
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[0], 
                 FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,0], 100), 
@@ -261,7 +277,7 @@ namespace Result
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[2], 
             FoodPoint.PointManager.FoodScoreValues[0,2], 
-            FoodPoint.PointManager.FoodScoreValues[0,2]);
+            FoodPoint.PointManager.FoodScoreValues[1,2]);
 
             
             // ゲージ音停止
@@ -451,9 +467,9 @@ namespace Result
         {
             await main();
 
-            player();
+            textMove(0);
+            textMove(1);
 
-            sub();
 
             // 挙動フラグがたっていたら待つ
             await UniTask.WaitWhile(() => !onMoveFlag);
@@ -475,48 +491,25 @@ namespace Result
         /// <summary>
         /// メインプレイヤーテキスト挙動
         /// </summary>
-        private void player()
+        private void textMove(int number)
         {
             var sequence = DOTween.Sequence();
 
-            changeText(texts[1], "playerPoint");
+            // 要素数が変わる為一つ増やす
+            number++;
+            changeText(texts[number], judgPrintText(number - 1));
 
             // 挙動追加
-            sequence.Append(texts[1].transform.DOLocalMoveX(-ResultConstants.TARGET_POS_X ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[number].transform.DOLocalMoveX(-ResultConstants.TARGET_POS_X[number - 1] ,moveTile.Amount).SetEase(Ease.Linear));
 
             // 一秒待機
             sequence.AppendInterval(moveTile.Amount);
 
             // 挙動追加
-            sequence.Append(texts[1].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[0] ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Append(texts[number].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[0] ,moveTile.Amount).SetEase(Ease.Linear));
             
             // 同時挙動追加
-            sequence.Join(texts[1].DOFade(0 ,moveTile.Amount).SetEase(Ease.Linear));
-
-            // 再生
-            sequence.Play();
-        }
-
-        /// <summary>
-        /// サブプレイヤーテキスト挙動
-        /// </summary>
-        private void sub()
-        {
-            var sequence = DOTween.Sequence();
-
-            changeText(texts[2], "subPlayerPoint");
-            
-            // 挙動追加
-            sequence.Append(texts[2].transform.DOLocalMoveX(ResultConstants.TARGET_POS_X ,moveTile.Amount).SetEase(Ease.Linear));
-
-            // 一秒待機
-            sequence.AppendInterval(moveTile.Amount);
-
-            // 挙動追加
-            sequence.Append(texts[2].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[0] ,moveTile.Amount).SetEase(Ease.Linear));
-            
-            // 同時挙動追加
-            sequence.Join(texts[2].DOFade(0 ,moveTile.Amount).SetEase(Ease.Linear));
+            sequence.Join(texts[number].DOFade(0 ,moveTile.Amount).SetEase(Ease.Linear));
 
             // 再生
             sequence.Play().OnComplete(() => 
@@ -525,6 +518,27 @@ namespace Result
             });
         }
 
+        private string judgPrintText(int number)
+        {
+            string text = default;
+            switch(ObjectManager.Result.Move.ResultPattern)
+            {
+                case EventsManager.ResultPatternEnum.FOOD_RATE:
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 0].ToString();
+                    for(int i = 1; i < 3; i++)
+                        text += "・" + FoodPoint.PointManager.PlayerPercentageArr[number, i].ToString();
+                    break;
+                case EventsManager.ResultPatternEnum.FOOD_AMOUNT:
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 3].ToString();
+                    break;
+                case EventsManager.ResultPatternEnum.SEASONING:
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 4].ToString();
+                    break;
+                default:   
+                    break;
+            }
+            return text;
+        }
         private void changeText(TextMeshProUGUI text, string message)
         {
             text.text = message;

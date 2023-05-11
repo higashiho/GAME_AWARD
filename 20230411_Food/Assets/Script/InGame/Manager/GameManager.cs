@@ -80,6 +80,7 @@ namespace GameManager
         private async UniTask InitGame()
         {
             ObjectManager.GameManager = this;
+            ObjectManager.PlayerManagers.Clear();
             ObjectManager.PlayerManagers.Add(new PlayerManager(mainPlayerData));
             ObjectManager.PlayerManagers.Add(new PlayerManager(subPlayerData));
 
