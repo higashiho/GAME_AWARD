@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using FoodPoint;
@@ -67,6 +68,9 @@ namespace GameManager
         private FoodThemeDataList foodThemeData;
 
         [SerializeField]
+        private Slider slider;
+
+        [SerializeField]
         private Canvas cutInCanvas;
 
         public Subject<bool> NowCountDownFlag{get;} = new Subject<bool>();
@@ -86,6 +90,7 @@ namespace GameManager
             ObjectManager.ItemManager = new ItemManager();
             ObjectManager.FollowCamera = new FollowingCameraManager();
             ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
+            ObjectManager.AmountSlider = new FoodAmountBar(slider.transform);
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
@@ -214,6 +219,14 @@ namespace GameManager
         {
             get{return followCamera;}
             set{followCamera = value;}
+        }
+
+        // 量ポイントの表示クラス
+        private static FoodAmountBar amountSlider;
+        public static FoodAmountBar AmountSlider
+        {
+            get{return amountSlider;}
+            set{amountSlider = value;}
         }
     }
 }
