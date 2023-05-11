@@ -35,7 +35,7 @@ namespace GameManager
 
         // ポイント管理クラス
         private PointManager[] pointManager = new PointManager[2];
-        
+
         async void Start()
         {
             // if(!cutInCanvas.gameObject.activeSelf)
@@ -138,8 +138,10 @@ namespace GameManager
                     //pointManager.GetPlayerFoodPoint(ObjectManager.Player);
                     for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
                     {
-                        pointManager[i].GetPlayerPoint(ObjectManager.PlayerManagers[i]);
+                        pointManager[i].GetPlayerPoint(i, ObjectManager.PlayerManagers[i]);
                     }
+                    
+                    
                     ChangeState();
                     break;
                 
@@ -163,6 +165,8 @@ namespace GameManager
             else
                 phase = (gameState)Enum.GetValues(typeof(gameState)).Cast<int>().Min();
         }
+
+        
     }
 
     public class ObjectManager

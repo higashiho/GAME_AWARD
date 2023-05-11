@@ -5,8 +5,6 @@ using System.IO;
 using System;
 using System.Linq;
 
-
-
 using Player;
 using Food;
 
@@ -30,18 +28,22 @@ namespace FoodPoint
 
         // プレイヤー
         private PlayerManager player;
+        
 
+        /// <summary>
+        /// プレイヤーの取得したポイント群
+        /// </summary>
+        /// <value>
+        /// ０: VegetablePoint
+        /// １: MeatPoint
+        /// ２: FishPoint
+        /// ３: SeasousingPoint
+        /// ４: AmountRate
+        /// </value>
+        public int[,] PlayerPercentageArr{get; private set;} = new int[2,5];
+ 
+        public int[] FoodScoreValues{get; private set;} = new int[3];
 
-        // 指定された料理のポイント配列
-        private BaseFoodPoint[] specifiedDishPoint = new BaseFoodPoint[5];
-
-
-        static public int[] playerPercentageArr = new int[5];
-
-
-        static public int[] arr = new int[3];
-
-    
         public enum Point
         {
             // 肉ポイント
@@ -69,7 +71,7 @@ namespace FoodPoint
         /// プレイヤーのポイントを取得するメソッド
         /// </summary>
         /// <returns></returns>
-        public void GetPlayerPoint(PlayerManager player)
+        public void GetPlayerPoint(int num ,PlayerManager player)
         {
             int vegetablePoint = 0;
             int meatPoint = 0;
@@ -93,21 +95,13 @@ namespace FoodPoint
             seasousing = val[0];
             amount += val[1];
 
-            playerPercentageArr[0] = meatPoint;
-            playerPercentageArr[1] = vegetablePoint;
-            playerPercentageArr[2] = fishPoint;
-            playerPercentageArr[3] = seasousing;
-            playerPercentageArr[4] = amount;
-            
-            Debug.Log("MEAT" + playerPercentageArr[0]);
-            Debug.Log("VEG" + playerPercentageArr[1]);
-            Debug.Log("FISH" + playerPercentageArr[2]);
-            Debug.Log("SEAS" + playerPercentageArr[3]);
-            Debug.Log("AMOUNT" + playerPercentageArr[4]);
+            PlayerPercentageArr[num, 0] = meatPoint;
+            PlayerPercentageArr[num, 1] = vegetablePoint;
+            PlayerPercentageArr[num, 2] = fishPoint;
+            PlayerPercentageArr[num, 3] = seasousing;
+            PlayerPercentageArr[num, 4] = amount;
 
-
-            
-
+            setScoreToArray();
         }
 
         /// <summary>
@@ -115,8 +109,8 @@ namespace FoodPoint
         /// </summary>
         /// <param name="getPoint">プレイヤーが取得したポイント</param>
         /// <param name="targetPoint">目標のポイント</param>
-        /// <returns>得点率</returns>
-        public int CalcThePercentage(int getPoint, int targetPoint)
+        /// <returns>得点率(100点中?)</returns>
+        public static int CalcThePercentage(int getPoint, int targetPoint)
         {
             int percent = 0;
             // 割合を計算
@@ -139,6 +133,39 @@ namespace FoodPoint
             return percent;
         }
 
+        /// <summary>
+        /// フードポイントの平均値を計算するメソッド
+        /// </summary>
+        /// <returns>
+        /// リザルト表示用のFoodPointの得点率
+        /// </returns>
+        private FoodPoint calcFoodPoint(int num)
+        {
+            int sumPoint = 0;
+            for(int i = 0; i < 3; i++)
+            {
+                sumPoint += PlayerPercentageArr[num, i];
+            }
+
+            return new FoodPoint(sumPoint / 3);
+        }
+
+        /// <summary>
+        /// リザルト
+        /// </summary>
+        private void setScoreToArray()
+        {
+            for(int i = 0; i < GameManager.ObjectManager.PlayerManagers.Count; i++)
+            {
+                FoodScoreValues[0] = calcFoodPoint(i).Point;
+
+                //*****************要修正
+                FoodScoreValues[1] = PlayerPercentageArr[i, 3];
+                FoodScoreValues[2] = PlayerPercentageArr[i, 4];
+            }
+            
+        }
+       
     }
 }
 
