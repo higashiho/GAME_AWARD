@@ -32,9 +32,6 @@ namespace Player
         private Vector3 rayRadiuse;
         public Vector3 RayRadiuse{get{return rayRadiuse;}}
 
-        [SerializeField, Header("ステージオブジェクト")]
-        private GameObject[] table;
-        public GameObject[] Table{get{return table;}}
 
         [SerializeField, Header("効果音まとめ")]
         private AudioClip[] actionSE;

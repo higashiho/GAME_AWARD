@@ -75,18 +75,6 @@ namespace Player
         }
     }
 
-    // プレイヤーから出るカプセル型のレイの距離
-    public sealed class PlayerBoxRayDistance
-    {
-        public float Amount{get; private set;}
-
-        // コンストラクタ
-        public PlayerBoxRayDistance(float tmpDirection)
-        {
-            Amount = tmpDirection;
-        }
-    }
-
     // プレイヤーから出る、矩形のレイの半径
     public sealed class PlayerBoxRayHalfExtents
     {
@@ -99,23 +87,13 @@ namespace Player
         }
     }
 
-    // ステージの大きさクラス
-    public sealed class Stage
-    {
-        public Vector3[] Scale{get; private set;}
-
-        public Stage(Vector3[] tmpScale)
-        {
-            Scale = tmpScale;
-        }
-    }
 
     // 机オブジェクトの外枠の座標
     public sealed class OutSide
     {
-        public Vector3 Pos{get; private set;}
+        public Vector3[] Pos{get; private set;}
 
-        public OutSide(Vector3 tmpPos)
+        public OutSide(Vector3[] tmpPos)
         {
             Pos = tmpPos;
         }
