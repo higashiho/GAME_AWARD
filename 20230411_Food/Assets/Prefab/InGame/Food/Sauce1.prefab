@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4151080600603034}
   - component: {fileID: 33353099259960006}
   - component: {fileID: 23722491778815098}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Handle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4330504939053660}
   - component: {fileID: 33685693695960176}
   - component: {fileID: 23270243744858646}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sauce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,7 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4517759716199774}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sauce1
   m_TagString: Food
   m_Icon: {fileID: 0}

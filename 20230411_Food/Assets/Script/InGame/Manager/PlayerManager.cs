@@ -172,16 +172,16 @@ namespace Player
 
                 // 目の前の食材をキューに追加
                 ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObjectFood);
-                args.presentPos = Move.RayController.RayHitObject.transform.position;
+                args.presentPos = Move.RayController.RayHitObjectFood.transform.position;
                 // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObjectFood);
                 // 座標を返す
                 ReturnPresentPos(args);
 
                 
                 
                 // １回取得すると消える
-                //deleteFood(data);
+                deleteFood();
 
                 // 肉に１点加算
                 incrimentDictionary(getFoodName(data), getFoodPoint(data));
@@ -195,8 +195,9 @@ namespace Player
         }
 
         // １回取得すると消える
-        private void deleteFood(DataPlayer data)
+        private void deleteFood()
         {
+            
             if(Move.RayController.RayHitObjectFood.tag == "Food")
             {
                 Move.RayController.RayHitObjectFood.SetActive(false);
@@ -238,7 +239,6 @@ namespace Player
         {
             // 目の前にある食材の名前を返す
             return  Move.RayController.RayHitObjectFood.GetComponent<GetValue>().Type;
-            return Move.RayController.RayHitObject.GetComponent<GetValue>().Type;
         }
 
         // 獲得した食材のポイントと量を取得する
@@ -344,7 +344,7 @@ namespace Player
             
 
             // プレイヤーが食べ物以外と当たっていなければ移動できる
-            if(RayController.RayHitObjectNonFood == null)
+            if(!RayController.RayHitObjectNonFood)
             {
                 // 移動を計算する
                 players.transform.localPosition +=
@@ -356,12 +356,20 @@ namespace Player
             {
                 if(Input.GetKey(tmpData.ControlleKey[0]))
                 {
-                        // プレイヤーのいる方向を決める
+                    // プレイヤーのいる方向を決める
                     checkPlayerRayHitObjectSideFlag(players);
                     
 
                     players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
                     
+                }
+                else if(Input.GetKey(tmpData.ControlleKey[2]))
+                {
+                    // プレイヤーのいる方向を決める
+                    checkPlayerRayHitObjectSideFlag(players);
+
+
+                    players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
                 }
             }
         }
@@ -651,6 +659,8 @@ namespace Player
         public DataPlayer Data{get{return data;} set{data  = value;}}
         private DataPlayer data;
 
+        public bool PlayerFrontBoxCast{get; protected set;}
+        public bool PlayerBackBoxCast{get; protected set;}
         public RayController(DataPlayer data)
         {
 
@@ -681,12 +691,39 @@ namespace Player
                 players.transform.localPosition.z
             );
 
+            // 正面のレイ
+            PlayerFrontBoxCast = Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                players.transform.forward,
+                out hit,
+                Quaternion.identity,
+                data.RayDirection,
+                nonFoodLayer);
+
+            // 背面のレイ
+            PlayerBackBoxCast = Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                -players.transform.forward,
+                out hit,
+                Quaternion.identity,
+                data.RayDirection,
+                nonFoodLayer);
+
 
             // レイを見えるようにする
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
+                Quaternion.identity,
+                data.RayDirection);
+
+            VisualPhysics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                -players.transform.forward,
                 Quaternion.identity,
                 data.RayDirection);
 
@@ -714,7 +751,7 @@ namespace Player
             }
             
             // 食べ物以外に当たった
-            if(Physics.BoxCast(
+            if((PlayerFrontBoxCast = Physics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
@@ -722,6 +759,17 @@ namespace Player
                 Quaternion.identity,
                 data.RayDirection,
                 nonFoodLayer))
+
+                ||
+                
+                (PlayerBackBoxCast = Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                -players.transform.forward,
+                out hit,
+                Quaternion.identity,
+                data.RayDirection,
+                nonFoodLayer)))
             {
 
                 if(hit.collider != null)
