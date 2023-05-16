@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Wall
+  - GameMastar
   layers:
   - Default
   - TransparentFX

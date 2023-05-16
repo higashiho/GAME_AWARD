@@ -16,15 +16,7 @@ namespace FoodPoint
     /// </summary>
     public class PointManager 
     {
-        // フードデータ
-        private FoodData foodData;
 
-        // 満腹度ポイント
-        public LevelOfSatiety Amount;
-        // 食料ポイント
-        public FoodPoint Points;
-        // 調味料ポイント
-        public SeasousingPoint SeasPoint;
 
         // プレイヤー
         private PlayerManager player;
@@ -52,10 +44,10 @@ namespace FoodPoint
             FISHPOINT = 1,
             // 野菜ポイント
             VEGPOINT = 2,
-            // 調味料ポイント
-            SEASOUSINGPOINT = 3,
             // 満腹度ポイント
-            LEVELOFSATIETY = 4
+            AMOUNTPOINT = 3,
+            // 調味料ポイント
+            SEASOUSINGPOINT = 4,
         }
         public Point PointType;
         /// <summary>
@@ -161,8 +153,10 @@ namespace FoodPoint
                 FoodScoreValues[i,0] = calcFoodPoint(i).Point;
 
                 //*****************要修正
-                FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
-                FoodScoreValues[i,2] = PlayerPercentageArr[i, 4];
+                // 量ポイントを追加
+                FoodScoreValues[i,1] = PlayerPercentageArr[i, 4];
+                // 調味料ポイントを追加
+                FoodScoreValues[i,2] = PlayerPercentageArr[i, 3];
             }
             
         }
