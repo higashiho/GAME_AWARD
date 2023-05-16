@@ -2464,6 +2464,7 @@ MonoBehaviour:
   - {fileID: 1267749704}
   - {fileID: 1321005511}
   audioController: {fileID: 2005194053}
+  foodData: {fileID: 11400000, guid: 8ab457fa739f4c34d917fb1cc73f167c, type: 2}
 --- !u!4 &1484687625
 Transform:
   m_ObjectHideFlags: 0

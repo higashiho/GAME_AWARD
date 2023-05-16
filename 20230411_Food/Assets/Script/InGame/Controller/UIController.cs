@@ -80,6 +80,7 @@ namespace InGame
         private RectMask2D gageMask;
         private TextMeshProUGUI foodItemsText;
 
+        public static int FoodSaturationAmount{get; private set;}
         public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
         public UIMove(Transform obj)
         {
@@ -186,8 +187,9 @@ namespace InGame
 
             // テキスト変更
             var saturationText = foodSaturationsObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
-        
-            saturationText.text = "kuuhukudo : " + (100 - (int)((targetPaddingAmount / gageMask.rectTransform.sizeDelta.y) * 100));
+
+            FoodSaturationAmount = (100 - (int)((targetPaddingAmount / gageMask.rectTransform.sizeDelta.y) * 100));
+            saturationText.text = "kuuhukudo : " + FoodSaturationAmount;
             
             // 二秒待ってステート更新
             await UniTask.Delay(2000);
