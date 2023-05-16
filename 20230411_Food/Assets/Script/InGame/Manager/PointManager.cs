@@ -72,6 +72,7 @@ namespace FoodPoint
 
             val = player.FoodPoint.Array["SEASOUSING"];
             seasousing = val[0];
+            Debug.Log("プレイヤーが取得した調味料ポイント : " + seasousing);
             amount += val[1];
 
             PlayerPercentageArr[num, 0] = meatPoint;
@@ -145,6 +146,8 @@ namespace FoodPoint
                 FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
                 // 調味料ポイントを追加
                 FoodScoreValues[i,2] = PlayerPercentageArr[i, 4];
+
+                Debug.Log("調味料ポイントテスト" + FoodScoreValues[i,2]);
             }
             
         }

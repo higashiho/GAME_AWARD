@@ -175,6 +175,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4517759716199774}
+  - component: {fileID: -251465749643845147}
+  - component: {fileID: 215573376218768500}
+  - component: {fileID: -3337913233418897988}
   m_Layer: 7
   m_Name: Sauce1
   m_TagString: Food
@@ -199,3 +202,41 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-251465749643845147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163922631430126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 776747a7943ad4d409370e521cf8b6c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &215573376218768500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163922631430126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff03a8fab56e7294fa291cdc07528915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: b0689927586a81642ac06bf4e209bccd, type: 2}
+--- !u!135 &-3337913233418897988
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163922631430126}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
