@@ -215,6 +215,13 @@ namespace Player
         // Dictionaryの特定のキーの値を加算する
         private void incrimentDictionary(string type, int[] pointValue)
         {
+            if(type == "SEASOUSING")
+            {
+                var result = Array[type];
+                //  調味料ポイントが0じゃなっかったらreturn
+                if(result[0] != 0)  return;
+                
+            } 
             int[] tmpCount;
 
             // tmpCountにfoodの値を代入
