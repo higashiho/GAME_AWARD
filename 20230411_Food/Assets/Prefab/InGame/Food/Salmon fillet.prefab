@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1796795963867157374}
   - component: {fileID: 7215474686589168443}
   - component: {fileID: 7873803777306754094}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Salmon fillet
   m_TagString: Food
   m_Icon: {fileID: 0}

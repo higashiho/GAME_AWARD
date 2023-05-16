@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5846494143834405493}
   - component: {fileID: 6350022366228548451}
   - component: {fileID: 6999169218281243420}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tomato Half
   m_TagString: Food
   m_Icon: {fileID: 0}
