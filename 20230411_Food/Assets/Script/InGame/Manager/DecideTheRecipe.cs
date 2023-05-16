@@ -11,11 +11,11 @@ namespace InGame
     {
         // 食材データを取ってきて料理、量を決める
         // 
-        public static int recipeIndex{get; private set;}
+        public static int RecipeIndex{get; private set;}
         // コンストラクタ
         public DecideTheRecipe(FoodThemeDataList dataList)
         {
-            recipeIndex = UnityEngine.Random.Range(0, dataList.FoodThemes.Count);
+            RecipeIndex = UnityEngine.Random.Range(0, dataList.FoodThemes.Count);
         }
 
 

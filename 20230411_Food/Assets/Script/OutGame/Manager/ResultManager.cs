@@ -8,6 +8,7 @@ using UniRx;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using DG.Tweening;
+
 using OutGame;
 using Constants;
 
@@ -40,6 +41,10 @@ namespace Result
         [SerializeField]
         private GameObject audioController;
         public GameObject AudioController{get => audioController;}
+
+        [SerializeField]
+        private InGame.FoodThemeDataList foodData;
+        public InGame.FoodThemeDataList FoodData{get => foodData;}
 
         // Start is called before the first frame update
         void Start()
@@ -224,14 +229,19 @@ namespace Result
             Debug.Log("foodRate");
             // インスタンス化
             text = new TextMove(ObjectManager.Result.TextsParent);
+            var num = InGame.DecideTheRecipe.RecipeIndex;
 
-            await text.Movement();
+            string textStr = default;
+            textStr += ObjectManager.Result.FoodData.FoodThemes[num].TargetRate[0];
 
-            Debug.Log("CalcThePercentage" + FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,0], 100));
+            for(int i = 1; i < ObjectManager.Result.FoodData.FoodThemes[num].TargetRate.Length; i++)
+                textStr += "・" + ObjectManager.Result.FoodData.FoodThemes[num].TargetRate[i];
+            await text.Movement("foodRate : " + textStr);
+
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[0], 
-                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,0], 100), 
-                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[1,0], 100));
+                FoodPoint.PointManager.FoodScoreValues[0,0], 
+                FoodPoint.PointManager.FoodScoreValues[1,0]);
             
             // ゲージ音停止
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
@@ -249,12 +259,12 @@ namespace Result
             // インスタンス化
             text = new TextMove(ObjectManager.Result.TextsParent);
 
-            await text.Movement();
+            await text.Movement("foodAmount : " + InGame.UIMove.FoodSaturationAmount);
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[1],
-                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,1], 100), 
-                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[1,1], 100));
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[0,1], InGame.UIMove.FoodSaturationAmount), 
+                FoodPoint.PointManager.CalcThePercentage(FoodPoint.PointManager.FoodScoreValues[1,1], InGame.UIMove.FoodSaturationAmount));
 
             // ゲージ音停止
             ObjectManager.Result.AudioController.GetComponent<ResultSoundController>().
@@ -272,7 +282,7 @@ namespace Result
             // インスタンス化
             text = new TextMove(ObjectManager.Result.TextsParent);
 
-            await text.Movement();
+            await text.Movement("seasoning");
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[2], 
@@ -456,16 +466,16 @@ namespace Result
                 texts[i] = parent.transform.GetChild(i).GetComponent<TextMeshProUGUI>();
                 texts[i].rectTransform.localPosition = ResultConstants.TEXT_START_POS[i];
                 
-                texts[i].color = new Color(1,1,1,1);
+                texts[i].color = Color.white;
             }
         }
 
         /// <summary>
         /// テキスト挙動関数
         /// </summary>
-        public async UniTask Movement()
+        public async UniTask Movement(string resultName)
         {
-            await main();
+            await main(resultName);
 
             textMove(0);
             textMove(1);
@@ -479,9 +489,9 @@ namespace Result
         /// <summary>
         /// メインテキスト挙動
         /// </summary>
-        private async UniTask main()
+        private async UniTask main(string nameStr)
         {
-            changeText(texts[0], "resultName");
+            changeText(texts[0], nameStr);
 
             var textTween = texts[0].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[1] ,moveTile.Amount).SetEase(Ease.Linear);
 
@@ -524,15 +534,15 @@ namespace Result
             switch(ObjectManager.Result.Move.ResultPattern)
             {
                 case EventsManager.ResultPatternEnum.FOOD_RATE:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 0].ToString();
-                    for(int i = 1; i < 3; i++)
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.MEATPOINT].ToString();
+                    for(int i = (int)FoodPoint.PointManager.Point.FISHPOINT; i <= (int)FoodPoint.PointManager.Point.VEGPOINT; i++)
                         text += "・" + FoodPoint.PointManager.PlayerPercentageArr[number, i].ToString();
                     break;
                 case EventsManager.ResultPatternEnum.FOOD_AMOUNT:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 3].ToString();
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.AMOUNTPOINT].ToString();
                     break;
                 case EventsManager.ResultPatternEnum.SEASONING:
-                    text = FoodPoint.PointManager.PlayerPercentageArr[number, 4].ToString();
+                    text = FoodPoint.PointManager.PlayerPercentageArr[number, (int)FoodPoint.PointManager.Point.SEASOUSINGPOINT].ToString();
                     break;
                 default:   
                     break;
