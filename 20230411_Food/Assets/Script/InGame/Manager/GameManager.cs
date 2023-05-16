@@ -253,7 +253,7 @@ namespace GameManager
         {
             timeUpCanvas = tmpCanvas;
         }
-        private float timeLimit = 1f;
+        private float timeLimit = 20f;
         public async void Timer()
         {
             while(!ObjectManager.GameManager.Cts.IsCancellationRequested)
