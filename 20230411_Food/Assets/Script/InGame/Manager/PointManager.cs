@@ -17,7 +17,10 @@ namespace FoodPoint
     public class PointManager 
     {
 
-
+        public enum Point
+        {
+            MEATPOINT, FISHPOINT, VEGPOINT, AMOUNTPOINT, SEASOUSINGPOINT
+        }
         // プレイヤー
         private PlayerManager player;
         
