@@ -10,6 +10,11 @@ public class GetValue : MonoBehaviour
     // ポイント
     public int Point{get; private set;}
 
+    public void SetPoint(int value)
+    {
+        this.Point = value;
+    }
+
     // 量
     public int Amount{get; private set;}
 
