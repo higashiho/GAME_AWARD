@@ -172,9 +172,7 @@ namespace Player
 
                 // 目の前の食材をキューに追加
                 ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObjectFood);
-                args.presentPos = Move.RayController.RayHitObject.transform.position;
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+                
                 // 座標を返す
                 ReturnPresentPos(args);
 
@@ -238,7 +236,6 @@ namespace Player
         {
             // 目の前にある食材の名前を返す
             return  Move.RayController.RayHitObjectFood.GetComponent<GetValue>().Type;
-            return Move.RayController.RayHitObject.GetComponent<GetValue>().Type;
         }
 
         // 獲得した食材のポイントと量を取得する
