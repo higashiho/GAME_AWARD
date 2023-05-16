@@ -63,7 +63,7 @@ namespace GameManager
 
         [SerializeField]
         private FoodThemeDataList foodThemeData;
-
+        public FoodThemeDataList FoodThemeData{get => foodThemeData;}
 
 
         [SerializeField]

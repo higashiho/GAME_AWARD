@@ -20,12 +20,22 @@ namespace InGame
         [SerializeField]
         private Canvas cutInCanvas = default;
         // Start is called before the first frame update
-        void Start()
+        async void Start()
         {
+            await UniTask.WaitWhile(() => ObjectManager.GameManager == null);
+
             uiMove = new UIMove(this.transform);
 
             // 空腹量増加
             uiMove.FoodSaturation();
+            // お題テキスト
+            uiMove.FoodText();
+
+            setSubscribe();
+        }
+        // 購読設定
+        private void setSubscribe()
+        {
             this.UpdateAsObservable()
                 .Where(_ => cutInFlag && this.transform.GetChild(1).gameObject.activeSelf)
                 .Subscribe(_ =>{
@@ -68,6 +78,7 @@ namespace InGame
         private GameObject foodSaturationsObj;
         private TextMeshProUGUI countdownText;
         private RectMask2D gageMask;
+        private TextMeshProUGUI foodItemsText;
 
         public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
         public UIMove(Transform obj)
@@ -75,10 +86,11 @@ namespace InGame
             foodSaturationsObj = obj.GetChild(0).GetChild(1).gameObject;
             countdownText = obj.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
             gageMask = foodSaturationsObj.transform.GetChild(1).GetComponent<RectMask2D>();
+            foodItemsText = obj.GetChild(0).GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
         }
 
         /// <summary>
-        /// UI全体挙動メソッド
+        /// Countdown挙動管理メソッド
         /// </summary>
         /// <returns></returns>
         public void Countdown()
@@ -87,7 +99,7 @@ namespace InGame
         }
 
         /// <summary>
-        /// 空腹ゲージ挙動関数
+        /// 空腹ゲージ挙動管理メソッド
         /// </summary>
         /// <returns></returns>
         public async void FoodSaturation()
@@ -96,18 +108,27 @@ namespace InGame
         }
 
         /// <summary>
+        /// お題テキスト挙動管理メソッド
+        /// </summary>
+        /// <returns></returns>
+        public async void FoodText()
+        {
+            await foodTextAsync();
+        }
+
+        /// <summary>
         /// Countdown挙動メソッド
         /// </summary>
         /// <returns></returns>
         private async void countdownAsync()
         {
-            await changeText("3");
+            await changeCountdonwText("3");
 
-            await changeText("2");
+            await changeCountdonwText("2");
 
-            await changeText("1");
+            await changeCountdonwText("1");
 
-            await changeText("go!!");
+            await changeCountdonwText("go!!");
             ObjectManager.GameManager.ChangeState();
 
             countdownText.transform.parent.gameObject.SetActive(false);
@@ -118,12 +139,16 @@ namespace InGame
         /// </summary>
         /// <param name="str">変更したいstring</param>
         /// <returns></returns>
-        private async UniTask changeText(string str)
+        private async UniTask changeCountdonwText(string str)
         {
             countdownText.text = str;
             await UniTask.Delay(1000);
         }
-    
+
+        /// <summary>
+        /// 空腹ゲージ増加メソッド
+        /// </summary>
+        /// <returns></returns>
         private async UniTask foodSaturationAsync()
         {
             var gagePadding = gageMask.padding;
@@ -167,6 +192,22 @@ namespace InGame
             // 二秒待ってステート更新
             await UniTask.Delay(2000);
             ObjectManager.GameManager.ChangeState();
+        }
+        
+        /// <summary>
+        /// お題テキスト変更メソッド
+        /// </summary>
+        /// <returns></returns>
+        private async UniTask foodTextAsync()
+        {
+            string[] wordArray; 
+            wordArray = ObjectManager.GameManager.FoodThemeData.FoodThemes[0].InstanceAddress.Split(',');
+
+            foreach(var tmpStr in wordArray)
+            {
+                foodItemsText.text += tmpStr;
+                await UniTask.Delay(100);
+            }
         }
     }
 }
