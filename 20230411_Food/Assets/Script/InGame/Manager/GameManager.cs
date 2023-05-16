@@ -51,8 +51,6 @@ namespace GameManager
                 await (UniTask)initTask;
             }
 
-            await UniTask.WaitWhile(() => !Input.GetKeyDown(KeyCode.Return));
-            ChangeState();
                
 
         }
