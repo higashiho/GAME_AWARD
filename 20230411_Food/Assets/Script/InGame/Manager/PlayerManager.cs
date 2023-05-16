@@ -5,10 +5,8 @@ using ObjectInterface;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using GameManager;
-using System.Linq;
 using System;
 using FoodPoint;
-using Item;
 using Nomnom.RaycastVisualization;
 
 namespace Player
@@ -344,32 +342,53 @@ namespace Player
             
 
             // プレイヤーが食べ物以外と当たっていなければ移動できる
-            if(!RayController.RayHitObjectNonFood)
+            if(!RayController.RayHitObjectNonFood
+            && !RayController.RayHitObjectFood)
             {
                 // 移動を計算する
                 players.transform.localPosition +=
                 playerMovePos * moveSpeed.Amount * Time.deltaTime;
             }
 
-            else
-            // レイが食べ物意外と当たったら
+            else if(RayController.RayHitObjectNonFood
+                 || RayController.RayHitObjectFood)
+            // レイが何かと当たったら
             {
-                if(Input.GetKey(tmpData.ControlleKey[0]))
+                if(RayController.PlayerFrontBoxCast)
                 {
                     // プレイヤーのいる方向を決める
                     checkPlayerRayHitObjectSideFlag(players);
                     
+                    if(Input.GetKey(tmpData.ControlleKey[0]))
+                    {
+                        players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
+                    }
 
-                    players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
+                    if(Input.GetKey(tmpData.ControlleKey[2]))
+                    {
+                        players.transform.localPosition +=
+                        playerMovePos * moveSpeed.Amount * Time.deltaTime;
+                    }
+                    
                     
                 }
-                else if(Input.GetKey(tmpData.ControlleKey[2]))
+                else if(RayController.PlayerBackBoxCast)
                 {
+                    
                     // プレイヤーのいる方向を決める
                     checkPlayerRayHitObjectSideFlag(players);
 
+                    if(Input.GetKey(tmpData.ControlleKey[2]))
+                    {
+                        players.transform.position += scratchWallMoonWalk(players) * moveSpeed.Amount * Time.deltaTime / 2;
+                    }
 
-                    players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
+                    if(Input.GetKey(tmpData.ControlleKey[0]))
+                    {
+                        players.transform.localPosition +=
+                        playerMovePos * moveSpeed.Amount * Time.deltaTime;
+                    }
+                    
                 }
             }
         }
@@ -453,6 +472,99 @@ namespace Player
                 }
 
                 else if(judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[1];
+                }
+                break;
+            }
+
+
+
+            return playerMoveDirection;
+            
+        }
+
+
+
+        /// <summary>
+        /// プレイヤーがどの方向を向いているかによって移動方向を決める
+        /// </summary>
+        /// <param name="tmpPlayer">プレイヤー</param>
+        /// <returns>当たったオブジェクトに対して平行方向の座標</returns>
+        private Vector3 scratchWallMoonWalk(GameObject tmpPlayer)
+        {
+            Vector3 playerMoveDirection = new Vector3(0, 0, 0);
+
+            Vector3[] playerMovePos = {
+                new Vector3(0, 0, 1),
+                new Vector3(0, 0, -1),
+                new Vector3(1, 0, 0),
+                new Vector3(-1, 0, 0),
+            };
+
+            // プレイヤーが当たったオブジェクトに対してどこにいるか
+            switch(Position)
+            {
+                // オブジェクトの上にいる
+                case playerLocation.UP:
+
+                // プレイヤーは右から上向きの間を向いている
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    // 左にスライドして移動
+                    playerMoveDirection = playerMovePos[3];
+                }
+
+                // 左から上
+                else if(judgeLeftToTop(tmpPlayer))
+                {
+                    // 右にスライドして移動
+                    playerMoveDirection = playerMovePos[2];
+                }
+                break;
+
+
+                case playerLocation.LEFT:
+
+                // 左上
+                if(judgeLeftToTop(tmpPlayer))
+                {
+                    // 下にスライドして移動
+                    playerMoveDirection = playerMovePos[1];
+                }
+
+                // 下から左
+                else if(judgeBottomToLeft(tmpPlayer))
+                {
+                    // 上にスライドして移動
+                    playerMoveDirection = playerMovePos[0];
+                }
+                break;
+
+
+                case playerLocation.DOWN:
+
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[2];
+                }
+
+                else if(judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[3];
+                }
+                break;
+
+
+                case playerLocation.RIGHT:
+
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[0];
+                    
+                }
+
+                else if(judgeTopToRight(tmpPlayer))
                 {
                     playerMoveDirection = playerMovePos[1];
                 }
@@ -549,7 +661,6 @@ namespace Player
         /// プレイヤーが当たったオブジェクトのどの方向にいるのか
         /// </summary>
         /// <param name="tmpPlayer">プレイヤー</param>
-        /// <returns>条件に当てはまった方向</returns>
         private void checkPlayerRayHitObjectSideFlag(GameObject tmpPlayer)
         {
             // 当たったオブジェクトの右側にいるなら
@@ -661,6 +772,7 @@ namespace Player
 
         public bool PlayerFrontBoxCast{get; protected set;}
         public bool PlayerBackBoxCast{get; protected set;}
+        public bool PlayerFoodBoxCast{get; protected set;}
         public RayController(DataPlayer data)
         {
 
@@ -712,6 +824,17 @@ namespace Player
                 nonFoodLayer);
 
 
+            // 食材用のレイ
+            PlayerFoodBoxCast = Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                players.transform.forward,
+                out hit,
+                Quaternion.identity,
+                data.RayDirection,
+                foodOnlyLayer);
+
+
             // レイを見えるようにする
             VisualPhysics.BoxCast(
                 BoxCenter,
@@ -729,7 +852,7 @@ namespace Player
 
 
             // レイを飛ばして当たったら
-            if(Physics.BoxCast(
+            if(PlayerFoodBoxCast = Physics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
