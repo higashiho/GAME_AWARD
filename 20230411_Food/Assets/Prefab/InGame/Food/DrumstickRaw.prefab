@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 729288533335887085}
   - component: {fileID: 6605672499513501626}
   - component: {fileID: 5193681843892045754}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8539251378695379376}
   - component: {fileID: 330915530831184264}
   - component: {fileID: 8666942424171495987}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Icosphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 2565959201550335146}
   - component: {fileID: 1133134154120035542}
   - component: {fileID: -9145588578213981718}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DrumstickRaw
   m_TagString: Food
   m_Icon: {fileID: 0}

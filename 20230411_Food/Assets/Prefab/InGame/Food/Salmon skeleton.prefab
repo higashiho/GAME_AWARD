@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5945186410367223854}
   - component: {fileID: 4386961177814559479}
   - component: {fileID: 657293878425709845}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Salmon skeleton
   m_TagString: Food
   m_Icon: {fileID: 0}
