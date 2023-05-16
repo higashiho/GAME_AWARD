@@ -44,10 +44,10 @@ namespace FoodPoint
             FISHPOINT = 1,
             // 野菜ポイント
             VEGPOINT = 2,
-            // 調味料ポイント
-            SEASOUSINGPOINT = 3,
             // 満腹度ポイント
-            LEVELOFSATIETY = 4
+            AMOUNTPOINT = 3,
+            // 調味料ポイント
+            SEASOUSINGPOINT = 4,
         }
         public Point PointType;
         /// <summary>

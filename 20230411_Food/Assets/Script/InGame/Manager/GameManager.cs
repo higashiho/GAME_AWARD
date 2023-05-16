@@ -1,12 +1,15 @@
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using FoodPoint;
 using System.Linq;
 using UniRx;
-
+using TMPro;
+using DG.Tweening;
 
 using Item;
 using Player;
@@ -17,6 +20,7 @@ namespace GameManager
 {
     public class GameManager : MonoBehaviour
     {
+        public CancellationTokenSource Cts{get;} = new CancellationTokenSource();
         private UniTask? initTask = null;
         // ステート
         [SerializeField]
@@ -51,8 +55,6 @@ namespace GameManager
                 await (UniTask)initTask;
             }
 
-            await UniTask.WaitWhile(() => !Input.GetKeyDown(KeyCode.Return));
-            ChangeState();
                
 
         }
@@ -65,8 +67,7 @@ namespace GameManager
 
         [SerializeField]
         private FoodThemeDataList foodThemeData;
-
-
+        public FoodThemeDataList FoodThemeData{get => foodThemeData;}
 
         [SerializeField]
         private Canvas cutInCanvas;
@@ -74,6 +75,10 @@ namespace GameManager
         public Subject<bool> NowCountDownFlag{get;} = new Subject<bool>();
         [SerializeField]
         private UIController uiController;
+
+        private GameTimer timer = null;
+        [SerializeField]
+        private Canvas timeUpCanvas;
 
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
@@ -133,7 +138,12 @@ namespace GameManager
 
                     ObjectManager.PlayerUpdate();
                     ObjectManager.ItemUpdate();
-                        
+                    
+                    if(timer == null)
+                    {
+                        timer = new GameTimer(timeUpCanvas);
+                        timer.Timer();
+                    }
                     
                     break;
                 
@@ -171,7 +181,10 @@ namespace GameManager
                 phase = (gameState)Enum.GetValues(typeof(gameState)).Cast<int>().Min();
         }
 
-        
+        private void OnDestroy()
+        {
+            Cts.Cancel();
+        }
     }
 
     public class ObjectManager
@@ -230,6 +243,35 @@ namespace GameManager
         }
      
         
+    }
+
+    public class GameTimer
+    {
+        private Canvas timeUpCanvas;
+
+        public GameTimer(Canvas tmpCanvas)
+        {
+            timeUpCanvas = tmpCanvas;
+        }
+        private float timeLimit = 1f;
+        public async void Timer()
+        {
+            while(!ObjectManager.GameManager.Cts.IsCancellationRequested)
+            {
+                timeLimit--;
+                await UniTask.Delay(1000);
+
+                if(timeLimit <= 0)
+                    break;
+            }
+            timeUpCanvas.transform.GetChild(0).gameObject.SetActive(true);
+            timeUpCanvas.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Time UP !!";
+            await UniTask.Delay(500);
+            
+            timeUpCanvas.transform.GetChild(1).GetComponent<Image>().
+                DOFade(1, 1).SetLink(ObjectManager.GameManager.gameObject).SetEase(Ease.InSine).
+                OnComplete(ObjectManager.GameManager.ChangeState);
+        }
     }
 }
 

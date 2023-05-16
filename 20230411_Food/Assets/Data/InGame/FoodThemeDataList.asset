@@ -13,23 +13,33 @@ MonoBehaviour:
   m_Name: FoodThemeDataList
   m_EditorClassIdentifier: 
   FoodThemes:
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
+    InstanceAddress: "\u3053,\u3093,\u306B,\u3061,\u306F,\u3002,\n,\u50D5,\u4E95,\u4E0A,\u3067,\u3059,\u3002,\n,\u6700,\u8FD1,\u982D,\u304C,\u30D4,\u30F3,\u30C1,\u306B,\u306A,\u3063,\u3066,\u304D,\u307E,\u3057,\u305F,\u3002,"
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
-  - TargetRate: 000000000000000000000000
-    InstanceAddress: 
-  - TargetRate: 000000000000000000000000
+  - FoodName: 
+    TargetRate: 000000000000000000000000
     InstanceAddress: 
