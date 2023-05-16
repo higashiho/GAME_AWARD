@@ -64,6 +64,8 @@ namespace GameManager
         [SerializeField]
         private FoodThemeDataList foodThemeData;
 
+
+
         [SerializeField]
         private Canvas cutInCanvas;
 
@@ -85,6 +87,8 @@ namespace GameManager
             ObjectManager.ItemManager = new ItemManager();
             ObjectManager.FollowCamera = new FollowingCameraManager();
             ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
+            // レシピを決める
+            ObjectManager.Recipe = new DecideTheRecipe(foodThemeData);
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
@@ -214,6 +218,16 @@ namespace GameManager
             get{return followCamera;}
             set{followCamera = value;}
         }
+
+        // レシピを決定するクラス
+        private static DecideTheRecipe recipe;
+        public static DecideTheRecipe Recipe
+        {
+            get{return recipe;}
+            set{recipe = value;}
+        }
+     
+        
     }
 }
 

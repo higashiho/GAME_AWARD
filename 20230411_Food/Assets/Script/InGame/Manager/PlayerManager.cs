@@ -172,6 +172,7 @@ namespace Player
 
                 // 目の前の食材をキューに追加
                 ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObjectFood);
+                
                 // 座標を返す
                 ReturnPresentPos(args);
 
