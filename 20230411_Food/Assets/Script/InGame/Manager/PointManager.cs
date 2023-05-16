@@ -17,7 +17,10 @@ namespace FoodPoint
     public class PointManager 
     {
 
-
+        public enum Point
+        {
+            MEATPOINT, FISHPOINT, VEGPOINT, AMOUNTPOINT, SEASOUSINGPOINT
+        }
         // プレイヤー
         private PlayerManager player;
         
@@ -29,27 +32,14 @@ namespace FoodPoint
         /// ０: VegetablePoint
         /// １: MeatPoint
         /// ２: FishPoint
-        /// ３: SeasousingPoint
-        /// ４: AmountRate
+        /// ３: AmountRate
+        /// ４: SeasousingPoint
         /// </value>
         public static int[,] PlayerPercentageArr{get; private set;} = new int[2,5];
  
         public static int[,] FoodScoreValues{get; private set;} = new int[2,3];
 
-        public enum Point
-        {
-            // 肉ポイント
-            MEATPOINT = 0,
-            // 魚ポイント
-            FISHPOINT = 1,
-            // 野菜ポイント
-            VEGPOINT = 2,
-            // 満腹度ポイント
-            AMOUNTPOINT = 3,
-            // 調味料ポイント
-            SEASOUSINGPOINT = 4,
-        }
-        public Point PointType;
+        
         /// <summary>
         /// ポイントマネージャーのコンストラクタ
         /// </summary>
@@ -85,13 +75,15 @@ namespace FoodPoint
 
             val = player.FoodPoint.Array["SEASOUSING"];
             seasousing = val[0];
+            Debug.Log("プレイヤーが取得した調味料ポイント : " + seasousing);
             amount += val[1];
 
             PlayerPercentageArr[num, 0] = meatPoint;
             PlayerPercentageArr[num, 1] = vegetablePoint;
             PlayerPercentageArr[num, 2] = fishPoint;
-            PlayerPercentageArr[num, 3] = seasousing;
-            PlayerPercentageArr[num, 4] = amount;
+            PlayerPercentageArr[num, 3] = amount;
+            PlayerPercentageArr[num, 4] = seasousing;
+            
 
             setScoreToArray();
         }
@@ -154,9 +146,11 @@ namespace FoodPoint
 
                 //*****************要修正
                 // 量ポイントを追加
-                FoodScoreValues[i,1] = PlayerPercentageArr[i, 4];
+                FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
                 // 調味料ポイントを追加
-                FoodScoreValues[i,2] = PlayerPercentageArr[i, 3];
+                FoodScoreValues[i,2] = PlayerPercentageArr[i, 4];
+
+                Debug.Log("調味料ポイントテスト" + FoodScoreValues[i,2]);
             }
             
         }
