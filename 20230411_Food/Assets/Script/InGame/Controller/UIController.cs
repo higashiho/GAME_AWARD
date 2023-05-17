@@ -19,6 +19,9 @@ namespace InGame
 
         [SerializeField]
         private Canvas cutInCanvas = default;
+        [SerializeField]
+        private TextMeshProUGUI timerText;
+        public TextMeshProUGUI TitmerText{get => timerText;}
         // Start is called before the first frame update
         async void Start()
         {
@@ -96,6 +99,12 @@ namespace InGame
         /// <returns></returns>
         public void Countdown()
         {
+            if(!ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.activeSelf)
+            {
+                ObjectManager.GameManager.UIController.TitmerText.transform.parent.DOLocalMoveY(400,2).SetEase(Ease.Linear).
+                    OnStart(() => ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.SetActive(true));
+
+            }
             countdownAsync();
         }
 
@@ -189,7 +198,7 @@ namespace InGame
             var saturationText = foodSaturationsObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
 
             FoodSaturationAmount = (100 - (int)((targetPaddingAmount / gageMask.rectTransform.sizeDelta.y) * 100));
-            saturationText.text = "kuuhukudo : " + FoodSaturationAmount;
+            saturationText.text = "空腹度 : " + FoodSaturationAmount;
             
             // 二秒待ってステート更新
             await UniTask.Delay(2000);
@@ -203,7 +212,7 @@ namespace InGame
         private async UniTask foodTextAsync()
         {
             string[] wordArray; 
-            wordArray = ObjectManager.GameManager.FoodThemeData.FoodThemes[0].InstanceAddress.Split(',');
+            wordArray = ObjectManager.GameManager.FoodThemeData.FoodThemes[DecideTheRecipe.RecipeIndex].InstanceAddress.Split(',');
 
             foreach(var tmpStr in wordArray)
             {

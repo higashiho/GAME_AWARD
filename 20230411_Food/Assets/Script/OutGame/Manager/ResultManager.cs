@@ -236,7 +236,7 @@ namespace Result
 
             for(int i = 1; i < ObjectManager.Result.FoodData.FoodThemes[num].TargetRate.Length; i++)
                 textStr += "・" + ObjectManager.Result.FoodData.FoodThemes[num].TargetRate[i];
-            await text.Movement("foodRate : " + textStr);
+            await text.Movement(ObjectManager.Result.FoodData.FoodThemes[num].FoodName + "\n食材割合\n" + textStr, -50);
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[0], 
@@ -259,7 +259,7 @@ namespace Result
             // インスタンス化
             text = new TextMove(ObjectManager.Result.TextsParent);
 
-            await text.Movement("foodAmount : " + InGame.UIMove.FoodSaturationAmount);
+            await text.Movement("オーナーの空腹度\n" + InGame.UIMove.FoodSaturationAmount);
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[1],
@@ -282,7 +282,7 @@ namespace Result
             // インスタンス化
             text = new TextMove(ObjectManager.Result.TextsParent);
 
-            await text.Movement("seasoning");
+            await text.Movement("調味料ポイント");
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[2], 
@@ -473,9 +473,9 @@ namespace Result
         /// <summary>
         /// テキスト挙動関数
         /// </summary>
-        public async UniTask Movement(string resultName)
+        public async UniTask Movement(string resultName, float moveAmount = 0)
         {
-            await main(resultName);
+            await main(resultName, moveAmount);
 
             textMove(0);
             textMove(1);
@@ -489,11 +489,11 @@ namespace Result
         /// <summary>
         /// メインテキスト挙動
         /// </summary>
-        private async UniTask main(string nameStr)
+        private async UniTask main(string nameStr, float moveAmount)
         {
             changeText(texts[0], nameStr);
 
-            var textTween = texts[0].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[1] ,moveTile.Amount).SetEase(Ease.Linear);
+            var textTween = texts[0].transform.DOLocalMoveY(ResultConstants.TARGET_POS_Y[1] + moveAmount ,moveTile.Amount).SetEase(Ease.Linear);
 
             await textTween.AsyncWaitForCompletion();
         }
