@@ -18,12 +18,12 @@ MonoBehaviour:
     MoveKey: 77000000610000007300000064000000
     DeterminationKey: 32
     InstancePos: {x: -4.5, y: 0, z: -7.5}
-    MoveSpeed: 1.5
+    MoveSpeed: 3
     RayDistance: 1
   - Id: 1
     InstanceAddress: Player_2
     MoveKey: 11010000140100001201000013010000
     DeterminationKey: 13
     InstancePos: {x: 4.5, y: 0, z: -7.5}
-    MoveSpeed: 1.5
+    MoveSpeed: 3
     RayDistance: 1
