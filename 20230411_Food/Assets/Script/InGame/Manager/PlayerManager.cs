@@ -29,6 +29,8 @@ namespace Player
         public PlayerNumber PlayerNumber{get{return playerNumber;} set{playerNumber = value;}}
         private PlayerNumber playerNumber;
 
+        public GameObject Object{get; private set;}
+
         // コンストラクタ
         public PlayerManager(DataPlayer tmpData)
         {
@@ -51,7 +53,7 @@ namespace Player
 
             // 1Pプレイヤー生成
             var tmpObj = (GameObject)DataHandle.Result;
-            FoodPoint.Move.RayController.Object = MonoBehaviour.Instantiate(tmpObj
+            FoodPoint.Move.RayController.Object = Object =  MonoBehaviour.Instantiate(tmpObj
             , InstancePos.MainPos
             , tmpObj.transform.rotation);
 
