@@ -96,7 +96,7 @@ namespace Player
             RayController = new RayController(tmpData, rayHitFoodObject);
 
             FoodPoint.Move.InstanceAction();
-        }
+
             // 笠は自身の子に1つしか存在しないため要素数０を取得する
             foreach(Transform cheld in GetChildrenRecursive(Object.transform))
             {
