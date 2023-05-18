@@ -15,10 +15,15 @@ namespace Item
     public class ItemManager 
     {   
 
-        
+        // アイテム生成クラス
         public ItemFactory itemFactory{get; private set;}
+        // プレイヤーマネージャー
         private PlayerManager playerManager;
-        
+        private int counter;
+        private int ripopItemCounter;
+        private int deleteTime = 600;
+        private int ripopTime = 600;
+        // アイテムリポップタスク
         private UniTask? repopItemTask = null;
 
         
@@ -39,6 +44,8 @@ namespace Item
         {
             // アイテムをステージにセット
             itemFactory.InitItem();
+            counter = 0;
+            ripopItemCounter = 0;
         }
 
         /// <summary>
@@ -47,7 +54,18 @@ namespace Item
         public void Update()
         {
             //itemFactory.CreateItem();
-            itemFactory.DebugText();
+            counter++;
+            ripopItemCounter++;
+            if(counter == deleteTime)
+            {
+                itemFactory.RandomEraseItem();
+                counter = 0;
+            }
+            if(ripopItemCounter > ripopTime)
+            {
+                itemFactory.CreateItem();
+                ripopItemCounter = 0;
+            }
         }
 
         
