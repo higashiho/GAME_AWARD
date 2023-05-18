@@ -21,7 +21,7 @@ namespace FollowCamera
         //private GameObject[] followCameras;
         private List<GameObject> followCameras;
         private float offsetY = 6f;
-        private float offsetZ = -4f;
+        private float offsetZ = 4f;
 
  
 
