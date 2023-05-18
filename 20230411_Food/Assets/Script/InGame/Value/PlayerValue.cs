@@ -108,5 +108,16 @@ namespace Player
             Index = tmpNum;
         }
     }
+
+    // プレイヤーの半径
+    public sealed class PlayerRadiuse
+    {
+        public float Value{get; private set;}
+
+        public PlayerRadiuse(float tmpValue)
+        {
+            Value = tmpValue;
+        }
+    }
 }
 
