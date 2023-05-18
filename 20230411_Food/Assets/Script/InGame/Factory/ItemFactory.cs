@@ -96,7 +96,7 @@ namespace Item
         {
             // プールリストの中身が空の場合early return 
             //if(!poolList[0]) return;
-
+            Debug.Log(poolList[0]);
             // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
             // その要素をリストから削除
