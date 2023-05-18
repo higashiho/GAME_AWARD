@@ -8,6 +8,7 @@ using GameManager;
 using System;
 using FoodPoint;
 using Nomnom.RaycastVisualization;
+using UnityEngine.Events;
 
 namespace Player
 {
@@ -24,14 +25,45 @@ namespace Player
         public FoodPoint FoodPoint{get{return foodPoint;} set{foodPoint = value;}}
         private FoodPoint foodPoint;
 
+        /// <summary>
+        /// プレイヤー移動・回転クラス
+        /// </summary>
+        public PlayerMove PlayerMove{get{return playerMove;} set{playerMove = value;}}
+        private PlayerMove playerMove;
+
+        /// <summary>
+        /// レイで当たり判定を得ているクラス
+        /// </summary>
+        /// <value></value>
+        public RayController RayController{get{return rayController;} set{rayController = value;}}
+        private RayController rayController;
+
         public PlayerNumber PlayerNumber{get{return playerNumber;} set{playerNumber = value;}}
         private PlayerNumber playerNumber;
 
+        /// <summary>
+        /// プレイヤー
+        /// </summary>
         public GameObject Object{get; private set;}
+
+        /// <summary>
+        /// レイが食べ物に当たったものを取得
+        /// </summary>
+        public GameObject RayHitFoodObject{get; private set;}
+
+        private void getRayHitFoodObject(GameObject tmpRayHitObj)
+        {
+            RayHitFoodObject = tmpRayHitObj;
+        }
+
+        private UnityAction<GameObject> rayHitFoodObject = null;
+
 
         // コンストラクタ
         public PlayerManager(DataPlayer tmpData)
         {
+            rayHitFoodObject = getRayHitFoodObject;
+
             // 初期化
             Initialization(tmpData);
         }
@@ -40,6 +72,7 @@ namespace Player
         {
 
             FoodPoint = new FoodPoint(tmpData);
+            
             
             // 取得するまで待つ
             DataHandle = Addressables.LoadAssetAsync<GameObject>(tmpData.AdressKey);
@@ -51,11 +84,14 @@ namespace Player
 
             // 1Pプレイヤー生成
             var tmpObj = (GameObject)DataHandle.Result;
-            FoodPoint.Move.RayController.Object = Object =  MonoBehaviour.Instantiate(tmpObj
+            RayController.Object = Object = MonoBehaviour.Instantiate(tmpObj
             , InstancePos.MainPos
             , tmpObj.transform.rotation);
 
             PlayerNumber = new PlayerNumber(tmpData.Number);
+
+            PlayerMove = new PlayerMove(tmpData);
+            RayController = new RayController(tmpData, rayHitFoodObject);
 
             FoodPoint.Move.InstanceAction();
         }
@@ -312,8 +348,6 @@ namespace Player
         // コンストラクタ
         public PlayerMove(DataPlayer tmpData)
         {
-
-            RayController = new RayController(tmpData);
             
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
 
@@ -943,8 +977,12 @@ namespace Player
         public bool PlayerBackBoxCast{get; protected set;}
         public bool PlayerFoodBoxCast{get; protected set;}
         public bool PlayerFloorRayCast{get; protected set;}
-        public RayController(DataPlayer data)
+
+
+        private UnityAction<GameObject> rayHitFoodObject;
+        public RayController(DataPlayer data, UnityAction<GameObject> tmpObj)
         {
+            rayHitFoodObject = tmpObj;
 
             // レイの半径
             PlayerBoxRayHalfExtents = new PlayerBoxRayHalfExtents(data.RayRadiuse);
@@ -1059,6 +1097,7 @@ namespace Player
                 
                 if(hit.collider != null)
                 {
+                    
                     RayHitObjectFood = hit.collider.gameObject;
                 }  
 
@@ -1092,6 +1131,7 @@ namespace Player
 
                 if(hit.collider != null)
                 {
+
                     RayHitObjectNonFood = hit.collider.gameObject;
                 }
                     
