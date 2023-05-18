@@ -240,6 +240,7 @@ GameObject:
   - component: {fileID: 1236042261489893621}
   - component: {fileID: 7659486864938189374}
   - component: {fileID: 4295084051454000658}
+  - component: {fileID: 2015350492815169331}
   m_Layer: 8
   m_Name: Umbrella_Open
   m_TagString: Untagged
@@ -312,6 +313,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2015350492815169331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2505947989032719008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a7f4bb91b22f94eb03aa66d6343352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2849550907931623978
 GameObject:
   m_ObjectHideFlags: 0

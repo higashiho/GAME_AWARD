@@ -45,6 +45,8 @@ namespace Player
         /// プレイヤー
         /// </summary>
         public GameObject Object{get; private set;}
+        public Umbrella.UmbrellaController[] Umbrella{get;private set;} = new Umbrella.UmbrellaController[2];
+        
 
         /// <summary>
         /// レイが食べ物に当たったものを取得
@@ -94,8 +96,20 @@ namespace Player
             RayController = new RayController(tmpData, rayHitFoodObject);
 
             FoodPoint.Move.InstanceAction();
-        }
 
+            // 笠は自身の子に1つしか存在しないため要素数０を取得する
+            foreach(Transform cheld in GetChildrenRecursive(Object.transform))
+            {
+                var umburella = cheld.GetComponent<Umbrella.UmbrellaController>();
+
+                if(umburella == null) continue;
+
+                Umbrella[PlayerNumber.Index] = umburella;
+                Debug.Log("in");
+                break;
+            }
+        }
+        
         public void Update()
         {
             // Rayで当たり判定を得る
@@ -113,6 +127,27 @@ namespace Player
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// 親を含む子オブジェクトを再帰的に取得メソッド
+        /// </summary>
+        /// <param name="parent">取得する親オブジェクト</param>
+        /// <returns>子オブジェクトの配列</returns>
+        private Transform[] GetChildrenRecursive(Transform parent)
+        {
+            // trueを指定しないと非アクティブなオブジェクトを取得できないことに注意
+            var parentAndChildren = parent.GetComponentsInChildren<Transform>(true);
+
+            // 子オブジェクトの格納用配列作成
+            var children = new Transform[parentAndChildren.Length - 1];
+
+            // 親を除く子オブジェクトを結果にコピー
+            Array.Copy(parentAndChildren, 1, children, 0, children.Length);
+
+            // 子オブジェクトが再帰的に格納された配列
+            return children;
+        }
+        
     }
 
 
@@ -1097,13 +1132,18 @@ namespace Player
                 
                 if(hit.collider != null)
                 {
-                    
+                    ObjectManager.PlayerManagers[data.Number].Umbrella[data.Number].
+                        hitObjectSubject.OnNext(hit.collider.gameObject);
+                        
                     RayHitObjectFood = hit.collider.gameObject;
                 }  
 
             }
             else
             {
+                ObjectManager.PlayerManagers[data.Number].Umbrella[data.Number].
+                    hitObjectSubject.OnNext(null);
+
                 RayHitObjectFood = null;
             }
             
