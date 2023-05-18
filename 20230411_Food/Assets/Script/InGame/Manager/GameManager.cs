@@ -100,7 +100,7 @@ namespace GameManager
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
-                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i]);
+                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i], FoodThemeData);
             }
             
             // アイテム関係初期化

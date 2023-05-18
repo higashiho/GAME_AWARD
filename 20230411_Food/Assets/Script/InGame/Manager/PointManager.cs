@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 
 using Player;
+using InGame;
 using Food;
 
 
@@ -23,6 +24,7 @@ namespace FoodPoint
         }
         // プレイヤー
         private PlayerManager player;
+        private FoodThemeDataList foodData;
         
 
         /// <summary>
@@ -44,9 +46,10 @@ namespace FoodPoint
         /// ポイントマネージャーのコンストラクタ
         /// </summary>
         /// <param name="data">料理の数値データ</param>
-        public PointManager(PlayerManager tmpPlayer)
+        public PointManager(PlayerManager tmpPlayer, FoodThemeDataList dataList)
         {
             player = tmpPlayer;
+            foodData = dataList;
         }
 
         /// <summary>
@@ -61,26 +64,27 @@ namespace FoodPoint
             int amount = 0;
             int seasousing = 0;
             
+            // 野菜ポイント
             int[] val = player.FoodPoint.Array["VEGETABLE"];
             vegetablePoint = val[0];
             amount += val[1];
-
+            // 肉ポイント
             val = player.FoodPoint.Array["MEAT"];
             meatPoint = val[0];
             amount += val[1];
-
+            // 魚ポイント
             val = player.FoodPoint.Array["FISH"];
             fishPoint = val[0];
             amount += val[1];
-
+            // 調味料ポイント
             val = player.FoodPoint.Array["SEASOUSING"];
             seasousing = val[0];
-            Debug.Log("プレイヤーが取得した調味料ポイント : " + seasousing);
+            
             amount += val[1];
 
-            PlayerPercentageArr[num, 0] = meatPoint;
-            PlayerPercentageArr[num, 1] = vegetablePoint;
-            PlayerPercentageArr[num, 2] = fishPoint;
+            PlayerPercentageArr[num, 0] = CalcThePercentage(meatPoint, foodData.FoodThemes[0].TargetRate[0]);
+            PlayerPercentageArr[num, 1] = CalcThePercentage(vegetablePoint, foodData.FoodThemes[0].TargetRate[1]);
+            PlayerPercentageArr[num, 2] = CalcThePercentage(fishPoint, foodData.FoodThemes[0].TargetRate[2]);
             PlayerPercentageArr[num, 3] = amount;
             PlayerPercentageArr[num, 4] = seasousing;
             
@@ -100,7 +104,6 @@ namespace FoodPoint
             // 割合を計算
             float rate = getPoint / targetPoint;
 
-            Debug.Log("rate :" + rate);
             // 割合が1より大きい場合
             if(rate > 1)
             {
@@ -144,13 +147,11 @@ namespace FoodPoint
             {
                 FoodScoreValues[i,0] = calcFoodPoint(i).Point;
 
-                //*****************要修正
                 // 量ポイントを追加
                 FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
                 // 調味料ポイントを追加
                 FoodScoreValues[i,2] = PlayerPercentageArr[i, 4];
 
-                Debug.Log("調味料ポイントテスト" + FoodScoreValues[i,2]);
             }
             
         }
