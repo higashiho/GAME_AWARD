@@ -54,6 +54,8 @@ namespace Player
             , tmpObj.transform.rotation);
 
             PlayerNumber = new PlayerNumber(tmpData.Number);
+
+            FoodPoint.Move.InstanceAction();
         }
 
         public void Update()
@@ -271,7 +273,10 @@ namespace Player
         public RayController RayController{get{return rayController;} set{rayController = value;}}
         private RayController rayController;
 
-
+        /// <summary>
+        /// レイが当たったオブジェクトの辺の中点
+        /// </summary>
+        /// <value></value>
         public OutSide OutSide{get{return outSide;} set{outSide = value;}}
         private OutSide outSide;
 
@@ -310,14 +315,18 @@ namespace Player
             
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
 
+            
+        }
+
+        public void InstanceAction()
+        {
             PlayerRadiuse = new PlayerRadiuse(RayController.Object.transform.localScale.z / 2);
+            Debug.Log(PlayerRadiuse.Value);
         }
 
         public void MovementActor()
         {
-            action(RayController.Object, RayController.Data);
-
-            
+            action(RayController.Object, RayController.Data); 
         }
 
         /// <summary>
@@ -358,7 +367,7 @@ namespace Player
             
             
             // プレイヤーがステージの内側に収める
-            insideStage(RayController.Object, playerMovePos);
+            insideStage(players, playerMovePos);
 
 
             // プレイヤーが食べ物以外と当たっていなければ移動できる
@@ -464,7 +473,7 @@ namespace Player
         /// </summary>
         private void insideStage(GameObject tmpPlayer, Vector3 tmpPlayerMovePos)
         {
-
+            
             // プレイヤーが踏み込める外側の座標・上
             float playerPositiveBorderPosZ = RayController.RayHitFloorObject.transform.position.z + 
                                              getTableHalfScale(RayController.RayHitFloorObject).z -
@@ -955,7 +964,8 @@ namespace Player
             int foodOnlyLayer = 1 << 7;
             // Food以外に当たる
             int nonFoodLayer = ~(1 << 7);
-            int floorLayer = 1 << 8;
+            // 床にのみ当たる
+            int floorLayer = 1 << 9;
 
             Vector3 BoxCenter = new Vector3(
                 players.transform.localPosition.x,
@@ -963,7 +973,9 @@ namespace Player
                 players.transform.localPosition.z
             );
             
-
+            Vector3 FloorRayDirection = new Vector3(
+                0, -Vector3.up.y, 0
+            );
             
 
             // 正面のレイ
@@ -990,7 +1002,7 @@ namespace Player
             // 真下に床用のレイを飛ばす
             PlayerFloorRayCast = Physics.Raycast(
                 players.transform.position,
-                players.transform.position,
+                FloorRayDirection,
                 out hit,
                 players.transform.localScale.y,
                 floorLayer
@@ -1027,7 +1039,7 @@ namespace Player
 
             VisualPhysics.Raycast(
                 players.transform.position,
-                players.transform.position,
+                FloorRayDirection,
                 players.transform.localScale.y
             );
 
@@ -1098,6 +1110,7 @@ namespace Player
             {
                 if(hit.collider != null)
                 {
+                    Debug.Log(hit.collider.name);
                     RayHitFloorObject = hit.collider.gameObject;
                 }
             }
