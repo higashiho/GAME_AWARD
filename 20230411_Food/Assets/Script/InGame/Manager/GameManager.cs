@@ -242,7 +242,7 @@ namespace GameManager
             get{return recipe;}
             set{recipe = value;}
         }
-     
+
         
     }
 
