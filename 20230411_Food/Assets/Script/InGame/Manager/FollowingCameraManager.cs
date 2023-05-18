@@ -21,15 +21,9 @@ namespace FollowCamera
         //private GameObject[] followCameras;
         private List<GameObject> followCameras;
         private float offsetY = 6f;
-        private float offsetZ = -2f;
+        private float offsetZ = -4f;
 
-        // カメラの回転状態
-        public enum CameraRotate
-        {
-            NORMAL,
-            REVERSE
-        }
-        public CameraRotate RotatePhase{get; private set;}
+ 
 
         /// <summary>
         /// カメラプレファブをロードするメソッド
@@ -86,7 +80,7 @@ namespace FollowCamera
                     followCameras[i].transform.parent = player[i].FoodPoint.Move.RayController.Object.transform;
                     
                     // 視野角調整
-                    followCameras[i].transform.localEulerAngles = new Vector3(45, 0, 0);
+                    followCameras[i].transform.localEulerAngles = new Vector3(30, 0, 0);
                 }
 
 
