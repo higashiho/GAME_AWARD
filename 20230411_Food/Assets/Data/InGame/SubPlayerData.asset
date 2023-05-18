@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: SubPlayerData
   m_EditorClassIdentifier: 
   adressKey: Player_2
-  playerCreatePos: {x: 10, y: 0, z: 5}
+  playerCreatePos: {x: 10, y: 0, z: 10}
   moveSpeed: 4
   controlleKey: 11010000140100001201000013010000
   rayDirection: 0.75
   rayRadiuse: {x: 0.5, y: 0.9, z: 0.25}
-  defaultAngle: {x: 0, y: 0, z: 0, w: 1}
   actionSE: []
   playerAudioSource: {fileID: 1409451924862225583, guid: 845d5aeabc540694aaa48762841b8782, type: 3}
   number: 2
