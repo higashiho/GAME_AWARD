@@ -75,6 +75,7 @@ namespace GameManager
         public Subject<bool> NowCountDownFlag{get;} = new Subject<bool>();
         [SerializeField]
         private UIController uiController;
+        public UIController UIController{get => uiController;}
 
         private GameTimer timer = null;
         [SerializeField]
@@ -253,13 +254,14 @@ namespace GameManager
         {
             timeUpCanvas = tmpCanvas;
         }
-        private float timeLimit = 999999f;
+        private float timeLimit = float.Parse(ObjectManager.GameManager.UIController.TitmerText.text);
         public async void Timer()
         {
             while(!ObjectManager.GameManager.Cts.IsCancellationRequested)
             {
                 timeLimit--;
                 await UniTask.Delay(1000);
+                ObjectManager.GameManager.UIController.TitmerText.text = timeLimit.ToString();
 
                 if(timeLimit <= 0)
                     break;

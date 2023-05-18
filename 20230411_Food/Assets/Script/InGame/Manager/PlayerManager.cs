@@ -51,7 +51,7 @@ namespace Player
             var tmpObj = (GameObject)DataHandle.Result;
             FoodPoint.Move.RayController.Object = MonoBehaviour.Instantiate(tmpObj
             , InstancePos.MainPos
-            , Quaternion.identity);
+            , tmpObj.transform.rotation);
 
             PlayerNumber = new PlayerNumber(tmpData.Number);
         }

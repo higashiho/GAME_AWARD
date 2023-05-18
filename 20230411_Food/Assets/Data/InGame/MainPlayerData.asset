@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MainPlayerData
   m_EditorClassIdentifier: 
   adressKey: Player_1
-  playerCreatePos: {x: 10, y: 0, z: -5}
+  playerCreatePos: {x: -10, y: 0, z: -10}
   moveSpeed: 4
   controlleKey: 77000000610000007300000064000000
   rayDirection: 0.5
