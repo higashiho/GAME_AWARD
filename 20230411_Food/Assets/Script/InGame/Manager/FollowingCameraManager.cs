@@ -20,16 +20,12 @@ namespace FollowCamera
         private GameObject followCamera;
         //private GameObject[] followCameras;
         private List<GameObject> followCameras;
-        private float offsetY = 6f;
-        private float offsetZ = -2f;
+        
+        private float offsetZ = 4f;
+        private float offsetX = 4f;
 
-        // カメラの回転状態
-        public enum CameraRotate
-        {
-            NORMAL,
-            REVERSE
-        }
-        public CameraRotate RotatePhase{get; private set;}
+
+ 
 
         /// <summary>
         /// カメラプレファブをロードするメソッド
@@ -78,19 +74,63 @@ namespace FollowCamera
                     // viewPort設定
                     followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
                     
+                   
+                    // カメラをそれぞれ担当のプレイヤーの子にセット
+                    followCameras[i].transform.parent = player[i].RayController.Object.transform;
+
+                    // ベクトルの判断、オフセット変更
+
                     // カメラの座標調整
                     followCameras[i].transform.position = 
-                    player[i].FoodPoint.Move.RayController.Object.transform.position + new Vector3(0f, offsetY, offsetZ);
-                    
-                    // カメラをそれぞれ担当のプレイヤーの子にセット
-                    followCameras[i].transform.parent = player[i].FoodPoint.Move.RayController.Object.transform;
+                    player[i].RayController.Object.transform.position + 
+                    setOffset(followCameras[i].transform.parent.eulerAngles.y);
                     
                     // 視野角調整
-                    followCameras[i].transform.localEulerAngles = new Vector3(45, 0, 0);
+                    //followCameras[i].transform.localEulerAngles = new Vector3(30, 0, 0);
                 }
 
 
             }  
+        }
+
+        // プレイヤーのベクトル取得
+        
+        /// <summary>
+        /// カメラのオフセットを設定するメソッド
+        /// プレイヤーが増えた場合カメラのオフセットの場合分けもここに増やす
+        /// </summary>
+        /// <param name="targetVectorY">プレイヤーのベクトル</param>
+        /// <returns>オフセット</returns>
+        private Vector3 setOffset(float targetVectorY)
+        {
+            var offset = new Vector3(0, 6f, 0);
+            switch(targetVectorY)
+            {
+                // 0°
+                case 0:
+                    offset.z = -offsetZ;
+                    break;
+                
+                // 90°
+                case 90:
+                    offset.x = offsetX;
+                    break;
+
+                // 180°
+                case 180:
+                    offset.z = offsetZ;
+                    break;
+
+                // 270°
+                case 270:
+                    offset.x = -offsetX;
+                    break;
+                
+                default:
+                    break;
+                
+            }
+            return  offset;
         }
 
         

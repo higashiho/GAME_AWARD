@@ -60,10 +60,10 @@ namespace GameManager
         }
 
         [SerializeField]
-        private DataPlayer mainPlayerData;
+        private DataPlayer firstPlayerData;
         
         [SerializeField]
-        private DataPlayer subPlayerData;
+        private DataPlayer secondPlayerData;
 
         [SerializeField]
         private FoodThemeDataList foodThemeData;
@@ -89,8 +89,8 @@ namespace GameManager
         {
             ObjectManager.GameManager = this;
             ObjectManager.PlayerManagers.Clear();
-            ObjectManager.PlayerManagers.Add(new PlayerManager(mainPlayerData));
-            ObjectManager.PlayerManagers.Add(new PlayerManager(subPlayerData));
+            ObjectManager.PlayerManagers.Add(new PlayerManager(firstPlayerData));
+            ObjectManager.PlayerManagers.Add(new PlayerManager(secondPlayerData));
 
             ObjectManager.ItemManager = new ItemManager();
             ObjectManager.FollowCamera = new FollowingCameraManager();
@@ -100,7 +100,7 @@ namespace GameManager
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
-                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i]);
+                pointManager[i] = new PointManager(ObjectManager.PlayerManagers[i], FoodThemeData);
             }
             
             // アイテム関係初期化
@@ -242,7 +242,7 @@ namespace GameManager
             get{return recipe;}
             set{recipe = value;}
         }
-     
+
         
     }
 

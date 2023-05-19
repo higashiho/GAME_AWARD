@@ -18,7 +18,9 @@ namespace Item
     public class ItemFactory 
     {
         private ItemData itemData;
-        
+        // アイテムを生成するときの親オブジェクト
+        private GameObject parent;
+
         /// <summary>
         /// アイテム出現座標リスト
         /// </summary>
@@ -37,11 +39,11 @@ namespace Item
         private float spaceX = 8.0f;
         private float spaceZ = 3.0f;
 
-        // 11.5, 4.0, 4.0, 11.5
         // アイテムを生成する基準ライン
         private float baseLineX = -12.0f;
         private float baseLineZ = -4.5f;
 
+        // アイテムの配置posの行、列
         private int posRow = 4;
         private int posCol = 4;
 
@@ -53,7 +55,9 @@ namespace Item
         {
             // 生成座標配列作成
             makePopPosArr();
-            
+
+            // 親オブジェクトを設定
+            parent = GameObject.Find("Item");
         }
 
         /// <summary>
@@ -90,9 +94,12 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            
-            
+            // プールリストの中身が空の場合early return 
+            //if(!poolList[0]) return;
+
+            // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
+            // その要素をリストから削除
             poolList.RemoveAt(0);
             
             // アイテム座標リストシャッフル
@@ -101,19 +108,17 @@ namespace Item
             // 座標リストから空座標のデータを取得
             ItemPosData data = itemPos.Find(item => !item.GetAttend());
 
+            // 座標リストのインデックスを取得
             int index = itemPos.IndexOf(data);
+
             // 生成座標設定
             obj.transform.position = itemPos[index].Pos;
 
             // アイテム生成フラグON
             itemPos[index].SetAttend(true);
             
-
             // アクティブ化
             obj.SetActive(true);
-            
-            
-            
         }
 
         /// <summary>
@@ -138,6 +143,7 @@ namespace Item
             foreach(var item in handle.Result)
             {   
                 var obj = MonoBehaviour.Instantiate(item);
+                obj.transform.parent = parent.transform;
                 obj.SetActive(false);
                 poolList.Add(obj);
             }
@@ -162,38 +168,31 @@ namespace Item
             // アイテム出現フラグOFF
             data.SetAttend(false);
             itemPos[index] = data;
-            CreateItem();
+            //CreateItem();
         }
 
         /// <summary>
         /// アイテムのリポップメソッド
         /// </summary>
         /// <returns></returns>
-        public async void CreateItem()
+        public void CreateItem()
         {
+            // 表示されているアイテムが?個未満
+            int num = 0;
+            for(int i = 0; i < parent.transform.childCount; i++)
+            {
+                if(parent.transform.GetChild(i).gameObject.activeSelf)
+                {
+                    num++;
+                }
+            }
+
+            if(num >= itemData.ItemPopNum)  return;
             
-            // 表示されているアイテムが8個未満の場合
-            int num = itemPos.Count(item => item.GetAttend());
-            if(num >= itemData.ItemPopNum) return;
-            
-            await UniTask.Delay(itemData.RipopInterval);
             Create();
             
         }
-        public void DebugText()
-        {
-            if(Input.GetKeyDown("space"))
-            {
-                for(int i = 0; i < itemPos.Count; i++)
-                {
-                    if(itemPos[i].GetAttend())
-                    {
-                        Debug.Log(itemPos[i].Pos + " : アイテム生成座標");
-                    }
-
-                }
-            }
-        }
+        
 
 
         /// <summary>
@@ -212,12 +211,31 @@ namespace Item
                 }
             }   
         }
-        
+
+        // アイテムリストの中から、アクティブな要素にランダムにアクセスして
+        // 一定時間ごとにstoingする
+        public void RandomEraseItem()
+        {
+            GameObject obj = null;
+            int count = parent.transform.childCount;
+            do
+            {
+                var rand = UnityEngine.Random.Range(0,count);
+                obj = parent.transform.GetChild(rand).gameObject;
+                
+            }
+            while(!obj.activeSelf);
+
+            Debug.Log(obj.name);
+            Storing(obj);
+            
+        }
+
     }
 
     /// <summary>
-        /// アイテムの座標データ
-        /// </summary>
+    /// アイテムの座標データ
+    /// </summary>
     class ItemPosData
     {
         public ItemPosData(Vector3 pos, bool attend)
@@ -229,10 +247,18 @@ namespace Item
         public Vector3 Pos{get; private set;}
         // アイテムが出現しているか
         private bool attend;
+
+        /// <summary>
+        /// attendを取得するメソッド
+        /// </summary>
+        /// <returns>attend</returns>
         public bool GetAttend(){return attend;}
+        /// <summary>
+        /// attendを登録するメソッド
+        /// </summary>
+        /// <param name="value">boolの値</param>
         public void SetAttend(bool value){attend = value;}
 
     }
-
 }
 
