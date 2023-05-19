@@ -1998,8 +1998,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   phase: 0
-  mainPlayerData: {fileID: 11400000, guid: fde2eb3cf2fe0ad4b8c2897d9c7008fa, type: 2}
-  subPlayerData: {fileID: 11400000, guid: 64db00604bf740043baa3ef0c24b5099, type: 2}
+  firstPlayerData: {fileID: 11400000, guid: fde2eb3cf2fe0ad4b8c2897d9c7008fa, type: 2}
+  secondPlayerData: {fileID: 11400000, guid: 64db00604bf740043baa3ef0c24b5099, type: 2}
   foodThemeData: {fileID: 11400000, guid: 8ab457fa739f4c34d917fb1cc73f167c, type: 2}
   cutInCanvas: {fileID: 6492883512057980561}
   uiController: {fileID: 6492883512741477509}

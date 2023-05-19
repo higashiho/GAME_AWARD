@@ -76,11 +76,11 @@ namespace FollowCamera
                     
                    
                     // カメラをそれぞれ担当のプレイヤーの子にセット
-                    followCameras[i].transform.parent = player[i].FoodPoint.Move.RayController.Object.transform;
+                    followCameras[i].transform.parent = player[i].RayController.Object.transform;
 
                     // カメラの座標調整
                     followCameras[i].transform.position = 
-                    player[i].FoodPoint.Move.RayController.Object.transform.position + 
+                    player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
                 }
 
