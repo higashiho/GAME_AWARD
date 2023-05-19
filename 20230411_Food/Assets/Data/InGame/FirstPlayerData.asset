@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2764b7e5736de4b45a7d32fe1133e1b0, type: 3}
-  m_Name: MainPlayerData
+  m_Name: FirstPlayerData
   m_EditorClassIdentifier: 
   adressKey: Player_1
   playerCreatePos: {x: -10, y: 0, z: -10}
