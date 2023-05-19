@@ -183,5 +183,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6492883512910696991, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: firstPlayerData
+      value: 
+      objectReference: {fileID: 11400000, guid: fde2eb3cf2fe0ad4b8c2897d9c7008fa, type: 2}
+    - target: {fileID: 6492883512910696991, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: secondPlayerData
+      value: 
+      objectReference: {fileID: 11400000, guid: 64db00604bf740043baa3ef0c24b5099, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}

@@ -21,14 +21,18 @@ namespace Umbrella
         /// </summary>
         private void setSubscribe()
         {
-            hitObjectSubject.Where(x => x)
+            hitObjectSubject
+                .DistinctUntilChanged()
+                .Where(x => x)
                 .Subscribe(x =>
                 {
                     Debug.Log(x);
                     this.GetComponent<Renderer>().material.SetColor("_BaseColor", new Color(1,1,1,0.5f));
                 }).AddTo(this.gameObject);
 
-            hitObjectSubject.Where(x => !x)
+            hitObjectSubject
+                .DistinctUntilChanged()
+                .Where(x => !x)
                 .Subscribe(x =>
                 {
                     Debug.Log(x);
