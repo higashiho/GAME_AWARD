@@ -119,7 +119,7 @@ namespace Player
         private UnityAction<GameObject> rayHitObjecFood = null;
         private UnityAction<GameObject> rayHitObjectNonFood = null;
         private UnityAction<GameObject> rayHitObjectFloor = null;
-        private UnityEvent[] getHitObject = new UnityEvent[2];
+        private UnityEvent[] getHitObject = new UnityEvent[3];
         private UnityAction<DataPlayer> dataMethod = null;
         private UnityAction<bool> frontBoxCast = null;
         private UnityAction<bool> backBoxCast = null;
@@ -130,8 +130,8 @@ namespace Player
         public PlayerManager(DataPlayer tmpData)
         {
             rayHitObjecFood = setRayHitFoodObject;
-            rayHitObjectNonFood += setRayHitNonFoodObject;
-            rayHitObjectFloor += setRayHitFloorObject;
+            rayHitObjectNonFood = setRayHitNonFoodObject;
+            rayHitObjectFloor = setRayHitFloorObject;
             dataMethod = setPlayerData;
             frontBoxCast = setPlayerFrontRay;
             backBoxCast = setPlayerBackRay;
@@ -555,6 +555,7 @@ namespace Player
                 // 前方のレイに何かが当たったら
                 if(ObjectManager.PlayerManagers[data.Number].FrontBoxCast)
                 {
+                    
                     // プレイヤーのいる方向を決める
                     checkPlayerRayHitObjectSideFlag(players);
                     
