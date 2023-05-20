@@ -15,7 +15,7 @@ MonoBehaviour:
   adressKey: Player_1
   playerCreatePos: {x: -10, y: 0, z: -10}
   moveSpeed: 4
-  controlleKey: 77000000610000007300000064000000
+  controlleKey: 7700000061000000730000006400000030010000
   rayDirection: 0.5
   rayRadiuse: {x: 0.4, y: 0.9, z: 0.1}
   actionSE: []
