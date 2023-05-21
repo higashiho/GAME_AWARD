@@ -140,5 +140,16 @@ namespace Player
             Number = tmpNumber;
         }
     }
+
+
+     public sealed class NonFoodLayer
+    {
+        public int Number{get; private set;}
+
+        public NonFoodLayer(int tmpNumber)
+        {
+            Number = tmpNumber;
+        }
+    }
 }
 
