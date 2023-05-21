@@ -226,7 +226,7 @@ namespace Item
             }
             while(!obj.activeSelf);
 
-            Debug.Log(obj.name);
+//            Debug.Log(obj.name);
             Storing(obj);
             
         }

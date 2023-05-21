@@ -25,8 +25,8 @@ namespace Player
         public KeyCode[] ControlleKey{get{return controlleKey;}}
 
         [SerializeField, Header("プレイヤーから出るRayの最大の長さ")]
-        private float rayDirection;
-        public float RayDirection{get{return rayDirection;}}
+        private float rayDistance;
+        public float RayDistance{get{return rayDistance;}}
 
         [SerializeField, Header("レイの半径")]
         private Vector3 rayRadiuse;

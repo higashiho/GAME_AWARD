@@ -26,7 +26,7 @@ namespace Umbrella
                 .Where(x => x)
                 .Subscribe(x =>
                 {
-                    Debug.Log(x);
+//                    Debug.Log(x);
                     this.GetComponent<Renderer>().material.SetColor("_BaseColor", new Color(1,1,1,0.5f));
                 }).AddTo(this.gameObject);
 
@@ -35,7 +35,7 @@ namespace Umbrella
                 .Where(x => !x)
                 .Subscribe(x =>
                 {
-                    Debug.Log(x);
+//                    Debug.Log(x);
                     this.GetComponent<Renderer>().material.SetColor("_BaseColor", new Color(1,1,1,1));
                 }).AddTo(this.gameObject);
         }

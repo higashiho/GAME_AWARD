@@ -15,7 +15,7 @@ public class GetValue : MonoBehaviour
     public void SetPoint(int value)
     {
         this.Point = value;
-        Debug.Log(Point);
+//        Debug.Log(Point);
     }
 
     // 量

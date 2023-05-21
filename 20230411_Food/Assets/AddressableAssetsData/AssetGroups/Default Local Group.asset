@@ -17,10 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 10f3208f1c9b03d4bb5349b9ede3b596
   m_SerializeEntries:
-  - m_GUID: fde2eb3cf2fe0ad4b8c2897d9c7008fa
-    m_Address: Assets/Data/InGame/MainPlayerData.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 6499442be693df8468974b9984bdff85
     m_Address: 1p
     m_ReadOnly: 0
