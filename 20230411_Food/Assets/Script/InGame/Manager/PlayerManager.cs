@@ -67,26 +67,48 @@ namespace Player
         /// <value></value>
         public PlayerBoxRayHalfExtents PlayerRayRadiuse{get; private set;}
 
-        // プレイヤーのパラメータ
-        public DataPlayer DataPlayer{get{return dataPlayer;} set{dataPlayer = value;}}
-        private DataPlayer dataPlayer;
-
         /// <summary>
         /// レイの当たったオブジェクト
         /// </summary>
         /// <param name="tmpRayHitObj"></param>
         private void setRayHitFoodObject(GameObject tmpRayHitObj)
         {
-            RayHitFoodObject = tmpRayHitObj;
+            if(tmpRayHitObj == null && RayHitFoodObject)
+            {
+                RayHitFoodObject = tmpRayHitObj;
+                return;
+            }
+            if(tmpRayHitObj?.layer == LayerMask.NameToLayer("Food") && tmpRayHitObj != null)
+            {
+                RayHitFoodObject = tmpRayHitObj;
+            }
         }
-
         private void setRayHitNonFoodObject(GameObject tmpRayHitObj)
         {
-            RayHitNonFoodObject = tmpRayHitObj;
+            if(tmpRayHitObj == null && RayHitNonFoodObject)
+            {
+                RayHitNonFoodObject = tmpRayHitObj;
+                return;
+            }
+
+            if(tmpRayHitObj?.layer != LayerMask.NameToLayer("Floor") && tmpRayHitObj != null)
+            {
+                
+                RayHitNonFoodObject = tmpRayHitObj;
+            }
         }
-        private void setRayHitFloorObject(GameObject tmpRayHitObject)
+        private void setRayHitFloorObject(GameObject tmpRayHitObj)
         {
-            RayHitFloorObject = tmpRayHitObject;
+            if(tmpRayHitObj == null && RayHitFloorObject)
+            {
+                RayHitFloorObject = tmpRayHitObj;
+                return;
+            }
+            if(tmpRayHitObj?.layer == LayerMask.NameToLayer("Floor") && tmpRayHitObj != null)
+            {
+                RayHitFloorObject = tmpRayHitObj;
+            }
+            
         }
 
         /// <summary>
@@ -110,17 +132,10 @@ namespace Player
         {
             PlayerRayRadiuse = tmpRayRadiuse;
         }
-        private void setPlayerData(DataPlayer tmpData)
-        {
-            DataPlayer = tmpData;
-        }
+        
 
 
-        private UnityAction<GameObject> rayHitObjecFood = null;
-        private UnityAction<GameObject> rayHitObjectNonFood = null;
-        private UnityAction<GameObject> rayHitObjectFloor = null;
-        private UnityEvent[] getHitObject = new UnityEvent[2];
-        private UnityAction<DataPlayer> dataMethod = null;
+        private UnityAction<GameObject> setRayHitObject = null;
         private UnityAction<bool> frontBoxCast = null;
         private UnityAction<bool> backBoxCast = null;
         private UnityAction<PlayerBoxRayHalfExtents> rayRadiuse = null;
@@ -129,10 +144,9 @@ namespace Player
         // コンストラクタ
         public PlayerManager(DataPlayer tmpData)
         {
-            rayHitObjecFood = setRayHitFoodObject;
-            rayHitObjectNonFood += setRayHitNonFoodObject;
-            rayHitObjectFloor += setRayHitFloorObject;
-            dataMethod = setPlayerData;
+            setRayHitObject = setRayHitFoodObject;
+            setRayHitObject += setRayHitFloorObject;
+            setRayHitObject += setRayHitNonFoodObject;
             frontBoxCast = setPlayerFrontRay;
             backBoxCast = setPlayerBackRay;
             rayRadiuse = setPlayerRayRadiuse;
@@ -146,7 +160,9 @@ namespace Player
 
             FoodPoint = new FoodPoint(tmpData);
             
-            RayController = new RayController(rayHitObjecFood, rayHitObjectNonFood, rayHitObjectFloor, tmpData);
+            RayController = new RayController(setRayHitObject,
+                                        frontBoxCast, 
+                                        backBoxCast, tmpData);
             
             // 取得するまで待つ
             DataHandle = Addressables.LoadAssetAsync<GameObject>(tmpData.AdressKey);
@@ -165,11 +181,6 @@ namespace Player
             PlayerNumber = new PlayerNumber(tmpData.Number);
 
             PlayerMove = new PlayerMove(tmpData, 
-                                        frontBoxCast, 
-                                        backBoxCast,     
-                                        rayHitObjecFood, 
-                                        rayHitObjectNonFood, 
-                                        rayHitObjectFloor,
                                         rayRadiuse);
             
 
@@ -183,7 +194,7 @@ namespace Player
                 if(umburella == null) continue;
 
                 Umbrella[PlayerNumber.Index] = umburella;
-                Debug.Log("in");
+//                Debug.Log("in");
                 break;
             }
         }
@@ -280,8 +291,6 @@ namespace Player
             // 何にもあたっていなければメソッドから抜ける
             if(!ObjectManager.PlayerManagers[data.Number].RayHitFoodObject) return;
 
-            if(ObjectManager.PlayerManagers[data.Number].RayHitFoodObject.tag != "Food") return;
-
             // 初めてその種類の食材を獲得
             // if(!Array.ContainsKey(getFoodName(data))
             // && Input.GetKeyDown(KeyCode.LeftShift))
@@ -309,7 +318,7 @@ namespace Player
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName(data))
-            && Input.GetKeyDown(KeyCode.LeftShift))
+            && Input.GetKeyDown(data.ControlleKey[4]))
             {
                 // アイテムの座標を取得するイベントインスタンス化
                 ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
@@ -429,6 +438,32 @@ namespace Player
         public PlayerRadiuse PlayerRadiuse{get{return playerRadiuse;} set{playerRadiuse = value;}}
         private PlayerRadiuse playerRadiuse;
 
+        // 平行方向の移動方向
+        private Vector3 playerMoveDirection = Vector3.zero;
+
+        private int planeScale = 10;
+
+        // プレイヤーが踏み込める外側の座標・上
+        private  float playerPositiveBorderPosZ;
+
+        // プレイヤーが踏み込める外側の座標・下
+        private float playerNegativeBorderPosZ;
+
+        // プレイヤーが踏み込める外側の座標・左
+        private float playerNegativeBorderPosX;
+
+        // プレイヤーが踏み込める外側の座標・右
+        private float playerPositiveBorderPosX;
+
+
+        // プレイヤー平行移動の方向
+        private Vector3[] playerMovePos = {
+                new Vector3(0, 0, 1),
+                new Vector3(0, 0, -1),
+                new Vector3(1, 0, 0),
+                new Vector3(-1, 0, 0),
+            };
+
         private Vector3[] outSidePos = {
             new Vector3(0, 0, 0),
             new Vector3(0, 0, 0),
@@ -451,40 +486,28 @@ namespace Player
         
         private DataPlayer data;
 
-        private UnityAction<bool> frontBoxRay;
-        private UnityAction<bool> backBoxRay;
-        private UnityAction<GameObject> rayHitFloorObject;
+
         private UnityAction<PlayerBoxRayHalfExtents> rayRadiuse;
-        private UnityAction<GameObject> rayHitNonFoodObject;
-        private UnityAction<GameObject> rayHitFoodObject;
         
 
         // コンストラクタ
         public PlayerMove(DataPlayer tmpData, 
-                          UnityAction<bool> tmpFrontRay, 
-                          UnityAction<bool> tmpBackRay, 
-                          UnityAction<GameObject> tmpFoodObj,
-                          UnityAction<GameObject> tmpNonFoodObj,
-                          UnityAction<GameObject> tmpFloorObject,
                           UnityAction<PlayerBoxRayHalfExtents> tmpRadiuse)
         {
-            frontBoxRay = tmpFrontRay;
-            backBoxRay = tmpBackRay;
-            rayHitFloorObject = tmpFloorObject;
+
             rayRadiuse = tmpRadiuse;
-            rayHitNonFoodObject = tmpNonFoodObj;
-            rayHitFoodObject = tmpFoodObj;
 
             data = tmpData;
 
 
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
+
+            
         }
 
         public void InstanceAction()
         {
             PlayerRadiuse = new PlayerRadiuse(ObjectManager.PlayerManagers[data.Number].Object.transform.localScale.z / 2);
-            Debug.Log(PlayerRadiuse.Value);
         }
 
         public void MovementActor()
@@ -502,6 +525,8 @@ namespace Player
 
             // プレイヤーの今の座標
             Vector3 playerNowPos = players.transform.position;
+
+            setOutSidePos();
 
 
             if(Input.GetKey(tmpData.ControlleKey[0]))
@@ -526,19 +551,60 @@ namespace Player
                 // 回転を計算する
                 players.transform.eulerAngles += playerRotateAmount;
             }
-            
-            
-            // if(ObjectManager.PlayerManagers[tmpData.Number].RayController.PlayerFloorRayCast)
-            // {
-            //     // プレイヤーがステージの内側に収める
-            //     insideStage(players, playerMovePos);
-            // }
-            // else
-            // {
 
-            // }
-                
 
+            // プレイヤーがステージの内側に収める
+            // 地面を取得しているのでジャンプなどの処理が出た時はレイの射程を伸ばすこと
+            if(insideStage(players))
+            {
+                if(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject)
+                {
+
+                    if(Input.GetKey(tmpData.ControlleKey[0]))
+                    {
+                        
+
+                        if(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.name != "Floor")
+                        {
+                            planeScale = 1;
+                        }
+                        else
+                        {
+                            planeScale = 10;
+                        }
+
+                        checkFloorInsidePos(players);
+
+                        // 壁に沿って移動
+                        players.transform.position += setStageScratchWalk(players, playerMovePos) * moveSpeed.Amount * Time.deltaTime / 2;
+
+                        return;
+
+                    }
+
+                    else if(Input.GetKey(tmpData.ControlleKey[2]))
+                    {
+
+                        if(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.name != "Floor")
+                        {
+                            planeScale = 1;
+                        }
+                        else
+                        {
+                            planeScale = 10;
+                        }
+
+                        checkFloorInsidePos(players);
+
+                        // 壁に沿って移動
+                        players.transform.position += setStageScratchMoonWalk(players, playerMovePos) * moveSpeed.Amount * Time.deltaTime / 2;
+
+                        return;
+
+                        
+                    }
+                }
+            }
 
             // プレイヤーが食べ物以外と当たっていなければ移動できる
             if(!ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject
@@ -548,20 +614,22 @@ namespace Player
                 move(players, playerMovePos);
             }
 
+            
+            
             // レイが何かと当たったら
-            else if(ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject
-                 || ObjectManager.PlayerManagers[data.Number].RayHitFoodObject)
+            if(ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject
+            || ObjectManager.PlayerManagers[data.Number].RayHitFoodObject)
             {
                 // 前方のレイに何かが当たったら
                 if(ObjectManager.PlayerManagers[data.Number].FrontBoxCast)
                 {
                     // プレイヤーのいる方向を決める
-                    checkPlayerRayHitObjectSideFlag(players);
-                    
-                    // 当たったオブジェクトと平行に移動する
+                    checkPlayerRayHitObjectSideFlag(players, ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject);
+
                     if(Input.GetKey(tmpData.ControlleKey[0]))
                     {
-
+                        
+                        // 当たったオブジェクトと平行に移動する
                         players.transform.position += scratchWall(players) * moveSpeed.Amount * Time.deltaTime / 2;
 
                         // 角から内側に侵入するのを防ぐ
@@ -576,7 +644,7 @@ namespace Player
                     }
 
 
-                    // 振り向き時のめり込み防止
+                    // 停止中の振り向き時のめり込み防止
                     if(Input.GetKey(tmpData.ControlleKey[1])
                     || Input.GetKey(tmpData.ControlleKey[3]))
                     {
@@ -597,13 +665,13 @@ namespace Player
                 // 後ろ向きで当たっている
                 else if(ObjectManager.PlayerManagers[data.Number].BackBoxCast)
                 {
-                    
                     // プレイヤーのいる方向を決める
-                    checkPlayerRayHitObjectSideFlag(players);
+                    checkPlayerRayHitObjectSideFlag(players, ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject);
 
                     // 当たったオブジェクトと平行に移動する
                     if(Input.GetKey(tmpData.ControlleKey[2]))
                     {
+
                         players.transform.position += scratchWallMoonWalk(players) * moveSpeed.Amount * Time.deltaTime / 2;
 
                         // 角から内側に侵入するのを防ぐ
@@ -637,72 +705,50 @@ namespace Player
             }
         }
 
-
         /// <summary>
-        /// プレイヤーをステージの内側に収める
+        /// 床の外の辺の中心を求めている
         /// </summary>
-        private void insideStage(GameObject tmpPlayer, Vector3 tmpPlayerMovePos)
+        private void setOutSidePos()
         {
-            
-            // プレイヤーが踏み込める外側の座標・上
-            float playerPositiveBorderPosZ = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.position.z + 
+            playerPositiveBorderPosZ = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.localPosition.z + 
+                                            // *10 はstageがPlaneのため大きさを１０倍している
                                              getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject).z -
                                              PlayerRadiuse.Value;
 
-            // プレイヤーが踏み込める外側の座標・下
-            float playerNegativeBorderPosZ = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.position.z - 
+            playerNegativeBorderPosZ = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.localPosition.z - 
                                              getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject).z +
                                              PlayerRadiuse.Value;
 
-            // プレイヤーが踏み込める外側の座標・左
-            float playerPositiveBorderPosX = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.position.x - 
+            playerNegativeBorderPosX = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.localPosition.x - 
                                              getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject).x +
                                              PlayerRadiuse.Value;
 
-            // プレイヤーが踏み込める外側の座標・右
-            float playerNegativeBorderPosX = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.position.x + 
+            playerPositiveBorderPosX = ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.transform.localPosition.x + 
                                              getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject).x -
                                              PlayerRadiuse.Value;
-
-            // プレイヤーが上へはみ出そう
-            if(tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
-            {
-                // 後ろへ下げる
-                backwardPlayer(tmpPlayer, tmpPlayerMovePos);
-            }
-
-            // プレイヤーが下へはみ出そう
-            if(tmpPlayer.transform.position.z < playerNegativeBorderPosZ)
-            {
-                // 後ろへ下げる
-                backwardPlayer(tmpPlayer, tmpPlayerMovePos);
-            }
-
-            // プレイヤーが左へはみ出そう
-            if(tmpPlayer.transform.position.x > playerNegativeBorderPosX)
-            {
-                // 後ろへ下げる
-                backwardPlayer(tmpPlayer, tmpPlayerMovePos);
-            }
-
-            // プレイヤーが右へはみ出そう
-            if(tmpPlayer.transform.position.x > playerPositiveBorderPosX)
-            {
-                // 後ろへ下げる
-                backwardPlayer(tmpPlayer, tmpPlayerMovePos);
-            }
         }
 
 
         /// <summary>
-        /// プレイヤーを後ろに下げる
+        /// プレイヤーがステージから出ようとしているか
         /// </summary>
-        /// <param name="tmpPlayer">プレイヤー</param>
-        /// <param name="tmpPlayerMovePos">移動量</param>
-        private void backwardPlayer(GameObject tmpPlayer, Vector3 tmpPlayerMovePos)
+        private bool insideStage(GameObject tmpPlayer)
         {
-            tmpPlayerMovePos -= tmpPlayer.transform.forward;
+            
+            // プレイヤーがステージからはみ出そう
+            if(tmpPlayer.transform.position.z >= playerPositiveBorderPosZ
+                || tmpPlayer.transform.position.z <= playerNegativeBorderPosZ
+                || tmpPlayer.transform.position.x <= playerNegativeBorderPosX
+                || tmpPlayer.transform.position.x >= playerPositiveBorderPosX)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            } 
         }
+
         
 
         /// <summary>
@@ -710,9 +756,9 @@ namespace Player
         /// </summary>
         /// <param name="tmpPlayer">プレイヤー</param>
         /// <param name="tmpPlayerMovePos">移動量</param>
-        private void move(GameObject tmpPlayer, Vector3 tmpPlayerMovePos)
+        private Vector3 move(GameObject tmpPlayer, Vector3 tmpPlayerMovePos)
         {
-            tmpPlayer.transform.localPosition +=
+            return tmpPlayer.transform.localPosition +=
             tmpPlayerMovePos * moveSpeed.Amount * Time.deltaTime;
         }
 
@@ -723,14 +769,7 @@ namespace Player
         /// <returns>当たったオブジェクトに対して平行方向の座標</returns>
         private Vector3 scratchWall(GameObject tmpPlayer)
         {
-            Vector3 playerMoveDirection = new Vector3(0, 0, 0);
-
-            Vector3[] playerMovePos = {
-                new Vector3(0, 0, 1),
-                new Vector3(0, 0, -1),
-                new Vector3(1, 0, 0),
-                new Vector3(-1, 0, 0),
-            };
+            
 
             // プレイヤーが当たったオブジェクトに対してどこにいるか
             switch(Position)
@@ -808,6 +847,217 @@ namespace Player
         }
 
 
+        private Vector3 setStageScratchWalk(GameObject tmpPlayer, Vector3 tmpMovePos)
+        {
+            // プレイヤーが当たったオブジェクトに対してどこにいるか
+            switch(Position)
+            {
+                // オブジェクトの上にいる
+                case playerLocation.UP:
+
+                // プレイヤーは右から上向きの間を向いている
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    // 右にスライドして移動
+                    playerMoveDirection = playerMovePos[2];
+                }
+
+                // 上から左
+                if(judgeLeftToTop(tmpPlayer))
+                {
+                    // 左にスライドして移動
+                    playerMoveDirection = playerMovePos[3];
+                }
+
+                if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+
+                case playerLocation.LEFT:
+
+                // 右から上
+                if(judgeLeftToTop(tmpPlayer))
+                {
+                    // 上にスライドして移動
+                    playerMoveDirection = playerMovePos[0];
+                }
+
+                // 下から左
+                if(judgeBottomToLeft(tmpPlayer))
+                {
+                    // 下にスライドして移動
+                    playerMoveDirection = playerMovePos[1];
+                }
+
+                if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+
+                case playerLocation.DOWN:
+
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[2];
+                }
+
+                if(judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[3];
+                }
+
+                if(judgeLeftToTop(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+
+                case playerLocation.RIGHT:
+
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[0];
+                    
+                }
+
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[1];
+                }
+
+                if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+            }
+
+            return playerMoveDirection;
+        }
+
+
+        private Vector3 uTurn(GameObject tmpPlayer, Vector3 tmpMovePos)
+        {
+            return tmpMovePos = tmpPlayer.transform.forward;
+        }
+
+        private Vector3 moveForward(GameObject tmpPlayer, Vector3 tmpMovePos)
+        {
+            return tmpMovePos = -tmpPlayer.transform.forward;
+        }
+
+
+        private Vector3 setStageScratchMoonWalk(GameObject tmpPlayer, Vector3 tmpMovePos)
+        {
+            // プレイヤーが当たったオブジェクトに対してどこにいるか
+            switch(Position)
+            {
+                // オブジェクトの上にいる
+                case playerLocation.UP:
+
+                // プレイヤーは右から上向きの間を向いている
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    // 左にスライドして移動
+                    playerMoveDirection = playerMovePos[3];
+                }
+
+                // 上から左
+                if(judgeBottomToLeft(tmpPlayer))
+                {
+                    // 右にスライドして移動
+                    playerMoveDirection = playerMovePos[2];
+                }
+
+                if(judgeTopToRight(tmpPlayer) || judgeLeftToTop(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    moveForward(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+
+                case playerLocation.LEFT:
+
+                // 右から上
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    // 下にスライドして移動
+                    playerMoveDirection = playerMovePos[1];
+                }
+
+                // 下から左
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    // 上にスライドして移動
+                    playerMoveDirection = playerMovePos[0];
+                }
+
+                if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    moveForward(tmpPlayer, tmpMovePos);
+                }
+
+                break;
+
+
+                case playerLocation.DOWN:
+
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[3];
+                }
+
+                else if(judgeLeftToTop(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[2];
+                }
+
+                if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    moveForward(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+
+                case playerLocation.RIGHT:
+
+                if(judgeLeftToTop(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[1];
+                    
+                }
+
+                else if(judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = playerMovePos[0];
+                }
+
+                if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = 
+                    moveForward(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+            }
+
+            return playerMoveDirection;
+        }
+
 
         /// <summary>
         /// プレイヤーがどの方向を向いているかによって移動方向を決める
@@ -816,14 +1066,6 @@ namespace Player
         /// <returns>当たったオブジェクトに対して平行方向の座標</returns>
         private Vector3 scratchWallMoonWalk(GameObject tmpPlayer)
         {
-            Vector3 playerMoveDirection = new Vector3(0, 0, 0);
-
-            Vector3[] playerMovePos = {
-                new Vector3(0, 0, 1),
-                new Vector3(0, 0, -1),
-                new Vector3(1, 0, 0),
-                new Vector3(-1, 0, 0),
-            };
 
             // プレイヤーが当たったオブジェクトに対してどこにいるか
             switch(Position)
@@ -899,6 +1141,11 @@ namespace Player
             return playerMoveDirection;
             
         }
+
+
+       
+
+
 
         /// <summary>
         /// プレイヤーがどの方向を向いているのか
@@ -984,28 +1231,33 @@ namespace Player
         /// プレイヤーが当たったオブジェクトのどの方向にいるのか
         /// </summary>
         /// <param name="tmpPlayer">プレイヤー</param>
-        private void checkPlayerRayHitObjectSideFlag(GameObject tmpPlayer)
+        private void checkPlayerRayHitObjectSideFlag(GameObject tmpPlayer, GameObject tmpRayHitObject)
         {
+            // レイの半径を代入
+            rayRadiuse(ObjectManager.PlayerManagers[data.Number].RayController.PlayerBoxRayHalfExtents);
+
             // 当たったオブジェクトの右側にいるなら
-            if(tmpPlayer.transform.position.x > getRayHitObjectOutSidePos().Pos[0].x + ObjectManager.PlayerManagers[data.Number].PlayerRayRadiuse.Amount.x)
+            if(tmpPlayer.transform.position.x > 
+                getRayHitObjectOutSidePos(tmpRayHitObject).Pos[0].x + ObjectManager.PlayerManagers[data.Number].PlayerRayRadiuse.Amount.x)
             {
                 Position = playerLocation.RIGHT;
             }
 
             // 左
-            else if(tmpPlayer.transform.position.x < getRayHitObjectOutSidePos().Pos[1].x - ObjectManager.PlayerManagers[data.Number].PlayerRayRadiuse.Amount.x)
+            else if(tmpPlayer.transform.position.x < 
+                getRayHitObjectOutSidePos(tmpRayHitObject).Pos[1].x - ObjectManager.PlayerManagers[data.Number].PlayerRayRadiuse.Amount.x)
             {
                 Position = playerLocation.LEFT;
             }
 
             // 上
-            else if(tmpPlayer.transform.position.z >= getRayHitObjectOutSidePos().Pos[0].z)
+            else if(tmpPlayer.transform.position.z >= getRayHitObjectOutSidePos(tmpRayHitObject).Pos[0].z)
             {
                 Position = playerLocation.UP;
             }
 
             // 下
-            else if(tmpPlayer.transform.position.z <= getRayHitObjectOutSidePos().Pos[1].z)
+            else if(tmpPlayer.transform.position.z <= getRayHitObjectOutSidePos(tmpRayHitObject).Pos[1].z)
             {
                 Position = playerLocation.DOWN;
             }
@@ -1017,20 +1269,60 @@ namespace Player
             
         }
 
+
+        /// <summary>
+        /// プレイヤーがどこの外側にいるのか
+        /// </summary>
+        /// <param name="tmpPlayer">プレイヤー</param>
+        private void checkFloorInsidePos(GameObject tmpPlayer)
+        {
+
+            // 右側にいるなら
+            if(tmpPlayer.transform.position.x > playerPositiveBorderPosX)
+            {
+                Position = playerLocation.RIGHT;
+            }
+
+            // 左
+            else if(tmpPlayer.transform.position.x < playerNegativeBorderPosX)
+            {
+                Position = playerLocation.LEFT;
+            }
+
+            // 上
+            else if(tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
+            {
+                Position = playerLocation.UP;
+            }
+
+            // 下
+            else if(tmpPlayer.transform.position.z < playerNegativeBorderPosZ)
+            {
+                Position = playerLocation.DOWN;
+            }
+
+            else
+            {
+                Position = playerLocation.NOHIT;
+            }
+            
+            
+        }
+
         
 
         /// <summary>
         /// プレイヤーの目の前の侵入できない座標の境界を配列化して取得する
         /// </summary>
         /// <returns>レイが当たったオブジェクトの外側の座標の配列・Vector3[]</returns>
-        private OutSide getRayHitObjectOutSidePos()
+        private OutSide getRayHitObjectOutSidePos(GameObject tmpRayHitObject)
         {
             // 当たったオブジェクトの中点の座標
-            Vector3 rayHitObjectPositivePos = ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject.transform.position 
-                                            + getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject);
+            Vector3 rayHitObjectPositivePos = tmpRayHitObject.transform.position 
+                                            + getTableHalfScale(tmpRayHitObject);
 
-            Vector3 rayHitObjectNegativePos = ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject.transform.position 
-                                            - getTableHalfScale(ObjectManager.PlayerManagers[data.Number].RayHitNonFoodObject);
+            Vector3 rayHitObjectNegativePos = tmpRayHitObject.transform.position 
+                                            - getTableHalfScale(tmpRayHitObject);
 
             // 侵入できない座標配列
             Vector3[] rayHitObjectSidePoses = 
@@ -1052,12 +1344,18 @@ namespace Player
         /// <summary>
         /// 机オブジェクトの半径を取得
         /// </summary>
-        /// <param name="tmpData">プレイヤーのデータ</param>
         private Vector3 getTableHalfScale(GameObject tmpRayHitObject)
         {
-
-            // 机の半径を取得
-            return tmpRayHitObject.transform.localScale / 2;
+            if(tmpRayHitObject.name != "Floor")
+            {
+                // 机の半径を取得
+                return tmpRayHitObject.transform.localScale / 2;
+            }
+            else
+            {
+                return tmpRayHitObject.transform.localScale * 10 / 2;
+            }
+                
         }
 
     }
@@ -1083,46 +1381,35 @@ namespace Player
         public PlayerBoxRayHalfExtents PlayerBoxRayHalfExtents{get{return playerBoxRayHalfExtents;} set{playerBoxRayHalfExtents = value;}}
         private PlayerBoxRayHalfExtents playerBoxRayHalfExtents;
 
-
         /// <summary>
-        /// Rayが当たったオブジェクト・食べ物
-        /// </summary>
-        public GameObject RayHitObjectFood{get{return rayHitObjectFood;} set{rayHitObjectFood = value;}}
-        private GameObject rayHitObjectFood;
-
-        /// <summary>
-        /// Rayが当たったオブジェクト・食べ物と床以外
+        /// 食材のレイヤー番号
         /// </summary>
         /// <value></value>
-        public GameObject RayHitObjectNonFood{get{return rayHitObjectNonFood;} set{rayHitObjectNonFood = value;}}
-        private GameObject rayHitObjectNonFood;
+        public FoodLayer FoodLayer{get{return foodLayer;} set{foodLayer = value;}}
+        private FoodLayer foodLayer;
 
-        /// <summary>
-        /// Rayが当たったオブジェクト・床
-        /// </summary>
-        /// <value></value>
-        public GameObject RayHitFloorObject{get{return rayHitFloorObject;} set{rayHitFloorObject = value;}}
-        private GameObject rayHitFloorObject;
+        public FoodLayer NonFoodLayer{get{return nonFoodLayer;} set{nonFoodLayer = value;}}
+        private FoodLayer nonFoodLayer;
 
         private DataPlayer dataPlayer;
-        public bool PlayerFrontBoxCast{get; protected set;}
-        public bool PlayerBackBoxCast{get; protected set;}
-        public bool PlayerFoodBoxCast{get; protected set;}
-        public bool PlayerFloorRayCast{get; protected set;}
+        public bool PlayerFrontBoxCast{get; private set;}
+        public bool PlayerBackBoxCast{get; private set;}
+        public bool PlayerFoodBoxCast{get; private set;}
+        public bool PlayerFloorRayCast{get; private set;}
 
 
-        private UnityAction<GameObject> rayHitFoodObject;
-        private UnityAction<GameObject> rayHitNonFoodObject;
-        private UnityAction<GameObject> rayHitObjectFloor;
+        private UnityAction<GameObject> rayHitObject;
+        private UnityAction<bool> frontBoxRay;
+        private UnityAction<bool> backBoxRay;
 
         public RayController(UnityAction<GameObject> tmpRayHitObj, 
-                             UnityAction<GameObject> tmpNonFoodObj, 
-                             UnityAction<GameObject> tmpFloorObj, 
+                             UnityAction<bool> tmpFrontRay, 
+                             UnityAction<bool> tmpBackRay, 
                              DataPlayer tmpData)
         {
-            rayHitFoodObject = tmpRayHitObj;
-            rayHitNonFoodObject = tmpNonFoodObj;
-            rayHitObjectFloor = tmpFloorObj;
+            rayHitObject = tmpRayHitObj;
+            frontBoxRay = tmpFrontRay;
+            backBoxRay = tmpBackRay;
 
             dataPlayer = tmpData;
             // レイの半径
@@ -1138,13 +1425,14 @@ namespace Player
         private void BoxCast(GameObject players, DataPlayer tmpData)
         {
 
-            RaycastHit hit;
-            // Foodのみ当たる
-            int foodOnlyLayer = 1 << 7;
-            // Food以外に当たる
-            int nonFoodLayer = ~(1 << 7);
-            // 床にのみ当たる
-            int floorLayer = 1 << 9;
+            RaycastHit foodHit;
+            RaycastHit frontObjectHit;
+            RaycastHit backObjectHit;
+            RaycastHit floorHit;
+
+            FoodLayer = new FoodLayer(1 << getLayerMask("Food"));
+
+            
 
             Vector3 BoxCenter = new Vector3(
                 players.transform.localPosition.x,
@@ -1156,154 +1444,133 @@ namespace Player
                 0, -Vector3.up.y, 0
             );
             
-
-            // 正面のレイ
-            PlayerFrontBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
-                players.transform.forward,
-                out hit,
-                players.transform.rotation,
-                dataPlayer.RayDirection,
-                nonFoodLayer);
-
-            // 背面のレイ
-            PlayerBackBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
-                -players.transform.forward,
-                out hit,
-                players.transform.rotation,
-                dataPlayer.RayDirection,
-                nonFoodLayer);
-
-
-            // 真下に床用のレイを飛ばす
-            PlayerFloorRayCast = Physics.Raycast(
-                players.transform.position,
-                FloorRayDirection,
-                out hit,
-                players.transform.localScale.y,
-                floorLayer
-            );
-
             
-
-
-            // 食材用のレイ
-            PlayerFoodBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
-                players.transform.forward,
-                out hit,
-                players.transform.rotation,
-                dataPlayer.RayDirection,
-                foodOnlyLayer);
-
-
             // レイを見えるようにする
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
                 players.transform.rotation,
-                dataPlayer.RayDirection);
+                dataPlayer.RayDistance);
 
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 -players.transform.forward,
                 players.transform.rotation,
-                dataPlayer.RayDirection);
+                dataPlayer.RayDistance);
 
             VisualPhysics.Raycast(
                 players.transform.position,
                 FloorRayDirection,
-                players.transform.localScale.y
-            );
-
-
-            // レイを飛ばして当たったら
-            if(PlayerFoodBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
-                players.transform.forward,
-                out hit,
-                players.transform.rotation,
-                dataPlayer.RayDirection,
-                foodOnlyLayer))
-            {
-                
-                if(hit.collider != null)
-                {
-                    ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
-                        hitObjectSubject.OnNext(hit.collider.gameObject);
-                        
-                    RayHitObjectFood = hit.collider.gameObject;
-                }  
-
-            }
-            else
-            {
-                ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
-                    hitObjectSubject.OnNext(null);
-
-                RayHitObjectFood = null;
-            }
+                players.transform.localScale.y);
             
-            // 食べ物以外に当たった
-            if((PlayerFrontBoxCast = Physics.BoxCast(
+
+            // 食材用のレイ
+            PlayerFoodBoxCast = Physics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
-                out hit,
+                out foodHit,
                 players.transform.rotation,
-                dataPlayer.RayDirection,
-                nonFoodLayer))
+                dataPlayer.RayDistance,
+                FoodLayer.Number);
 
-                ||
-                
-                (PlayerBackBoxCast = Physics.BoxCast(
+            // 正面のレイ
+            PlayerFrontBoxCast = Physics.BoxCast(
+                BoxCenter,
+                PlayerBoxRayHalfExtents.Amount,
+                players.transform.forward,
+                out frontObjectHit,
+                players.transform.rotation,
+                dataPlayer.RayDistance);
+
+            // 背面のレイ
+            PlayerBackBoxCast = Physics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 -players.transform.forward,
-                out hit,
+                out backObjectHit,
                 players.transform.rotation,
-                dataPlayer.RayDirection,
-                nonFoodLayer)))
+                dataPlayer.RayDistance);
+
+
+            // 真下に床用のレイを飛ばす
+            PlayerFloorRayCast = Physics.Raycast(
+                players.transform.localPosition,
+                FloorRayDirection,
+                out floorHit,
+                players.transform.localScale.y
+                );
+
+
+            
+            // レイが食べ物に当たる
+            if(foodHit.collider != null)
+            {
+                ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
+                    hitObjectSubject.OnNext(foodHit.collider.gameObject);
+                    
+                rayHitObject(foodHit.collider.gameObject);
+            } 
+            else
+            {
+                ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
+                hitObjectSubject.OnNext(null);
+
+                rayHitObject(null);
+            }
+            
+            
+            
+            // 正面もしくは背面のレイが食べ物以外に当たった
+            if(frontObjectHit.collider != null)
             {
 
-                if(hit.collider != null)
-                {
+                rayHitObject(frontObjectHit.collider.gameObject);
+        
+                // 前で当たっている
+                frontBoxRay(PlayerFrontBoxCast);
+                
+            
+            }
 
-                    RayHitObjectNonFood = hit.collider.gameObject;
-                }
+            else if(backObjectHit.collider != null)
+            {
+                
+                rayHitObject(backObjectHit.collider.gameObject);
+                
+            
+                // 後ろで当たっている
+                backBoxRay(PlayerBackBoxCast);
+                
+            }
+            // レイが当たっていない
+            else
+            {
+                rayHitObject(null);
+
+                frontBoxRay(false);
+                
+                backBoxRay(false);
                     
             }
-            else
-            {
-                RayHitObjectNonFood = null;
-            }
 
-            // 床を取得
-            if(PlayerFloorRayCast = Physics.Raycast(
-                players.transform.position,
-                players.transform.position,
-                out hit,
-                players.transform.localScale.y,
-                floorLayer
-            ))
+           
+            if(floorHit.collider != null)
             {
-                if(hit.collider != null)
-                {
-                    Debug.Log(hit.collider.name);
-                    RayHitFloorObject = hit.collider.gameObject;
-                }
+                rayHitObject(floorHit.collider.gameObject);
             }
             else
             {
-                RayHitFloorObject = null;
+                rayHitObject(null);
             }
+        }
+
+
+        private int getLayerMask(string tmpLayerName)
+        {
+            return LayerMask.NameToLayer(tmpLayerName);
         }
     }
 
