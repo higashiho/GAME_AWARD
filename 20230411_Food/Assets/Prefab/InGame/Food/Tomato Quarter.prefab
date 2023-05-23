@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: a5c9f2f301a3dce4e94e6e6817cd723e, type: 2}
+  Point: 0
 --- !u!135 &5077860166470476481
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -109,5 +110,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.16989638
+  m_Radius: 0.5
   m_Center: {x: -0.030214291, y: 0.16989674, z: -0.043759502}

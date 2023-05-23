@@ -21,6 +21,10 @@ namespace Item
         // アイテムを生成するときの親オブジェクト
         private GameObject parent;
 
+        // 皿オブジェクト配列
+        private Queue<GameObject> plateList = new Queue<GameObject>(5);
+        // 皿オブジェクト
+        private GameObject tmpPlate;
         /// <summary>
         /// アイテム出現座標リスト
         /// </summary>
@@ -94,10 +98,9 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            // // プールリストの中身が空の場合early return 
-            //if(poolList[0] == null) return;
+            // プールリストの中身が空の場合early return 
             Debug.Log(poolList[0] + " : プールリストの先頭の要素");
-            // // プールリストの最初の要素を取得
+            // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
             
             // // その要素をリストから削除
@@ -118,7 +121,18 @@ namespace Item
 
             // アイテム生成フラグON
             itemPos[index].SetAttend(true);
-            
+            if(plateList.Count <= 0)
+            {
+                GameObject tmpObj = MonoBehaviour.Instantiate(tmpPlate);
+                plateList.Enqueue(tmpObj);
+                tmpObj.SetActive(false);
+            }
+
+            GameObject plate = plateList.Dequeue();
+            plate.transform.parent = obj.transform;
+            // 皿の座標調整
+            plate.transform.position = obj.transform.position - new Vector3(0,0.25f,0);
+            plate.SetActive(true);
             // アクティブ化
             obj.SetActive(true);
         }
@@ -138,6 +152,10 @@ namespace Item
             data.SetAttend(false);
             // 配列にそのデータを返す
             itemPos[index] = data;
+            GameObject plate = obj.transform.GetChild(0).gameObject;
+            plate.transform.parent = null;
+            plateList.Enqueue(plate);
+            plate.SetActive(false);
             // アイテムオブジェクトを非アクティブにする
             obj.SetActive(false);
         }
@@ -161,8 +179,13 @@ namespace Item
 
             var dataHandle = Addressables.LoadAssetAsync<ItemData>("ItemData");
             await dataHandle.Task;
-
+            
             itemData = dataHandle.Result;
+
+            var plateHandle = Addressables.LoadAssetAsync<GameObject>("Plate");
+            await plateHandle.Task;
+
+            tmpPlate = plateHandle.Result;
         }
 
         /// <summary>
@@ -179,6 +202,7 @@ namespace Item
             // アイテム出現フラグOFF
             data.SetAttend(false);
             itemPos[index] = data;
+            CreateItem();
         }
 
         /// <summary>

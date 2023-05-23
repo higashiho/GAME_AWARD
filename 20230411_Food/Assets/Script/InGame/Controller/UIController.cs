@@ -102,7 +102,18 @@ namespace InGame
             if(!ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.activeSelf)
             {
                 ObjectManager.GameManager.UIController.TitmerText.transform.parent.DOLocalMoveY(400,2).SetEase(Ease.Linear).
-                    OnStart(() => ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.SetActive(true));
+                    OnStart(() => {
+                            var num = InGame.DecideTheRecipe.RecipeIndex;
+                            var tmpText = ObjectManager.GameManager.UIController.TitmerText.transform.parent.parent.GetChild(1).GetComponent<TextMeshProUGUI>();
+                            
+                            tmpText.text = "肉・野・魚\n " + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[0] + " ・ " 
+                            + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[1] + " ・ "
+                            + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[2];
+
+                            tmpText.DOFade(1,2).SetEase(Ease.Linear).SetLink(tmpText.gameObject);
+                            
+                            ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.SetActive(true);
+                        });
 
             }
             countdownAsync();

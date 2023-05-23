@@ -39,6 +39,9 @@ namespace GameManager
 
         // ポイント管理クラス
         private PointManager[] pointManager = new PointManager[2];
+        [SerializeField]
+        private FoodThemeDataList foodData;
+        public FoodThemeDataList FoodData{get => foodData;}
 
         async void Start()
         {
