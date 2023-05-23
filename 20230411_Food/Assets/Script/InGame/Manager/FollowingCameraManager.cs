@@ -78,22 +78,15 @@ namespace FollowCamera
                     // カメラをそれぞれ担当のプレイヤーの子にセット
                     followCameras[i].transform.parent = player[i].RayController.Object.transform;
 
-                    // ベクトルの判断、オフセット変更
-
                     // カメラの座標調整
                     followCameras[i].transform.position = 
                     player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
-                    
-                    // 視野角調整
-                    //followCameras[i].transform.localEulerAngles = new Vector3(30, 0, 0);
                 }
 
 
             }  
         }
-
-        // プレイヤーのベクトル取得
         
         /// <summary>
         /// カメラのオフセットを設定するメソッド
