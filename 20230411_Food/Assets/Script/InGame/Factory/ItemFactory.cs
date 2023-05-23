@@ -36,11 +36,11 @@ namespace Item
         private UniTask? loadTask = null;
 
         // アイテムを生成する間隔
-        private float spaceX = 8.0f;
+        private float spaceX = 10.0f;
         private float spaceZ = 3.0f;
 
         // アイテムを生成する基準ライン
-        private float baseLineX = -12.0f;
+        private float baseLineX = -15.0f;
         private float baseLineZ = -4.5f;
 
         // アイテムの配置posの行、列
@@ -130,10 +130,15 @@ namespace Item
         {
             // プールのQueueに入れる
             poolList.Add(obj);
+            // アイテムがあった座標のItemPosDataを取得
             var data = itemPos.Find(item => item.Pos == obj.transform.position);
+            // 配列上のインデックスを取得
             int index = itemPos.IndexOf(data);
+            // アイテム生成パラメータをオフ
             data.SetAttend(false);
+            // 配列にそのデータを返す
             itemPos[index] = data;
+            // アイテムオブジェクトを非アクティブにする
             obj.SetActive(false);
         }
         
@@ -174,7 +179,6 @@ namespace Item
             // アイテム出現フラグOFF
             data.SetAttend(false);
             itemPos[index] = data;
-            //CreateItem();
         }
 
         /// <summary>
@@ -232,7 +236,6 @@ namespace Item
             }
             while(!obj.activeSelf);
 
-//            Debug.Log(obj.name);
             Storing(obj);
             
         }
