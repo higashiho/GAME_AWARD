@@ -113,7 +113,7 @@ namespace FoodPoint
             {
                 percent = (int)(rate * 100);
             }
-            else
+            else if(rate < 0)
             {
                 Debug.LogError("結果が負になっています");
             }

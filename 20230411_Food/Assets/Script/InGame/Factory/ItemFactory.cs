@@ -217,7 +217,7 @@ namespace Item
                 {
                     // アイテム座標管理リストに追加
                     // 生成座標, アイテムが生成されているかのフラグ
-                    itemPos.Add(new ItemPosData(new Vector3(baseLineX + i * spaceX, 1.0f, baseLineZ + j * spaceZ), false));
+                    itemPos.Add(new ItemPosData(new Vector3(baseLineX + i * spaceX, InGameConst.ITEMPOS_Y, baseLineZ + j * spaceZ), false));
                 }
             }   
         }
