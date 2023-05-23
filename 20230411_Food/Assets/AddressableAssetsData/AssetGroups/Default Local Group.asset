@@ -31,6 +31,10 @@ MonoBehaviour:
     m_Address: ItemData
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: acbc7238c9c191d4d8aff4ab3a575a69
+    m_Address: Assets/Kitchen Asset/Prefabs/Plate3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
   m_SchemaSet:
