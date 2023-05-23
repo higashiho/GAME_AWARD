@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   adressKey: Player_1
   playerCreatePos: {x: -10, y: 0, z: -10}
-  moveSpeed: 4
-  controlleKey: 77000000610000007300000064000000
-  rayDirection: 0.5
+  moveSpeed: 5
+  controlleKey: 7700000061000000730000006400000030010000
+  rayDistance: 0.5
   rayRadiuse: {x: 0.4, y: 0.9, z: 0.1}
   actionSE: []
   playerAudioSource: {fileID: 1409451924862225583, guid: 845d5aeabc540694aaa48762841b8782, type: 3}

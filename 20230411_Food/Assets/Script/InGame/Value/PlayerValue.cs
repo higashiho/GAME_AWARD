@@ -119,5 +119,37 @@ namespace Player
             Value = tmpValue;
         }
     }
+
+
+    public sealed class FoodLayer
+    {
+        public int Number{get; private set;}
+
+        public FoodLayer(int tmpNumber)
+        {
+            Number = tmpNumber;
+        }
+    }
+
+    public sealed class FloorLayer
+    {
+        public int Number{get; private set;}
+
+        public FloorLayer(int tmpNumber)
+        {
+            Number = tmpNumber;
+        }
+    }
+
+
+     public sealed class NonFoodLayer
+    {
+        public int Number{get; private set;}
+
+        public NonFoodLayer(int tmpNumber)
+        {
+            Number = tmpNumber;
+        }
+    }
 }
 
