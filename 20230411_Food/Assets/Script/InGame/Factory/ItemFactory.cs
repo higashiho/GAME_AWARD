@@ -179,6 +179,7 @@ namespace Item
             // アイテム出現フラグOFF
             data.SetAttend(false);
             itemPos[index] = data;
+            CreateItem();
         }
 
         /// <summary>
