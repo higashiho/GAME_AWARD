@@ -20,4 +20,5 @@ MonoBehaviour:
   rayRadiuse: {x: 0.4, y: 0.9, z: 0.1}
   actionSE: []
   playerAudioSource: {fileID: 1409451924862225583, guid: 845d5aeabc540694aaa48762841b8782, type: 3}
+  playerRotateSpeed: 50
   number: 2

@@ -292,29 +292,32 @@ namespace Player
             if(!ObjectManager.PlayerManagers[data.Number].RayHitFoodObject) return;
 
             // 初めてその種類の食材を獲得
-            // if(!Array.ContainsKey(getFoodName(data))
-            // && Input.GetKeyDown(KeyCode.LeftShift))
-            // {
-            //     // アイテムの座標を取得するイベントインスタンス化
-            //     ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
-            //     // 座標設定
-            //     args.presentPos = Move.RayController.RayHitObject.transform.position;
-            //     // 座標を返す
-            //     ReturnPresentPos(args);
+            if(!Array.ContainsKey(getFoodName(data))
+            && Input.GetKeyDown(data.ControlleKey[4]))
+            {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.PlayerManagers[data.Number].RayHitFoodObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
 
-            //     // 目の前の食材をキューに追加
-            //     ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.PlayerManagers[data.Number].RayHitFoodObject);
+                
+                // 座標を返す
+                ReturnPresentPos(args);
 
-            //     // １回しか取得できない
-            //     deleteFood(data);
+                // １回取得すると消える
+                deleteFood();
 
-            //     // Dictionaryに肉１点追加
-            //     Array.Add(getFoodName(data), 1);
-            //     //Debug.Log(Array.FirstOrDefault());
+                // 肉に１点加算
+                incrimentDictionary(getFoodName(data), getFoodPoint(data));
+                //Debug.Log(Array.FirstOrDefault());
 
                 
-            //     return;
-            // }
+                return;
+            }
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName(data))
@@ -494,7 +497,7 @@ namespace Player
         
         private DataPlayer data;
 
-
+        private Rotate rotate;
         private UnityAction<PlayerBoxRayHalfExtents> rayRadiuse;
         
 
@@ -510,7 +513,7 @@ namespace Player
 
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
 
-            
+            rotate = new Rotate(tmpData.PlayerRotateSpeed);
         }
 
         public void InstanceAction(GameObject tmpPlayer)
@@ -557,7 +560,7 @@ namespace Player
             if(playerRotateAmount != Vector3.zero)
             {
                 // 回転を計算する
-                players.transform.eulerAngles += playerRotateAmount;
+                players.transform.eulerAngles += playerRotateAmount * rotate.Speed * Time.deltaTime;
             }
 
 
@@ -1515,11 +1518,11 @@ namespace Player
 
             Vector3 foodRayRadiuse = new Vector3(players.transform.localScale.x / 3,
                                                  players.transform.localScale.y / 5,
-                                                 players.transform.localScale.z / 2);
+                                                 players.transform.localScale.z / 15 * 10);
 
-            Vector3 foodRayCenter = new Vector3(players.transform.localPosition.x + players.transform.forward.x,
-                                                1,
-                                                players.transform.localPosition.z + players.transform.forward.z);
+            Vector3 foodRayCenter = new Vector3(players.transform.localPosition.x,
+                                                InGameConst.ITEMPOS_Y,
+                                                players.transform.localPosition.z);
 
             Vector3 BoxCenter = new Vector3(
                 players.transform.localPosition.x,
@@ -1533,12 +1536,11 @@ namespace Player
             
             
             // レイを見えるようにする
-            VisualPhysics.BoxCast(
+            VisualPhysics.Raycast(
                 foodRayCenter,
-                foodRayRadiuse,
                 players.transform.forward,
-                players.transform.rotation,
-                dataPlayer.RayDistance);
+                3,
+                FoodLayer.Number);
 
             VisualPhysics.BoxCast(
                 BoxCenter,
@@ -1561,13 +1563,11 @@ namespace Player
             
 
             // 食材用のレイ
-            PlayerFoodBoxCast = Physics.BoxCast(
+            PlayerFoodBoxCast = Physics.Raycast(
                 foodRayCenter,
-                foodRayRadiuse,
                 players.transform.forward,
                 out foodHit,
-                players.transform.rotation,
-                dataPlayer.RayDistance,
+                3,
                 FoodLayer.Number);
 
             // 正面のレイ

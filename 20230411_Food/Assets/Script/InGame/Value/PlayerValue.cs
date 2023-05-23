@@ -151,5 +151,16 @@ namespace Player
             Number = tmpNumber;
         }
     }
+
+
+    public sealed class Rotate
+    {
+        public float Speed{get; private set;}
+
+        public Rotate(float tmpSpeed)
+        {
+            Speed = tmpSpeed;
+        }
+    }
 }
 
