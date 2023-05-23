@@ -184,7 +184,7 @@ namespace Player
                                         rayRadiuse);
             
 
-            PlayerMove.InstanceAction();
+            PlayerMove.InstanceAction(Object);
 
             // 笠は自身の子に1つしか存在しないため要素数０を取得する
             foreach(Transform cheld in GetChildrenRecursive(Object.transform))
@@ -513,9 +513,9 @@ namespace Player
             
         }
 
-        public void InstanceAction()
+        public void InstanceAction(GameObject tmpPlayer)
         {
-            PlayerRadiuse = new PlayerRadiuse(ObjectManager.PlayerManagers[data.Number].Object.transform.localScale.z / 2);
+            PlayerRadiuse = new PlayerRadiuse(tmpPlayer.transform.localScale.z / 2);
         }
 
         public void MovementActor()
@@ -1513,7 +1513,13 @@ namespace Player
 
             FoodLayer = new FoodLayer(1 << getLayerMask("Food"));
 
-            
+            Vector3 foodRayRadiuse = new Vector3(players.transform.localScale.x / 3,
+                                                 players.transform.localScale.y / 5,
+                                                 players.transform.localScale.z / 2);
+
+            Vector3 foodRayCenter = new Vector3(players.transform.localPosition.x + players.transform.forward.x,
+                                                1,
+                                                players.transform.localPosition.z + players.transform.forward.z);
 
             Vector3 BoxCenter = new Vector3(
                 players.transform.localPosition.x,
@@ -1527,6 +1533,13 @@ namespace Player
             
             
             // レイを見えるようにする
+            VisualPhysics.BoxCast(
+                foodRayCenter,
+                foodRayRadiuse,
+                players.transform.forward,
+                players.transform.rotation,
+                dataPlayer.RayDistance);
+
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
@@ -1549,8 +1562,8 @@ namespace Player
 
             // 食材用のレイ
             PlayerFoodBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
+                foodRayCenter,
+                foodRayRadiuse,
                 players.transform.forward,
                 out foodHit,
                 players.transform.rotation,
