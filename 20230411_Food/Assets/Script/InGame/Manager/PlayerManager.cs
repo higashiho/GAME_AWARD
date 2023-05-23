@@ -184,7 +184,7 @@ namespace Player
                                         rayRadiuse);
             
 
-            PlayerMove.InstanceAction();
+            PlayerMove.InstanceAction(Object);
 
             // 笠は自身の子に1つしか存在しないため要素数０を取得する
             foreach(Transform cheld in GetChildrenRecursive(Object.transform))
@@ -292,29 +292,32 @@ namespace Player
             if(!ObjectManager.PlayerManagers[data.Number].RayHitFoodObject) return;
 
             // 初めてその種類の食材を獲得
-            // if(!Array.ContainsKey(getFoodName(data))
-            // && Input.GetKeyDown(KeyCode.LeftShift))
-            // {
-            //     // アイテムの座標を取得するイベントインスタンス化
-            //     ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
-            //     // 座標設定
-            //     args.presentPos = Move.RayController.RayHitObject.transform.position;
-            //     // 座標を返す
-            //     ReturnPresentPos(args);
+            if(!Array.ContainsKey(getFoodName(data))
+            && Input.GetKeyDown(data.ControlleKey[4]))
+            {
+                // アイテムの座標を取得するイベントインスタンス化
+                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
+                // 座標設定
+                args.presentPos = ObjectManager.PlayerManagers[data.Number].RayHitFoodObject.transform.position;
+                // 座標を返す
+                ReturnPresentPos(args);
 
-            //     // 目の前の食材をキューに追加
-            //     ObjectManager.ItemManager.itemFactory.Storing(Move.RayController.RayHitObject);
+                // 目の前の食材をキューに追加
+                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.PlayerManagers[data.Number].RayHitFoodObject);
+                
+                // 座標を返す
+                ReturnPresentPos(args);
 
-            //     // １回しか取得できない
-            //     deleteFood(data);
+                // １回取得すると消える
+                deleteFood();
 
-            //     // Dictionaryに肉１点追加
-            //     Array.Add(getFoodName(data), 1);
-            //     //Debug.Log(Array.FirstOrDefault());
+                // 肉に１点加算
+                incrimentDictionary(getFoodName(data), getFoodPoint(data));
+                //Debug.Log(Array.FirstOrDefault());
 
                 
-            //     return;
-            // }
+                return;
+            }
 
             // 2回目以降の食材獲得
             if(Array.ContainsKey(getFoodName(data))
@@ -474,19 +477,27 @@ namespace Player
         {
             NOHIT,
 
-            UP,     // 上にいる
+            UP,         // 上にいる
 
-            LEFT,   // 左
+            LEFT,       // 左
 
-            DOWN,   // 下
+            DOWN,       // 下
 
-            RIGHT,  // 右
+            RIGHT,      // 右
+
+            TOP_RIGHT,  //右上
+
+            RIGHT_BUTTOM,//右下
+
+            LEFT_BUTTOM,//左下
+
+            LEFT_TOP,   //左上
         }
         private playerLocation Position;
         
         private DataPlayer data;
 
-
+        private Rotate rotate;
         private UnityAction<PlayerBoxRayHalfExtents> rayRadiuse;
         
 
@@ -502,12 +513,12 @@ namespace Player
 
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
 
-            
+            rotate = new Rotate(tmpData.PlayerRotateSpeed);
         }
 
-        public void InstanceAction()
+        public void InstanceAction(GameObject tmpPlayer)
         {
-            PlayerRadiuse = new PlayerRadiuse(ObjectManager.PlayerManagers[data.Number].Object.transform.localScale.z / 2);
+            PlayerRadiuse = new PlayerRadiuse(tmpPlayer.transform.localScale.z / 2);
         }
 
         public void MovementActor()
@@ -549,7 +560,7 @@ namespace Player
             if(playerRotateAmount != Vector3.zero)
             {
                 // 回転を計算する
-                players.transform.eulerAngles += playerRotateAmount;
+                players.transform.eulerAngles += playerRotateAmount * rotate.Speed * Time.deltaTime;
             }
 
 
@@ -854,7 +865,6 @@ namespace Player
             {
                 // オブジェクトの上にいる
                 case playerLocation.UP:
-
                 // プレイヤーは右から上向きの間を向いている
                 if(judgeTopToRight(tmpPlayer))
                 {
@@ -872,13 +882,12 @@ namespace Player
                 if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
+                    moveForward(tmpPlayer, tmpMovePos);
                 }
                 break;
 
 
                 case playerLocation.LEFT:
-
                 // 右から上
                 if(judgeLeftToTop(tmpPlayer))
                 {
@@ -896,13 +905,12 @@ namespace Player
                 if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
+                    moveForward(tmpPlayer, tmpMovePos);
                 }
                 break;
 
 
                 case playerLocation.DOWN:
-
                 if(judgeRightToBottom(tmpPlayer))
                 {
                     playerMoveDirection = playerMovePos[2];
@@ -916,13 +924,12 @@ namespace Player
                 if(judgeLeftToTop(tmpPlayer) || judgeTopToRight(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
+                    moveForward(tmpPlayer, tmpMovePos);
                 }
                 break;
 
 
                 case playerLocation.RIGHT:
-
                 if(judgeTopToRight(tmpPlayer))
                 {
                     playerMoveDirection = playerMovePos[0];
@@ -937,22 +944,51 @@ namespace Player
                 if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
+                    moveForward(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+                case playerLocation.TOP_RIGHT:
+                if(judgeTopToRight(tmpPlayer))
+                {
+                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+                case playerLocation.LEFT_TOP:
+                if(judgeLeftToTop(tmpPlayer))
+                {
+                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+                case playerLocation.LEFT_BUTTOM:
+                if(judgeBottomToLeft(tmpPlayer))
+                {
+                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                }
+                break;
+
+                case playerLocation.RIGHT_BUTTOM:
+                if(judgeRightToBottom(tmpPlayer))
+                {
+                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
                 }
                 break;
 
             }
+            Debug.Log(Position);
 
             return playerMoveDirection;
         }
 
 
-        private Vector3 uTurn(GameObject tmpPlayer, Vector3 tmpMovePos)
+        private Vector3 moveForward(GameObject tmpPlayer, Vector3 tmpMovePos)
         {
             return tmpMovePos = tmpPlayer.transform.forward;
         }
 
-        private Vector3 moveForward(GameObject tmpPlayer, Vector3 tmpMovePos)
+        private Vector3 uTurn(GameObject tmpPlayer, Vector3 tmpMovePos)
         {
             return tmpMovePos = -tmpPlayer.transform.forward;
         }
@@ -983,7 +1019,7 @@ namespace Player
                 if(judgeTopToRight(tmpPlayer) || judgeLeftToTop(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
+                    uTurn(tmpPlayer, tmpMovePos);
                 }
                 break;
 
@@ -1007,7 +1043,7 @@ namespace Player
                 if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
+                    uTurn(tmpPlayer, tmpMovePos);
                 }
 
                 break;
@@ -1028,7 +1064,7 @@ namespace Player
                 if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
+                    uTurn(tmpPlayer, tmpMovePos);
                 }
                 break;
 
@@ -1049,7 +1085,7 @@ namespace Player
                 if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
                 {
                     playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
+                    uTurn(tmpPlayer, tmpMovePos);
                 }
                 break;
 
@@ -1276,6 +1312,26 @@ namespace Player
         /// <param name="tmpPlayer">プレイヤー</param>
         private void checkFloorInsidePos(GameObject tmpPlayer)
         {
+            // ステージの右上の座標
+            // Vector3 stageFirstQuadrantPos = new Vector3(playerPositiveBorderPosX,
+            //                                             tmpPlayer.transform.position.y,
+            //                                             playerPositiveBorderPosZ);
+
+            // // 左上
+            // Vector3 stageSecondeQuadrantPos = new Vector3(playerNegativeBorderPosX,
+            //                                               tmpPlayer.transform.position.y,
+            //                                               playerPositiveBorderPosZ);
+
+            // // 左下
+            // Vector3 stageThirdQuadrantPos = new Vector3(playerNegativeBorderPosX,
+            //                                             tmpPlayer.transform.position.y,
+            //                                             playerNegativeBorderPosZ);
+
+            // // 右下
+            // Vector3 stageForthQuadrantPos = new Vector3(playerPositiveBorderPosX,
+            //                                             tmpPlayer.transform.position.y,
+            //                                             playerNegativeBorderPosZ);
+
 
             // 右側にいるなら
             if(tmpPlayer.transform.position.x > playerPositiveBorderPosX)
@@ -1299,6 +1355,34 @@ namespace Player
             else if(tmpPlayer.transform.position.z < playerNegativeBorderPosZ)
             {
                 Position = playerLocation.DOWN;
+            }
+
+            // 右上
+            if(tmpPlayer.transform.position.x > playerPositiveBorderPosX
+            && tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
+            {
+                Position = playerLocation.TOP_RIGHT;
+            }
+
+            // 左上
+            else if(tmpPlayer.transform.position.x > playerNegativeBorderPosX
+                 && tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
+            {
+                Position = playerLocation.LEFT_TOP;
+            }
+
+            // 左下
+            else if(tmpPlayer.transform.position.x > playerNegativeBorderPosX
+                 && tmpPlayer.transform.position.z > playerNegativeBorderPosZ)
+            {
+                Position = playerLocation.LEFT_BUTTOM;
+            }
+
+            // 右下
+            else if(tmpPlayer.transform.position.x > playerPositiveBorderPosX
+                 && tmpPlayer.transform.position.z > playerNegativeBorderPosZ)
+            {
+                Position = playerLocation.RIGHT_BUTTOM;
             }
 
             else
@@ -1432,7 +1516,13 @@ namespace Player
 
             FoodLayer = new FoodLayer(1 << getLayerMask("Food"));
 
-            
+            Vector3 foodRayRadiuse = new Vector3(players.transform.localScale.x / 3,
+                                                 players.transform.localScale.y / 5,
+                                                 players.transform.localScale.z / 15 * 10);
+
+            Vector3 foodRayCenter = new Vector3(players.transform.localPosition.x,
+                                                InGameConst.ITEMPOS_Y,
+                                                players.transform.localPosition.z);
 
             Vector3 BoxCenter = new Vector3(
                 players.transform.localPosition.x,
@@ -1446,6 +1536,12 @@ namespace Player
             
             
             // レイを見えるようにする
+            VisualPhysics.Raycast(
+                foodRayCenter,
+                players.transform.forward,
+                3,
+                FoodLayer.Number);
+
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
@@ -1467,13 +1563,11 @@ namespace Player
             
 
             // 食材用のレイ
-            PlayerFoodBoxCast = Physics.BoxCast(
-                BoxCenter,
-                PlayerBoxRayHalfExtents.Amount,
+            PlayerFoodBoxCast = Physics.Raycast(
+                foodRayCenter,
                 players.transform.forward,
                 out foodHit,
-                players.transform.rotation,
-                dataPlayer.RayDistance,
+                3,
                 FoodLayer.Number);
 
             // 正面のレイ

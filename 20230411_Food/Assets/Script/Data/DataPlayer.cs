@@ -41,6 +41,10 @@ namespace Player
         private AudioSource playerAudioSource;
         public AudioSource PlayerAudioSource{get{return playerAudioSource;}}
 
+        [SerializeField, Header("回転速度")]
+        private float playerRotateSpeed;
+        public float PlayerRotateSpeed{get{return playerRotateSpeed;}}
+
         [SerializeField, Header("何人目か")]
         private int number;
         public int Number{get{
