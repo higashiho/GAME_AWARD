@@ -591,7 +591,7 @@ namespace Title
         /// <summary>
         /// Rayの長さ
         /// </summary>
-        private RayDistance rayDistance = new RayDistance(1);
+        private RayDistance rayDistance = new RayDistance(1f);
         public TextApproachEventManager()
         {
             // スケールはすべて一緒のため、０要素目を代入
@@ -701,6 +701,15 @@ namespace Title
                         ObjectManager.TitleScene.TextImageCanvas[i].transform.position.y * 0.9f,
                         ObjectManager.TitleScene.TextImageCanvas[i].transform.position.z
                     );
+
+                    
+                    Nomnom.RaycastVisualization.VisualPhysics.BoxCast(
+                    drawRayPos,
+                    drawRayScale * 0.5f,
+                    -ObjectManager.TitleScene.TextImageCanvas[i].transform.forward,
+                    Quaternion.identity,
+                    rayDistance.Amount);
+
                     // 当たっているか
                     if(!Physics.BoxCast(
                         drawRayPos, 
@@ -709,8 +718,10 @@ namespace Title
                         out ObjectManager.Text.HitPlayerRay[i], Quaternion.identity, 
                         rayDistance.Amount))
                         {
-                            // イメージリセット関数呼び出し
-                            ObjectManager.Text.Move.ResetTextMovement(ObjectManager.TitleScene.TextImageCanvas[i]);
+                            var hits = Physics.OverlapBox(drawRayPos, drawRayScale * 0.5f, Quaternion.identity);
+                            if(hits.Length == 0)
+                                // イメージリセット関数呼び出し
+                                ObjectManager.Text.Move.ResetTextMovement(ObjectManager.TitleScene.TextImageCanvas[i]);
                         }
                 }
                 await UniTask.Yield();

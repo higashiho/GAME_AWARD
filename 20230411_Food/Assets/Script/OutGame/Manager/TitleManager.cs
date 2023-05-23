@@ -99,30 +99,6 @@ namespace Title
             Cts.Cancel();
         }
 
-        /// <summary>
-        /// 描画関数
-        /// </summary>
-        void OnDrawGizmos()
-        {
-            // Ray描画
-            //　Cubeのレイを疑似的に視覚化
-            for(int i = 0; i < TextImageCanvas.Length; i++)
-            {    
-                var drawRayScale = new Vector3(
-                    TextImageCanvas[i].transform.localScale.x * 3,
-                    TextImageCanvas[i].transform.localScale.y * 2,
-                    TextImageCanvas[i].transform.localScale.z * 0.5f
-                );
-                var drawRayPos = new Vector3(
-                    TextImageCanvas[i].transform.position.x,
-                    // 中央に表示しないように少し下げる
-                    TextImageCanvas[i].transform.position.y * 0.9f,
-                    TextImageCanvas[i].transform.position.z
-                );
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(drawRayPos - TextImageCanvas[i].transform.forward, drawRayScale);
-            }        
-        }
     }
    
     /// <summary>
