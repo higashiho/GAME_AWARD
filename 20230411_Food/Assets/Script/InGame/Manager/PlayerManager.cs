@@ -471,27 +471,20 @@ namespace Player
             new Vector3(0, 0, 0),
             new Vector3(0, 0, 0),
         };
+        
 
-
+        [Flags]
         private enum playerLocation
         {
-            NOHIT,
+            NOHIT = 0,
 
-            UP,         // 上にいる
+            UP = 0b0001,         // 上にいる
 
-            LEFT,       // 左
+            LEFT = 0b0010,       // 左
 
-            DOWN,       // 下
+            DOWN = 0b0100,       // 下
 
-            RIGHT,      // 右
-
-            TOP_RIGHT,  //右上
-
-            RIGHT_BUTTOM,//右下
-
-            LEFT_BUTTOM,//左下
-
-            LEFT_TOP,   //左上
+            RIGHT = 0b1000,      // 右
         }
         private playerLocation Position;
         
@@ -587,8 +580,9 @@ namespace Player
                         checkFloorInsidePos(players);
 
                         // 壁に沿って移動
-                        players.transform.position += setStageScratchWalk(players, playerMovePos) * moveSpeed.Amount * Time.deltaTime / 2;
+                        playerMovePos = setStageScratchWalk(players, playerMovePos) / 2;
 
+                        move(players, playerMovePos);
                         return;
 
                     }
@@ -608,8 +602,9 @@ namespace Player
                         checkFloorInsidePos(players);
 
                         // 壁に沿って移動
-                        players.transform.position += setStageScratchMoonWalk(players, playerMovePos) * moveSpeed.Amount * Time.deltaTime / 2;
+                        playerMovePos = setStageScratchMoonWalk(players, playerMovePos) / 2;
 
+                        move(players, playerMovePos);
                         return;
 
                         
@@ -863,121 +858,124 @@ namespace Player
             // プレイヤーが当たったオブジェクトに対してどこにいるか
             switch(Position)
             {
-                // オブジェクトの上にいる
+                // 上側にいる
                 case playerLocation.UP:
-                // プレイヤーは右から上向きの間を向いている
-                if(judgeTopToRight(tmpPlayer))
-                {
-                    // 右にスライドして移動
-                    playerMoveDirection = playerMovePos[2];
-                }
+                    // プレイヤーは右から上向きの間を向いている
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        // 右にスライドして移動
+                        playerMoveDirection = playerMovePos[2];
+                    }
 
-                // 上から左
-                if(judgeLeftToTop(tmpPlayer))
-                {
-                    // 左にスライドして移動
-                    playerMoveDirection = playerMovePos[3];
-                }
+                    // 上から左
+                    if(judgeLeftToTop(tmpPlayer))
+                    {
+                        // 左にスライドして移動
+                        playerMoveDirection = playerMovePos[3];
+                    }
 
-                if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        moveForward(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
 
                 case playerLocation.LEFT:
-                // 右から上
-                if(judgeLeftToTop(tmpPlayer))
-                {
-                    // 上にスライドして移動
-                    playerMoveDirection = playerMovePos[0];
-                }
+                    // 右から上
+                    if(judgeLeftToTop(tmpPlayer))
+                    {
+                        // 上にスライドして移動
+                        playerMoveDirection = playerMovePos[0];
+                    }
 
-                // 下から左
-                if(judgeBottomToLeft(tmpPlayer))
-                {
-                    // 下にスライドして移動
-                    playerMoveDirection = playerMovePos[1];
-                }
+                    // 下から左
+                    if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        // 下にスライドして移動
+                        playerMoveDirection = playerMovePos[1];
+                    }
 
-                if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        moveForward(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
 
                 case playerLocation.DOWN:
-                if(judgeRightToBottom(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[2];
-                }
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[2];
+                    }
 
-                if(judgeBottomToLeft(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[3];
-                }
+                    if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[3];
+                    }
 
-                if(judgeLeftToTop(tmpPlayer) || judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeLeftToTop(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        moveForward(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
 
                 case playerLocation.RIGHT:
-                if(judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[0];
-                    
-                }
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[0];
+                        
+                    }
 
-                if(judgeRightToBottom(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[1];
-                }
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[1];
+                    }
 
-                if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    moveForward(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        moveForward(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
-                case playerLocation.TOP_RIGHT:
-                if(judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
 
-                case playerLocation.LEFT_TOP:
-                if(judgeLeftToTop(tmpPlayer))
-                {
-                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
+                case playerLocation.RIGHT | playerLocation.UP:
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
-                case playerLocation.LEFT_BUTTOM:
-                if(judgeBottomToLeft(tmpPlayer))
-                {
-                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
 
-                case playerLocation.RIGHT_BUTTOM:
-                if(judgeRightToBottom(tmpPlayer))
-                {
-                    playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
+                case playerLocation.LEFT | playerLocation.UP:
+                    if(judgeLeftToTop(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.LEFT | playerLocation.DOWN:
+                    if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.RIGHT | playerLocation.DOWN:
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
             }
-            Debug.Log(Position);
 
             return playerMoveDirection;
         }
@@ -1002,92 +1000,124 @@ namespace Player
                 // オブジェクトの上にいる
                 case playerLocation.UP:
 
-                // プレイヤーは右から上向きの間を向いている
-                if(judgeRightToBottom(tmpPlayer))
-                {
-                    // 左にスライドして移動
-                    playerMoveDirection = playerMovePos[3];
-                }
+                    // プレイヤーは右から上向きの間を向いている
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        // 左にスライドして移動
+                        playerMoveDirection = playerMovePos[3];
+                    }
 
-                // 上から左
-                if(judgeBottomToLeft(tmpPlayer))
-                {
-                    // 右にスライドして移動
-                    playerMoveDirection = playerMovePos[2];
-                }
+                    // 上から左
+                    if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        // 右にスライドして移動
+                        playerMoveDirection = playerMovePos[2];
+                    }
 
-                if(judgeTopToRight(tmpPlayer) || judgeLeftToTop(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeTopToRight(tmpPlayer) || judgeLeftToTop(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
 
                 case playerLocation.LEFT:
 
-                // 右から上
-                if(judgeTopToRight(tmpPlayer))
-                {
-                    // 下にスライドして移動
-                    playerMoveDirection = playerMovePos[1];
-                }
+                    // 右から上
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        // 下にスライドして移動
+                        playerMoveDirection = playerMovePos[1];
+                    }
 
-                // 下から左
-                if(judgeRightToBottom(tmpPlayer))
-                {
-                    // 上にスライドして移動
-                    playerMoveDirection = playerMovePos[0];
-                }
+                    // 下から左
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        // 上にスライドして移動
+                        playerMoveDirection = playerMovePos[0];
+                    }
 
-                if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
-                }
+                    if(judgeLeftToTop(tmpPlayer) || judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        uTurn(tmpPlayer, tmpMovePos);
+                    }
 
-                break;
+                    break;
 
 
                 case playerLocation.DOWN:
 
-                if(judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[3];
-                }
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[3];
+                    }
 
-                else if(judgeLeftToTop(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[2];
-                }
+                    else if(judgeLeftToTop(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[2];
+                    }
 
-                if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeBottomToLeft(tmpPlayer) || judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
 
                 case playerLocation.RIGHT:
 
-                if(judgeLeftToTop(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[1];
-                    
-                }
+                    if(judgeLeftToTop(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[1];
+                        
+                    }
 
-                else if(judgeBottomToLeft(tmpPlayer))
-                {
-                    playerMoveDirection = playerMovePos[0];
-                }
+                    else if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = playerMovePos[0];
+                    }
 
-                if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
-                {
-                    playerMoveDirection = 
-                    uTurn(tmpPlayer, tmpMovePos);
-                }
-                break;
+                    if(judgeRightToBottom(tmpPlayer) || judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = 
+                        uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.RIGHT | playerLocation.UP:
+                    if(judgeBottomToLeft(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.LEFT | playerLocation.UP:
+                    if(judgeRightToBottom(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.LEFT | playerLocation.DOWN:
+                    if(judgeTopToRight(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
+
+
+                case playerLocation.RIGHT | playerLocation.DOWN:
+                    if(judgeLeftToTop(tmpPlayer))
+                    {
+                        playerMoveDirection = uTurn(tmpPlayer, tmpMovePos);
+                    }
+                    break;
 
             }
 
@@ -1179,10 +1209,6 @@ namespace Player
         }
 
 
-       
-
-
-
         /// <summary>
         /// プレイヤーがどの方向を向いているのか
         /// </summary>
@@ -1190,10 +1216,10 @@ namespace Player
         /// <returns>上から右の間の方向に向いている</returns>
         private bool judgeTopToRight(GameObject tmpPlayer)
         {
-            // 上から右
+            // 上から右 0°から90°
             // 今回はy軸しか触らないのでこれでいいが、ジンバルロックを回避するならクオータニオンを使用すること
-            if(tmpPlayer.transform.localEulerAngles.y > 0
-            && tmpPlayer.transform.localEulerAngles.y < 90)
+            if(tmpPlayer.transform.localEulerAngles.y > 1
+            && tmpPlayer.transform.localEulerAngles.y < 89)
             {
                 return true;
             }
@@ -1211,9 +1237,9 @@ namespace Player
         /// <returns>右から下の間の方向に向いている</returns>
         private bool judgeRightToBottom(GameObject tmpPlayer)
         {
-            // 右から下
-            if(tmpPlayer.transform.localEulerAngles.y > 90
-            && tmpPlayer.transform.localEulerAngles.y < 180)
+            // 右から下 90°から180°
+            if(tmpPlayer.transform.localEulerAngles.y > 91
+            && tmpPlayer.transform.localEulerAngles.y < 179)
             {
                 return true;
             }
@@ -1231,9 +1257,9 @@ namespace Player
         /// <returns>下から左の間の方向に向いている</returns>
         private bool judgeBottomToLeft(GameObject tmpPlayer)
         {
-            // 下から左
-            if(tmpPlayer.transform.localEulerAngles.y > 180
-            && tmpPlayer.transform.localEulerAngles.y < 270)
+            // 下から左 180°から270°
+            if(tmpPlayer.transform.localEulerAngles.y > 181
+            && tmpPlayer.transform.localEulerAngles.y < 269)
             {
                 return true;
             }
@@ -1251,9 +1277,9 @@ namespace Player
         /// <returns>左から上の間の方向に向いている</returns>
         private bool judgeLeftToTop(GameObject tmpPlayer)
         {
-            // 左から上
-            if(tmpPlayer.transform.localEulerAngles.y > 270
-            && tmpPlayer.transform.localEulerAngles.y < 360)
+            // 左から上 270°から360°
+            if(tmpPlayer.transform.localEulerAngles.y > 271
+            && tmpPlayer.transform.localEulerAngles.y < 359)
             {
                 return true;
             }
@@ -1312,82 +1338,49 @@ namespace Player
         /// <param name="tmpPlayer">プレイヤー</param>
         private void checkFloorInsidePos(GameObject tmpPlayer)
         {
-            // ステージの右上の座標
-            // Vector3 stageFirstQuadrantPos = new Vector3(playerPositiveBorderPosX,
-            //                                             tmpPlayer.transform.position.y,
-            //                                             playerPositiveBorderPosZ);
-
-            // // 左上
-            // Vector3 stageSecondeQuadrantPos = new Vector3(playerNegativeBorderPosX,
-            //                                               tmpPlayer.transform.position.y,
-            //                                               playerPositiveBorderPosZ);
-
-            // // 左下
-            // Vector3 stageThirdQuadrantPos = new Vector3(playerNegativeBorderPosX,
-            //                                             tmpPlayer.transform.position.y,
-            //                                             playerNegativeBorderPosZ);
-
-            // // 右下
-            // Vector3 stageForthQuadrantPos = new Vector3(playerPositiveBorderPosX,
-            //                                             tmpPlayer.transform.position.y,
-            //                                             playerNegativeBorderPosZ);
 
 
             // 右側にいるなら
-            if(tmpPlayer.transform.position.x > playerPositiveBorderPosX)
+            if(tmpPlayer.transform.position.x >= playerPositiveBorderPosX)
             {
-                Position = playerLocation.RIGHT;
+                Position |= playerLocation.RIGHT;
             }
-
-            // 左
-            else if(tmpPlayer.transform.position.x < playerNegativeBorderPosX)
-            {
-                Position = playerLocation.LEFT;
-            }
-
-            // 上
-            else if(tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
-            {
-                Position = playerLocation.UP;
-            }
-
-            // 下
-            else if(tmpPlayer.transform.position.z < playerNegativeBorderPosZ)
-            {
-                Position = playerLocation.DOWN;
-            }
-
-            // 右上
-            if(tmpPlayer.transform.position.x > playerPositiveBorderPosX
-            && tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
-            {
-                Position = playerLocation.TOP_RIGHT;
-            }
-
-            // 左上
-            else if(tmpPlayer.transform.position.x > playerNegativeBorderPosX
-                 && tmpPlayer.transform.position.z > playerPositiveBorderPosZ)
-            {
-                Position = playerLocation.LEFT_TOP;
-            }
-
-            // 左下
-            else if(tmpPlayer.transform.position.x > playerNegativeBorderPosX
-                 && tmpPlayer.transform.position.z > playerNegativeBorderPosZ)
-            {
-                Position = playerLocation.LEFT_BUTTOM;
-            }
-
-            // 右下
-            else if(tmpPlayer.transform.position.x > playerPositiveBorderPosX
-                 && tmpPlayer.transform.position.z > playerNegativeBorderPosZ)
-            {
-                Position = playerLocation.RIGHT_BUTTOM;
-            }
-
             else
             {
-                Position = playerLocation.NOHIT;
+                Position &= ~playerLocation.RIGHT;
+            }
+
+
+            // 左
+            if(tmpPlayer.transform.position.x <= playerNegativeBorderPosX)
+            {
+                Position |= playerLocation.LEFT;
+            }
+            else
+            {
+                Position &= ~playerLocation.LEFT;
+            }
+
+
+            // 上
+            if(tmpPlayer.transform.position.z >= playerPositiveBorderPosZ)
+            {
+                Position |= playerLocation.UP;
+            }
+            else
+            {
+                Position &= ~playerLocation.UP;
+            }
+
+
+            // 下
+            if(tmpPlayer.transform.position.z <= playerNegativeBorderPosZ)
+            {
+                Position |= playerLocation.DOWN;
+            }
+            else
+            {
+                Position &= ~playerLocation.DOWN;
             }
             
             
