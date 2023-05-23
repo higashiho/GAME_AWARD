@@ -30,7 +30,7 @@ namespace Item
 
         // ロードしたプレファブを入れるList
         // アイテムをプールしておく
-        private List<GameObject> poolList = new List<GameObject>(16);
+        private List<GameObject> poolList = new List<GameObject>(10);
 
         // プレファブをロードするタスク
         private UniTask? loadTask = null;
@@ -94,13 +94,15 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            // プールリストの中身が空の場合early return 
-            //if(!poolList[0]) return;
-            Debug.Log(poolList[0]);
-            // プールリストの最初の要素を取得
+            // // プールリストの中身が空の場合early return 
+            //if(poolList[0] == null) return;
+            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
+            // // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
-            // その要素をリストから削除
+            
+            // // その要素をリストから削除
             poolList.RemoveAt(0);
+            
             
             // アイテム座標リストシャッフル
             itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
@@ -128,6 +130,10 @@ namespace Item
         {
             // プールのQueueに入れる
             poolList.Add(obj);
+            var data = itemPos.Find(item => item.Pos == obj.transform.position);
+            int index = itemPos.IndexOf(data);
+            data.SetAttend(false);
+            itemPos[index] = data;
             obj.SetActive(false);
         }
         
