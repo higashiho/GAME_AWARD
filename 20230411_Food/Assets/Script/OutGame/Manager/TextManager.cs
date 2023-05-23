@@ -89,12 +89,13 @@ namespace Title
         }
 
         /// <summary>
-        /// 食材相性表示テキスト挙動処理
+        /// ゲームスタートテキストイメージ挙動処理
         /// </summary>
         /// <param name="distination">テキストイメージ目標座標</param>
-        public void DisplayIngredientsListTextMovement(float distination)
+        public void GameStartTextMovement(float distination)
         {
             textImageObject = ObjectManager.TitleScene.TextImageCanvas[1];
+
             // ImageのTweenを削除
             DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[1].transform);
 
@@ -123,19 +124,16 @@ namespace Title
             sequence.Join(textImageObject.DOFade(1, approachMovementTime.Amount)
             .SetEase(Ease.Linear));
 
-
             sequence.Play();
             
         }
-
         /// <summary>
-        /// ゲームスタートテキストイメージ挙動処理
+        /// 食材相性表示テキスト挙動処理
         /// </summary>
         /// <param name="distination">テキストイメージ目標座標</param>
-        public void GameStartTextMovement(float distination)
+        public void DisplayIngredientsListTextMovement(float distination)
         {
             textImageObject = ObjectManager.TitleScene.TextImageCanvas[2];
-
             // ImageのTweenを削除
             DOTween.Kill(ObjectManager.TitleScene.TextImageCanvas[2].transform);
 
@@ -163,6 +161,7 @@ namespace Title
             // アルファ値変更
             sequence.Join(textImageObject.DOFade(1, approachMovementTime.Amount)
             .SetEase(Ease.Linear));
+
 
             sequence.Play();
             
