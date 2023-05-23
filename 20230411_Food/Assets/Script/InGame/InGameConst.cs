@@ -16,4 +16,6 @@ public class InGameConst
         "SEASOUSING",
         "AMOUNT"
     };
+
+    public const float ITEMPOS_Y = 1.0f;
 }
