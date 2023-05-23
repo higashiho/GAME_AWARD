@@ -30,17 +30,17 @@ namespace Item
 
         // ロードしたプレファブを入れるList
         // アイテムをプールしておく
-        private List<GameObject> poolList = new List<GameObject>(16);
+        private List<GameObject> poolList = new List<GameObject>(10);
 
         // プレファブをロードするタスク
         private UniTask? loadTask = null;
 
         // アイテムを生成する間隔
-        private float spaceX = 8.0f;
+        private float spaceX = 10.0f;
         private float spaceZ = 3.0f;
 
         // アイテムを生成する基準ライン
-        private float baseLineX = -12.0f;
+        private float baseLineX = -15.0f;
         private float baseLineZ = -4.5f;
 
         // アイテムの配置posの行、列
@@ -94,13 +94,15 @@ namespace Item
         /// </summary>
         public void Create()
         {
-            // プールリストの中身が空の場合early return 
-            //if(!poolList[0]) return;
-
-            // プールリストの最初の要素を取得
+            // // プールリストの中身が空の場合early return 
+            //if(poolList[0] == null) return;
+            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
+            // // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
-            // その要素をリストから削除
+            
+            // // その要素をリストから削除
             poolList.RemoveAt(0);
+            
             
             // アイテム座標リストシャッフル
             itemPos = itemPos.OrderBy(a => Guid.NewGuid()).ToList();
@@ -128,6 +130,15 @@ namespace Item
         {
             // プールのQueueに入れる
             poolList.Add(obj);
+            // アイテムがあった座標のItemPosDataを取得
+            var data = itemPos.Find(item => item.Pos == obj.transform.position);
+            // 配列上のインデックスを取得
+            int index = itemPos.IndexOf(data);
+            // アイテム生成パラメータをオフ
+            data.SetAttend(false);
+            // 配列にそのデータを返す
+            itemPos[index] = data;
+            // アイテムオブジェクトを非アクティブにする
             obj.SetActive(false);
         }
         
@@ -168,7 +179,6 @@ namespace Item
             // アイテム出現フラグOFF
             data.SetAttend(false);
             itemPos[index] = data;
-            //CreateItem();
         }
 
         /// <summary>
@@ -226,7 +236,6 @@ namespace Item
             }
             while(!obj.activeSelf);
 
-//            Debug.Log(obj.name);
             Storing(obj);
             
         }
