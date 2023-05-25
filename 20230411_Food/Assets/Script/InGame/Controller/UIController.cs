@@ -44,7 +44,7 @@ namespace InGame
                 .Subscribe(_ =>{
                     cutInFlag = false;
                     
-                    var panelImage = cutInCanvas.transform.GetChild(0).GetComponent<Image>();
+                    var panelImage = cutInCanvas.transform.GetChild(0).GetComponent<RawImage>();
                     var gageObj = cutInCanvas.transform.GetChild(1);
                     panelImage.DOFade(0,1).SetEase(Ease.Linear)
                         .SetLink(this.gameObject).OnComplete(() => {
@@ -61,11 +61,11 @@ namespace InGame
         /// </summary>
         /// <param name="panelImage">cut-inの全体イメージ親オブジェクト</param>
         /// <param name="gageObj">ゲージのイメージ親オブジェクト</param>
-        private void fadeImages(Image panelImage, Transform gageObj)
+        private void fadeImages(RawImage panelImage, Transform gageObj)
         {
             panelImage.transform.GetChild(0).GetComponent<Image>().color = panelImage.color;
             panelImage.transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = panelImage.color;
-            gageObj.GetChild(0).GetComponent<RawImage>().color = panelImage.color;
+            gageObj.GetChild(0).GetComponent<Image>().color = panelImage.color;
             gageObj.GetChild(1).GetChild(0).GetComponent<RawImage>().color = panelImage.color;
             gageObj.GetChild(2).GetComponent<TextMeshProUGUI>().color = panelImage.color;
             gageObj.GetChild(3).GetComponent<TextMeshProUGUI>().color = panelImage.color;
