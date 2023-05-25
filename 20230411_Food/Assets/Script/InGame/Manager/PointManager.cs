@@ -87,7 +87,11 @@ namespace FoodPoint
             PlayerPercentageArr[num, 2] = CalcThePercentage(fishPoint, foodData.FoodThemes[0].TargetRate[2]);
             PlayerPercentageArr[num, 3] = amount;
             PlayerPercentageArr[num, 4] = seasousing;
-            
+            Debug.Log(PlayerPercentageArr[num, 0] + " : MeatPoint");
+            Debug.Log(PlayerPercentageArr[num, 1] + " : VegetablePoint");
+            Debug.Log(PlayerPercentageArr[num, 2] + " : FishPoint");
+
+
 
             setScoreToArray();
         }
@@ -101,6 +105,10 @@ namespace FoodPoint
         public static int CalcThePercentage(float getPoint, float targetPoint)
         {
             int percent = 0;
+            if(targetPoint == 0)
+            {
+                return percent;
+            }
             // 割合を計算
             float rate = getPoint / targetPoint;
 
@@ -146,7 +154,7 @@ namespace FoodPoint
             for(int i = 0; i < GameManager.ObjectManager.PlayerManagers.Count; i++)
             {
                 FoodScoreValues[i,0] = calcFoodPoint(i).Point;
-
+                Debug.Log("Player" + i + "のFoodPoint" + FoodScoreValues[i,0]);
                 // 量ポイントを追加
                 FoodScoreValues[i,1] = PlayerPercentageArr[i, 3];
                 // 調味料ポイントを追加
