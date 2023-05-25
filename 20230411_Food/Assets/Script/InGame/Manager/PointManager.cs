@@ -63,6 +63,7 @@ namespace FoodPoint
             int fishPoint = 0;
             int amount = 0;
             int seasousing = 0;
+            int sumFood = 0;
             
             // 野菜ポイント
             int[] val = player.FoodPoint.Array["VEGETABLE"];
@@ -82,20 +83,29 @@ namespace FoodPoint
             
             amount += val[1];
 
-            PlayerPercentageArr[num, 0] = CalcThePercentage(meatPoint, foodData.FoodThemes[0].TargetRate[0]);
-            PlayerPercentageArr[num, 1] = CalcThePercentage(vegetablePoint, foodData.FoodThemes[0].TargetRate[1]);
-            PlayerPercentageArr[num, 2] = CalcThePercentage(fishPoint, foodData.FoodThemes[0].TargetRate[2]);
+            sumFood += meatPoint;
+            sumFood += vegetablePoint;
+            sumFood += fishPoint;
+            
+            PlayerPercentageArr[num, 0] = percentage(meatPoint, sumFood);//CalcThePercentage(meatPoint, foodData.FoodThemes[0].TargetRate[0]);
+            PlayerPercentageArr[num, 1] = percentage(vegetablePoint, sumFood);//CalcThePercentage(vegetablePoint, foodData.FoodThemes[0].TargetRate[1]);
+            PlayerPercentageArr[num, 2] = percentage(fishPoint, sumFood);//CalcThePercentage(fishPoint, foodData.FoodThemes[0].TargetRate[2]);
             PlayerPercentageArr[num, 3] = amount;
             PlayerPercentageArr[num, 4] = seasousing;
-            Debug.Log(PlayerPercentageArr[num, 0] + " : MeatPoint");
-            Debug.Log(PlayerPercentageArr[num, 1] + " : VegetablePoint");
-            Debug.Log(PlayerPercentageArr[num, 2] + " : FishPoint");
-
-
-
+            
             setScoreToArray();
         }
 
+        private int percentage(float point, float sum)
+        {
+            if(sum == 0)
+            {
+                return 0;
+            }
+
+            return (int)(10 * (point / sum));
+
+        }
         /// <summary>
         /// 割合計算メソッド
         /// </summary>
