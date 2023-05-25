@@ -187,6 +187,12 @@ namespace GameManager
 
         private void OnDestroy()
         {
+            ObjectManager.ItemManager.itemFactory.ReleaseHandleEvent();
+
+            for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+            {
+                UnityEngine.AddressableAssets.Addressables.Release(ObjectManager.PlayerManagers[i].DataHandle);
+            }
             Cts.Cancel();
         }
     }

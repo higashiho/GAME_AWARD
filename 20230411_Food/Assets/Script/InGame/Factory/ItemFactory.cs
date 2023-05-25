@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
@@ -50,6 +51,9 @@ namespace Item
         // アイテムの配置posの行、列
         private int posRow = 4;
         private int posCol = 4;
+
+        // ハンドルリリースイベント
+        public UnityAction ReleaseHandleEvent{get; private set;}
 
 
         /// <summary>
@@ -163,6 +167,16 @@ namespace Item
         private async UniTask load()
         {
             var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
+
+            void releaseHandle()
+            {
+                for(int i = 0; i < handle.Result.Count; i++)
+                {
+                    Addressables.Release(handle);
+                }
+            }
+
+            ReleaseHandleEvent = releaseHandle;
             
             await handle.Task;
             foreach(var item in handle.Result)
