@@ -104,7 +104,7 @@ namespace Item
         public void Create()
         {
             // プールリストの中身が空の場合early return 
-            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
+//            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
             // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
             

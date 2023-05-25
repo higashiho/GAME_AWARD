@@ -60,6 +60,7 @@ namespace Player
         /// </summary>
         public bool FrontBoxCast{get; private set;}
         public bool BackBoxCast{get; private set;}
+        public bool FoodRay{get; private set;}
 
         /// <summary>
         /// プレイヤーのレイの半径
@@ -73,42 +74,61 @@ namespace Player
         /// <param name="tmpRayHitObj"></param>
         private void setRayHitFoodObject(GameObject tmpRayHitObj)
         {
-            if(tmpRayHitObj == null && RayHitFoodObject)
-            {
-                RayHitFoodObject = tmpRayHitObj;
-                return;
-            }
             if(tmpRayHitObj?.layer == LayerMask.NameToLayer("Food") && tmpRayHitObj != null)
             {
                 RayHitFoodObject = tmpRayHitObj;
             }
         }
+
         private void setRayHitNonFoodObject(GameObject tmpRayHitObj)
+        {
+            
+
+            if(tmpRayHitObj?.layer != LayerMask.NameToLayer("Floor")
+            && tmpRayHitObj?.layer != LayerMask.NameToLayer("Food")
+            && tmpRayHitObj != null)
+            {
+                RayHitNonFoodObject = tmpRayHitObj;
+            }
+        }
+        private void setRayHitFloorObject(GameObject tmpRayHitObj)
+        {
+            
+            if(tmpRayHitObj?.layer == LayerMask.NameToLayer("Floor") && tmpRayHitObj != null)
+            {
+                RayHitFloorObject = tmpRayHitObj;
+            }
+            
+        }
+
+        
+        /// <summary>
+        /// レイのオブジェクトにnullで初期化
+        /// </summary>
+        /// <param name="tmpRayHitObj"></param>
+        public void ResetRayHitFoodObject(GameObject tmpRayHitObj)
+        {
+            if(tmpRayHitObj == null && RayHitFoodObject)
+            {
+                RayHitFoodObject = tmpRayHitObj;
+                return;
+            }
+        }
+        public void ResetRayHitNonFoodObject(GameObject tmpRayHitObj)
         {
             if(tmpRayHitObj == null && RayHitNonFoodObject)
             {
                 RayHitNonFoodObject = tmpRayHitObj;
                 return;
             }
-
-            if(tmpRayHitObj?.layer != LayerMask.NameToLayer("Floor") && tmpRayHitObj != null)
-            {
-                
-                RayHitNonFoodObject = tmpRayHitObj;
-            }
         }
-        private void setRayHitFloorObject(GameObject tmpRayHitObj)
+        public void ResetRayHitFloorObject(GameObject tmpRayHitObj)
         {
             if(tmpRayHitObj == null && RayHitFloorObject)
             {
                 RayHitFloorObject = tmpRayHitObj;
                 return;
             }
-            if(tmpRayHitObj?.layer == LayerMask.NameToLayer("Floor") && tmpRayHitObj != null)
-            {
-                RayHitFloorObject = tmpRayHitObj;
-            }
-            
         }
 
         /// <summary>
@@ -133,23 +153,29 @@ namespace Player
             PlayerRayRadiuse = tmpRayRadiuse;
         }
         
+        private void setFoodRayHit(bool tmpRay)
+        {
+            FoodRay = tmpRay;
+        }
 
 
         private UnityAction<GameObject> setRayHitObject = null;
         private UnityAction<bool> frontBoxCast = null;
         private UnityAction<bool> backBoxCast = null;
         private UnityAction<PlayerBoxRayHalfExtents> rayRadiuse = null;
+        private UnityAction<bool> foodRay = null;
 
 
         // コンストラクタ
         public PlayerManager(DataPlayer tmpData)
         {
-            setRayHitObject = setRayHitFoodObject;
+            setRayHitObject += setRayHitFoodObject;
             setRayHitObject += setRayHitFloorObject;
             setRayHitObject += setRayHitNonFoodObject;
             frontBoxCast = setPlayerFrontRay;
             backBoxCast = setPlayerBackRay;
             rayRadiuse = setPlayerRayRadiuse;
+            foodRay = setFoodRayHit;
 
             // 初期化
             Initialization(tmpData);
@@ -162,7 +188,9 @@ namespace Player
             
             RayController = new RayController(setRayHitObject,
                                         frontBoxCast, 
-                                        backBoxCast, tmpData);
+                                        backBoxCast,
+                                        foodRay,
+                                         tmpData);
             
             // 取得するまで待つ
             DataHandle = Addressables.LoadAssetAsync<GameObject>(tmpData.AdressKey);
@@ -203,12 +231,14 @@ namespace Player
         {
             // Rayで当たり判定を得る
             RayController.RayUpdate();
+
+            // 食べ物を獲得してポイントゲット
+            FoodPoint.addPointUpdate();
             
             // 各移動メソッド
             PlayerMove.MovementActor();
 
-            // 食べ物を獲得してポイントゲット
-            FoodPoint.addPointUpdate();
+            
 
         }
 
@@ -288,11 +318,14 @@ namespace Player
         // ポイント獲得メソッド
         public void AddPoint()
         {
-            // 何にもあたっていなければメソッドから抜ける
+            // 食べ物に当たっていなければメソッドから抜ける
             if(!ObjectManager.PlayerManagers[data.Number].RayHitFoodObject) return;
 
-            // 初めてその種類の食材を獲得
-            if(!Array.ContainsKey(getFoodName(data))
+            
+
+
+            if(ObjectManager.PlayerManagers[data.Number].FoodRay
+            && Array.ContainsKey(getFoodName(data))
             && Input.GetKeyDown(data.ControlleKey[4]))
             {
                 // アイテムの座標を取得するイベントインスタンス化
@@ -307,36 +340,6 @@ namespace Player
                 
                 // 座標を返す
                 ReturnPresentPos(args);
-
-                // １回取得すると消える
-                deleteFood();
-
-                // 肉に１点加算
-                incrimentDictionary(getFoodName(data), getFoodPoint(data));
-                //Debug.Log(Array.FirstOrDefault());
-
-                
-                return;
-            }
-
-            // 2回目以降の食材獲得
-            if(Array.ContainsKey(getFoodName(data))
-            && Input.GetKeyDown(data.ControlleKey[4]))
-            {
-                // アイテムの座標を取得するイベントインスタンス化
-                ReturnPresentPosEventArgs args = new ReturnPresentPosEventArgs();
-                // 座標設定
-                args.presentPos = ObjectManager.PlayerManagers[data.Number].RayHitFoodObject.transform.position;
-                // 座標を返す
-                ReturnPresentPos(args);
-
-                // 目の前の食材をキューに追加
-                ObjectManager.ItemManager.itemFactory.Storing(ObjectManager.PlayerManagers[data.Number].RayHitFoodObject);
-                
-                // 座標を返す
-                ReturnPresentPos(args);
-
-                
                 
                 // １回取得すると消える
                 deleteFood();
@@ -347,6 +350,8 @@ namespace Player
 
                 // 獲得音を鳴らす
                 PlayerAudio.GetFood(data);
+
+                
                 
                 return;
             }
@@ -643,7 +648,7 @@ namespace Player
                         || Input.GetKey(tmpData.ControlleKey[3]))
                         {
                             // 後ろに下がる
-                            playerMovePos -= players.transform.forward;
+                            playerMovePos -= players.transform.forward + players.transform.forward / 2;
 
                             move(players, playerMovePos);
                         }
@@ -655,14 +660,14 @@ namespace Player
                     || Input.GetKey(tmpData.ControlleKey[3]))
                     {
                         // 後ろに下がる
-                        playerMovePos -= players.transform.forward;
+                        playerMovePos -= players.transform.forward + players.transform.forward / 2;
 
                         move(players, playerMovePos);
                     }
 
                     if(Input.GetKey(tmpData.ControlleKey[2]))
                     {
-                        playerMovePos -= players.transform.forward;
+                        playerMovePos -= players.transform.forward + players.transform.forward / 2;
 
                         move(players, playerMovePos);
                     }
@@ -685,7 +690,7 @@ namespace Player
                         || Input.GetKey(tmpData.ControlleKey[3]))
                         {
                             // 壁の外にずれる
-                            playerMovePos += players.transform.forward;
+                            playerMovePos += players.transform.forward + players.transform.forward / 2;
 
                             move(players, playerMovePos);
                         }
@@ -696,14 +701,14 @@ namespace Player
                     || Input.GetKey(tmpData.ControlleKey[3]))
                     {
                         // 前に下がる
-                        playerMovePos += players.transform.forward;
+                        playerMovePos += players.transform.forward + players.transform.forward / 2;
 
                         move(players, playerMovePos);
                     }
 
                     if(Input.GetKey(tmpData.ControlleKey[0]))
                     {
-                        playerMovePos += players.transform.forward;
+                        playerMovePos += players.transform.forward + players.transform.forward / 2;
 
                         move(players, playerMovePos);
                     }
@@ -1465,32 +1470,40 @@ namespace Player
         public FoodLayer FoodLayer{get{return foodLayer;} set{foodLayer = value;}}
         private FoodLayer foodLayer;
 
-        public FoodLayer NonFoodLayer{get{return nonFoodLayer;} set{nonFoodLayer = value;}}
-        private FoodLayer nonFoodLayer;
+        public NonFoodLayer NonFoodLayer{get{return nonFoodLayer;} set{nonFoodLayer = value;}}
+        private NonFoodLayer nonFoodLayer;
+
+        public FoodRayDistance FoodRayDistance{get{return foodRayDistance;} set{foodRayDistance = value;}}
+        private FoodRayDistance foodRayDistance;
 
         private DataPlayer dataPlayer;
         public bool PlayerFrontBoxCast{get; private set;}
         public bool PlayerBackBoxCast{get; private set;}
-        public bool PlayerFoodBoxCast{get; private set;}
+        public bool PlayerFoodCast{get; private set;}
         public bool PlayerFloorRayCast{get; private set;}
 
 
         private UnityAction<GameObject> rayHitObject;
         private UnityAction<bool> frontBoxRay;
         private UnityAction<bool> backBoxRay;
+        private UnityAction<bool> foodRay;
 
         public RayController(UnityAction<GameObject> tmpRayHitObj, 
                              UnityAction<bool> tmpFrontRay, 
                              UnityAction<bool> tmpBackRay, 
+                             UnityAction<bool> tmpFoodRay,
                              DataPlayer tmpData)
         {
             rayHitObject = tmpRayHitObj;
             frontBoxRay = tmpFrontRay;
             backBoxRay = tmpBackRay;
+            foodRay = tmpFoodRay;
 
             dataPlayer = tmpData;
             // レイの半径
             PlayerBoxRayHalfExtents = new PlayerBoxRayHalfExtents(tmpData.RayRadiuse);
+
+            FoodRayDistance = new FoodRayDistance(4);
         }
 
         public void RayUpdate()
@@ -1508,10 +1521,7 @@ namespace Player
             RaycastHit floorHit;
 
             FoodLayer = new FoodLayer(1 << getLayerMask("Food"));
-
-            Vector3 foodRayRadiuse = new Vector3(players.transform.localScale.x / 3,
-                                                 players.transform.localScale.y / 5,
-                                                 players.transform.localScale.z / 15 * 10);
+            NonFoodLayer = new NonFoodLayer(~(1 << getLayerMask("Food")));
 
             Vector3 foodRayCenter = new Vector3(players.transform.localPosition.x,
                                                 InGameConst.ITEMPOS_Y,
@@ -1532,7 +1542,7 @@ namespace Player
             VisualPhysics.Raycast(
                 foodRayCenter,
                 players.transform.forward,
-                3,
+                FoodRayDistance.Length,
                 FoodLayer.Number);
 
             VisualPhysics.BoxCast(
@@ -1540,14 +1550,16 @@ namespace Player
                 PlayerBoxRayHalfExtents.Amount,
                 players.transform.forward,
                 players.transform.rotation,
-                dataPlayer.RayDistance);
+                dataPlayer.RayDistance,
+                NonFoodLayer.Number);
 
             VisualPhysics.BoxCast(
                 BoxCenter,
                 PlayerBoxRayHalfExtents.Amount,
                 -players.transform.forward,
                 players.transform.rotation,
-                dataPlayer.RayDistance);
+                dataPlayer.RayDistance,
+                NonFoodLayer.Number);
 
             VisualPhysics.Raycast(
                 players.transform.position,
@@ -1556,11 +1568,11 @@ namespace Player
             
 
             // 食材用のレイ
-            PlayerFoodBoxCast = Physics.Raycast(
+            PlayerFoodCast = Physics.Raycast(
                 foodRayCenter,
                 players.transform.forward,
                 out foodHit,
-                3,
+                FoodRayDistance.Length,
                 FoodLayer.Number);
 
             // 正面のレイ
@@ -1570,7 +1582,8 @@ namespace Player
                 players.transform.forward,
                 out frontObjectHit,
                 players.transform.rotation,
-                dataPlayer.RayDistance);
+                dataPlayer.RayDistance,
+                NonFoodLayer.Number);
 
             // 背面のレイ
             PlayerBackBoxCast = Physics.BoxCast(
@@ -1579,7 +1592,8 @@ namespace Player
                 -players.transform.forward,
                 out backObjectHit,
                 players.transform.rotation,
-                dataPlayer.RayDistance);
+                dataPlayer.RayDistance,
+                NonFoodLayer.Number);
 
 
             // 真下に床用のレイを飛ばす
@@ -1587,8 +1601,7 @@ namespace Player
                 players.transform.localPosition,
                 FloorRayDirection,
                 out floorHit,
-                players.transform.localScale.y
-                );
+                players.transform.localScale.y);
 
 
             
@@ -1597,15 +1610,18 @@ namespace Player
             {
                 ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
                     hitObjectSubject.OnNext(foodHit.collider.gameObject);
+
                     
                 rayHitObject(foodHit.collider.gameObject);
+
+                foodRay(PlayerFoodCast);
             } 
             else
             {
                 ObjectManager.PlayerManagers[dataPlayer.Number].Umbrella[dataPlayer.Number].
                 hitObjectSubject.OnNext(null);
 
-                rayHitObject(null);
+                ObjectManager.PlayerManagers[tmpData.Number].ResetRayHitFoodObject(null);
             }
             
             
@@ -1635,7 +1651,7 @@ namespace Player
             // レイが当たっていない
             else
             {
-                rayHitObject(null);
+                ObjectManager.PlayerManagers[tmpData.Number].ResetRayHitNonFoodObject(null);
 
                 frontBoxRay(false);
                 
@@ -1650,7 +1666,7 @@ namespace Player
             }
             else
             {
-                rayHitObject(null);
+                ObjectManager.PlayerManagers[tmpData.Number].ResetRayHitFloorObject(null);
             }
         }
 
