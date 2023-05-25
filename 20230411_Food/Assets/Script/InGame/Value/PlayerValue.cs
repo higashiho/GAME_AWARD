@@ -162,5 +162,15 @@ namespace Player
             Speed = tmpSpeed;
         }
     }
+
+    public sealed class FoodRayDistance
+    {
+        public float Length{get; private set;}
+
+        public FoodRayDistance(float tmpLength)
+        {
+            Length = tmpLength;
+        }
+    }
 }
 
