@@ -84,6 +84,11 @@ namespace Item
                 {
                     Create();
                 }
+
+                for(int i = 0; i < itemPos.Count; i++)
+                {
+                    MonoBehaviour.Instantiate(tmpPlate, itemPos[i].Pos - new Vector3(0, 0.25f, 0), Quaternion.identity);
+                }
                     
                 // プレイヤーに食べ物を取得したときのイベントを登録
                 for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
@@ -121,18 +126,13 @@ namespace Item
 
             // アイテム生成フラグON
             itemPos[index].SetAttend(true);
-            if(plateList.Count <= 0)
-            {
-                GameObject tmpObj = MonoBehaviour.Instantiate(tmpPlate);
-                plateList.Enqueue(tmpObj);
-                tmpObj.SetActive(false);
-            }
+            
 
-            GameObject plate = plateList.Dequeue();
-            plate.transform.parent = obj.transform;
+            
+            
             // 皿の座標調整
-            plate.transform.position = obj.transform.position - new Vector3(0,0.25f,0);
-            plate.SetActive(true);
+            
+            
             // アクティブ化
             obj.SetActive(true);
         }
@@ -152,10 +152,6 @@ namespace Item
             data.SetAttend(false);
             // 配列にそのデータを返す
             itemPos[index] = data;
-            GameObject plate = obj.transform.GetChild(0).gameObject;
-            plate.transform.parent = null;
-            plateList.Enqueue(plate);
-            plate.SetActive(false);
             // アイテムオブジェクトを非アクティブにする
             obj.SetActive(false);
         }
