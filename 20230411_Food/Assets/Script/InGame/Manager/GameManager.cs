@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using FoodPoint;
@@ -188,10 +189,11 @@ namespace GameManager
         private void OnDestroy()
         {
             ObjectManager.ItemManager.itemFactory.ReleaseHandleEvent();
+            ObjectManager.FollowCamera.ReleaseHandleEvent();
 
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
-                UnityEngine.AddressableAssets.Addressables.Release(ObjectManager.PlayerManagers[i].DataHandle);
+                Addressables.Release(ObjectManager.PlayerManagers[i].DataHandle);
             }
             Cts.Cancel();
         }
@@ -275,6 +277,9 @@ namespace GameManager
                 if(timeLimit <= 0)
                     break;
             }
+            
+            if(ObjectManager.GameManager.Cts.IsCancellationRequested) return;
+
             timeUpCanvas.transform.GetChild(0).gameObject.SetActive(true);
             timeUpCanvas.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Time UP !!";
             await UniTask.Delay(500);

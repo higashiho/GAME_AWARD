@@ -170,10 +170,7 @@ namespace Item
 
             void releaseIngredientsHandle()
             {
-                for(int i = 0; i < handle.Result.Count; i++)
-                {
-                    Addressables.Release(handle);
-                }
+                Addressables.Release(handle);
             }
 
             
@@ -205,7 +202,6 @@ namespace Item
             // ハンドル開放イベント追加
             ReleaseHandleEvent = releaseIngredientsHandle;
             ReleaseHandleEvent += relesePlateHandle;
-
         }
 
         /// <summary>

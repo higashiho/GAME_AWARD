@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace FollowCamera
         private float offsetZ = 4f;
         private float offsetX = 4f;
 
-
+        public UnityAction ReleaseHandleEvent{get; private set;}
  
 
         /// <summary>
@@ -44,6 +45,13 @@ namespace FollowCamera
             {
                 followCameras.Add(MonoBehaviour.Instantiate(item));
             }
+
+            void releaseCameraHandle()
+            {
+                Addressables.Release(handle);
+            }
+
+            ReleaseHandleEvent = releaseCameraHandle;
         }
 
         /// <summary>
