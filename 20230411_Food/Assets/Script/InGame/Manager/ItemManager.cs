@@ -21,8 +21,8 @@ namespace Item
         private PlayerManager playerManager;
         private int counter;
         private int ripopItemCounter;
-        private int deleteTime = 600;
-        private int ripopTime = 600;
+        private int deleteTime = 1200;
+        private int ripopTime = 1200;
         // アイテムリポップタスク
         private UniTask? repopItemTask = null;
 
