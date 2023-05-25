@@ -184,7 +184,7 @@ namespace InGame
                 
                 // 指定値以下の場合は
                 if(gagePadding.w > targetPaddingAmount)
-                    gagePadding.w -= gageMask.rectTransform.sizeDelta.y / 400f;
+                    gagePadding.w -= gageMask.rectTransform.sizeDelta.y / 200f;
                 
                 // 代入
                 gageMask.padding = gagePadding;
