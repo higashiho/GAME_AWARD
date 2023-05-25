@@ -17,7 +17,7 @@ namespace Player
         /// <summary>
         /// DataPlayerのハンドル
         /// </summary>
-        private AsyncOperationHandle DataHandle;
+        public AsyncOperationHandle DataHandle{get; private set;}
 
         /// <summary>
         /// 食べ物を取ってポイントを獲得するクラス

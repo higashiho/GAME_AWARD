@@ -168,7 +168,7 @@ namespace Item
         {
             var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
 
-            void releaseHandle()
+            void releaseIngredientsHandle()
             {
                 for(int i = 0; i < handle.Result.Count; i++)
                 {
@@ -176,7 +176,6 @@ namespace Item
                 }
             }
 
-            ReleaseHandleEvent = releaseHandle;
             
             await handle.Task;
             foreach(var item in handle.Result)
@@ -191,11 +190,22 @@ namespace Item
             await dataHandle.Task;
             
             itemData = dataHandle.Result;
+            Addressables.Release(dataHandle);
 
             var plateHandle = Addressables.LoadAssetAsync<GameObject>("Plate");
             await plateHandle.Task;
 
             tmpPlate = plateHandle.Result;
+
+            void relesePlateHandle()
+            {
+                Addressables.Release(plateHandle);
+            }
+
+            // ハンドル開放イベント追加
+            ReleaseHandleEvent = releaseIngredientsHandle;
+            ReleaseHandleEvent += relesePlateHandle;
+
         }
 
         /// <summary>
