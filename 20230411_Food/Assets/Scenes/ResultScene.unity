@@ -2047,7 +2047,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 750}
+  m_SizeDelta: {x: 180, y: 570}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1049128549
 MonoBehaviour:
@@ -2061,7 +2061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding: {x: 0, y: 0, z: 0, w: 750}
+  m_Padding: {x: 0, y: 0, z: 0, w: 570}
   m_Softness: {x: 0, y: 0}
 --- !u!1 &1158928781
 GameObject:
@@ -2282,7 +2282,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1352280836}
   - component: {fileID: 1352280838}
-  - component: {fileID: 1352280837}
+  - component: {fileID: 1352280839}
   m_Layer: 5
   m_Name: GageImageBG (1)
   m_TagString: Untagged
@@ -2308,10 +2308,18 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -165.00012}
-  m_SizeDelta: {x: 200, y: 750}
+  m_AnchoredPosition: {x: 200, y: -203.22522}
+  m_SizeDelta: {x: 200, y: 673.5498}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1352280837
+--- !u!222 &1352280838
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352280835}
+  m_CullTransparentMesh: 1
+--- !u!114 &1352280839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2320,7 +2328,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1352280835}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -2331,21 +2339,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: f67021125bb29c34d81355e68915c874, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
---- !u!222 &1352280838
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352280835}
-  m_CullTransparentMesh: 1
+  m_Sprite: {fileID: 367429296, guid: 39552f039e3e62d479522499fafb547d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1435402424
 GameObject:
   m_ObjectHideFlags: 0
@@ -2600,7 +2603,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1568804476}
   - component: {fileID: 1568804478}
-  - component: {fileID: 1568804477}
+  - component: {fileID: 1568804479}
   m_Layer: 5
   m_Name: GageImageBG
   m_TagString: Untagged
@@ -2626,10 +2629,18 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -165.00018}
-  m_SizeDelta: {x: 200, y: 750}
+  m_AnchoredPosition: {x: -200, y: -203.22528}
+  m_SizeDelta: {x: 200, y: 673.5498}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1568804477
+--- !u!222 &1568804478
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568804475}
+  m_CullTransparentMesh: 1
+--- !u!114 &1568804479
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2638,7 +2649,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1568804475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -2649,21 +2660,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: f67021125bb29c34d81355e68915c874, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
---- !u!222 &1568804478
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1568804475}
-  m_CullTransparentMesh: 1
+  m_Sprite: {fileID: 367429296, guid: 39552f039e3e62d479522499fafb547d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1631599028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3527,7 +3533,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 180, y: 750}
+  m_SizeDelta: {x: 180, y: 570}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984464233
 MonoBehaviour:
@@ -3541,7 +3547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding: {x: 0, y: 0, z: 0, w: 750}
+  m_Padding: {x: 0, y: 0, z: 0, w: 570}
   m_Softness: {x: 0, y: 0}
 --- !u!1 &2005194053
 GameObject:

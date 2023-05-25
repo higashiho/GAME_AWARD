@@ -1,10 +1,13 @@
 using System.Threading;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UniRx;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+
+
 using OutGame;
 using FoodPoint;
 
@@ -95,6 +98,10 @@ namespace Title
 
         private void OnDestroy() 
         {
+            for(int i = 0; i < ObjectManager.Player.Length; i++)
+                Addressables.Release(ObjectManager.Player[i].Handle);
+
+            
             DOTween.KillAll();
             Cts.Cancel();
         }

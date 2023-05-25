@@ -65,7 +65,7 @@ namespace InGame
         {
             panelImage.transform.GetChild(0).GetComponent<Image>().color = panelImage.color;
             panelImage.transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = panelImage.color;
-            gageObj.GetChild(0).GetComponent<RawImage>().color = panelImage.color;
+            gageObj.GetChild(0).GetComponent<Image>().color = panelImage.color;
             gageObj.GetChild(1).GetChild(0).GetComponent<RawImage>().color = panelImage.color;
             gageObj.GetChild(2).GetComponent<TextMeshProUGUI>().color = panelImage.color;
             gageObj.GetChild(3).GetComponent<TextMeshProUGUI>().color = panelImage.color;
@@ -101,16 +101,18 @@ namespace InGame
         {
             if(!ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.activeSelf)
             {
-                ObjectManager.GameManager.UIController.TitmerText.transform.parent.DOLocalMoveY(400,2).SetEase(Ease.Linear).
+                ObjectManager.GameManager.UIController.TitmerText.transform.parent.parent.DOLocalMoveY(420,2).SetEase(Ease.Linear).
                     OnStart(() => {
                             var num = InGame.DecideTheRecipe.RecipeIndex;
-                            var tmpText = ObjectManager.GameManager.UIController.TitmerText.transform.parent.parent.GetChild(1).GetComponent<TextMeshProUGUI>();
+    
+                            var tmpText = ObjectManager.GameManager.UIController.TitmerText.transform.parent.parent.parent.GetChild(2).GetComponent<TextMeshProUGUI>();
                             
-                            tmpText.text = "肉・野・魚\n " + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[0] + " ・ " 
-                            + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[1] + " ・ "
+                            tmpText.text += "\n肉・野・魚\n " + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[0] + "・" 
+                            + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[1] + "・"
                             + ObjectManager.GameManager.FoodData.FoodThemes[num].TargetRate[2];
 
                             tmpText.DOFade(1,2).SetEase(Ease.Linear).SetLink(tmpText.gameObject);
+                            ObjectManager.GameManager.UIController.TitmerText.transform.parent.parent.parent.GetChild(1).GetComponent<Image>().DOFade(1,2).SetEase(Ease.Linear).SetLink(tmpText.gameObject);
                             
                             ObjectManager.GameManager.UIController.TitmerText.transform.parent.gameObject.SetActive(true);
                         });

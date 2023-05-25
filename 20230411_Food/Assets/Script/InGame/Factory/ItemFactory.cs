@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
@@ -50,6 +51,9 @@ namespace Item
         // アイテムの配置posの行、列
         private int posRow = 4;
         private int posCol = 4;
+
+        // ハンドルリリースイベント
+        public UnityAction ReleaseHandleEvent{get; private set;}
 
 
         /// <summary>
@@ -104,7 +108,7 @@ namespace Item
         public void Create()
         {
             // プールリストの中身が空の場合early return 
-            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
+//            Debug.Log(poolList[0] + " : プールリストの先頭の要素");
             // プールリストの最初の要素を取得
             GameObject obj = poolList[0];
             
@@ -163,6 +167,15 @@ namespace Item
         private async UniTask load()
         {
             var handle = Addressables.LoadAssetsAsync<GameObject>("Ingredients", null);
+
+            void releaseIngredientsHandle()
+            {
+                for(int i = 0; i < handle.Result.Count; i++)
+                {
+                    Addressables.Release(handle);
+                }
+            }
+
             
             await handle.Task;
             foreach(var item in handle.Result)
@@ -177,11 +190,22 @@ namespace Item
             await dataHandle.Task;
             
             itemData = dataHandle.Result;
+            Addressables.Release(dataHandle);
 
             var plateHandle = Addressables.LoadAssetAsync<GameObject>("Plate");
             await plateHandle.Task;
 
             tmpPlate = plateHandle.Result;
+
+            void relesePlateHandle()
+            {
+                Addressables.Release(plateHandle);
+            }
+
+            // ハンドル開放イベント追加
+            ReleaseHandleEvent = releaseIngredientsHandle;
+            ReleaseHandleEvent += relesePlateHandle;
+
         }
 
         /// <summary>
