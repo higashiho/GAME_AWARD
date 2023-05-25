@@ -118,7 +118,6 @@ namespace Title
         }
 
         private Tween mainMoveTween = null;
-        private Tween subMoveTween = null;
 
         private UIMoveTile moveTile = new UIMoveTile(1);
 
