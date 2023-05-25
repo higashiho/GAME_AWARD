@@ -378,7 +378,7 @@ namespace Result
             // ゲージ減算最大値     (割合を取る為10分の1)
             var gageAmount = ObjectManager.Result.GageImages[0].GetComponent<RectTransform>().sizeDelta.y * (rate * 0.1f);
             // 0.001秒に対して減算する量        (400%ずつ減算するため400で除算)
-            var gameDecrement = gageAmount / 400f;
+            var gameDecrement = gageAmount / 300f;
             
             // ゲージイメージパディング取得
             var playerGagePadding = playerGageMask.padding;
