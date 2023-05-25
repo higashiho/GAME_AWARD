@@ -324,8 +324,14 @@ namespace Result
                 ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
             }
 
-            ObjectManager.Result.ResultText[0].SetActive(true);ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
-            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
+        
+            ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear)
+            .OnStart(() => ObjectManager.Result.ResultText[0].SetActive(true))
+            .SetLink(ObjectManager.Result.ResultText[0]);
+            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).
+            SetEase(Ease.Linear).SetLoops(4, LoopType.Restart)
+            .SetLink(ObjectManager.Result.ResultText[0]);
+
 
   
 
