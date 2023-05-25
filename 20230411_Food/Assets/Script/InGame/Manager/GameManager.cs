@@ -85,6 +85,8 @@ namespace GameManager
         [SerializeField]
         private Canvas timeUpCanvas;
 
+        public Text[] debugText;
+
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
         /// </summary>
@@ -96,7 +98,13 @@ namespace GameManager
             ObjectManager.PlayerManagers.Add(new PlayerManager(firstPlayerData));
             ObjectManager.PlayerManagers.Add(new PlayerManager(secondPlayerData));
 
+            // Playerの生成が終わるまで待つ
+            for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                await UniTask.WaitWhile(() => ObjectManager.PlayerManagers[i] == null);
+                
             ObjectManager.ItemManager = new ItemManager();
+
+
             ObjectManager.FollowCamera = new FollowingCameraManager();
             ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
             // レシピを決める

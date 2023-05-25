@@ -26,6 +26,8 @@ namespace FollowCamera
         private float offsetX = 4f;
 
         public UnityAction ReleaseHandleEvent{get; private set;}
+
+        
  
 
         /// <summary>
@@ -90,6 +92,8 @@ namespace FollowCamera
                     followCameras[i].transform.position = 
                     player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
+
+                    GameManager.ObjectManager.GameManager.debugText[i].text += followCameras[i].transform.position;
                 }
 
 
