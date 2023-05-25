@@ -135,6 +135,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6492883511839199479, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883511839199479, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883511839199480, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_Padding.w
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353170, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 230
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353170, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353171, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353171, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353171, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492883512050353171, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 2800000, guid: 2d27f92a33debe94cb83a5c2f3ff72b9, type: 3}
+    - target: {fileID: 6492883512143327243, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 6492883512910696960, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
       propertyPath: m_RootOrder
       value: 0
