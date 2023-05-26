@@ -93,7 +93,6 @@ namespace FollowCamera
                     player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
 
-                    GameManager.ObjectManager.GameManager.debugText[i].text += followCameras[i].transform.position;
                 }
 
 
