@@ -150,7 +150,7 @@ namespace FoodPoint
             int sumPoint = 0;
             for(int i = 0; i < 3; i++)
             {
-                sumPoint += PlayerPercentageArr[num, i];
+                sumPoint += CalcThePercentage(PlayerPercentageArr[num, i], GameManager.ObjectManager.GameManager.FoodData.FoodThemes[InGame.DecideTheRecipe.RecipeIndex].TargetRate[i]);
             }
 
             return new FoodPoint(sumPoint / 3);

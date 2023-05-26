@@ -109,8 +109,7 @@ namespace GameManager
 
             //ObjectManager.GameManager.debugText[0].text += ObjectManager.PlayerManagers.Count;
 
-            ObjectManager.FollowCamera = new FollowingCameraManager();
-            ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
+            ObjectManager.FollowCamera = new FollowingCameraManager(ObjectManager.PlayerManagers);
             // レシピを決める
             ObjectManager.Recipe = new DecideTheRecipe(foodThemeData);
             //ObjectManager.GameManager.debugText[0].text += ObjectManager.Recipe;
