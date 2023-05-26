@@ -39,7 +39,7 @@ namespace FollowCamera
             var handle = Addressables.LoadAssetsAsync<GameObject>("FollowingCamera", null);
             
             await handle.Task;
-            int count = player.Count;
+            int count = GameManager.ObjectManager.PlayerManagers.Count;
             //followCameras = new GameObject[count];
             followCameras = new List<GameObject>(count);
             
@@ -72,31 +72,27 @@ namespace FollowCamera
         /// </summary>
         public async void Init()
         {
-            if(loadTask == null)
+            loadTask = load();
+            await (UniTask)loadTask;
+
+            int count = GameManager.ObjectManager.PlayerManagers.Count;
+
+            for(int i = 0; i < count; i++)
             {
-                loadTask = load();
-                await (UniTask)loadTask;
-
-                int count = player.Count;
-
-                for(int i = 0; i < count; i++)
-                {
-                    // viewPort設定
-                    followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
-                    
-                   
-                    // カメラをそれぞれ担当のプレイヤーの子にセット
-                    followCameras[i].transform.parent = player[i].RayController.Object.transform;
-
-                    // カメラの座標調整
-                    followCameras[i].transform.position = 
-                    player[i].RayController.Object.transform.position + 
-                    setOffset(followCameras[i].transform.parent.eulerAngles.y);
-
-                }
+                // viewPort設定
+                followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
+                
+                
+                // カメラをそれぞれ担当のプレイヤーの子にセット
+                followCameras[i].transform.parent = GameManager.ObjectManager.PlayerManagers[i].Object.transform;
 
 
-            }  
+                // カメラの座標調整
+                followCameras[i].transform.position = 
+                GameManager.ObjectManager.PlayerManagers[i].Object.transform.position + 
+                setOffset(followCameras[i].transform.parent.eulerAngles.y);
+
+            }
         }
         
         /// <summary>

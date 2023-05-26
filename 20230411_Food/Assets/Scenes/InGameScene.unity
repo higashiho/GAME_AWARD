@@ -397,6 +397,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6492883512475228898, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
+      propertyPath: m_text
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6492883512910696960, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -452,10 +456,10 @@ PrefabInstance:
     - target: {fileID: 6492883512910696991, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
       propertyPath: debugText.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1143193205}
     - target: {fileID: 6492883512910696991, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
       propertyPath: debugText.Array.data[1]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 474875450}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe97f1a4b6431b44b973fee7d7dad64c, type: 3}
