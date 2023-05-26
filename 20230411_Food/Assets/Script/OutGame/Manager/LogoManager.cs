@@ -28,6 +28,7 @@ namespace Logo
         // Start is called before the first frame update
         void Start()
         {
+            Application.targetFrameRate = 60;
             move = new LogoMove(logoCanvas.transform.GetChild(1).GetComponent<Image>());
             move.Movement();
 
@@ -55,6 +56,17 @@ namespace Logo
                     nowSceneMove = false;
                     DOTween.CompleteAll();
                 }).AddTo(this.gameObject);
+
+            this.UpdateAsObservable()
+                .Where(_ => Input.GetKeyDown(KeyCode.Escape))
+                .Subscribe(_ => {
+                    
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#else
+                    Application.Quit();
+#endif
+                }).AddTo(this);
         }
     }
 

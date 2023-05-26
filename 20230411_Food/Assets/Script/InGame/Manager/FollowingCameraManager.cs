@@ -100,7 +100,7 @@ namespace FollowCamera
                     player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
 
-                    
+
                 }
 
 
