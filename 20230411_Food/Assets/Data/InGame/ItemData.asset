@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66822cd2579116343bcba7ca7a7a2ab8, type: 3}
   m_Name: ItemData
   m_EditorClassIdentifier: 
-  itemPopNum: 5
+  itemPopNum: 8
   ripopInterval: 5
