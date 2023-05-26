@@ -4,6 +4,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UniRx;
+using UniRx.Triggers;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 
@@ -64,6 +65,8 @@ namespace Title
         public GameObject AudioController{get => audioController;}
         async void Awake()
         {
+            Application.targetFrameRate = 60;
+            setSubscribe();
             // インスタンス化
             getData = new GetData();
 
@@ -94,6 +97,19 @@ namespace Title
             textApproachEvent.TextApproachEvents();
             // イベント設定
             ObjectManager.Events.InputSetting.SetEvents();
+        }
+
+        private void setSubscribe()
+        {
+            this.UpdateAsObservable()
+                .Where(_ => Input.GetKeyDown(KeyCode.Escape))
+                .Subscribe(_ => {     
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#else
+                    Application.Quit();
+#endif                
+                }).AddTo(this);
         }
 
         private void OnDestroy() 

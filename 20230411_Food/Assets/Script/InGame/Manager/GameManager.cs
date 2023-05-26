@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using FoodPoint;
 using System.Linq;
 using UniRx;
+using UniRx.Triggers;
 using TMPro;
 using DG.Tweening;
 
@@ -46,21 +47,17 @@ namespace GameManager
 
         async void Start()
         {
+            Application.targetFrameRate = 60;
+
             // if(!cutInCanvas.gameObject.activeSelf)
             //     cutInCanvas.gameObject.SetActive(true);
             // スタートアニメーション
             // ロードなどの処理
 
             // ゲームシーン初期化処理
-            if(initTask == null)
-            {
-                initTask = InitGame();
+            initTask = InitGame();
 
-                await (UniTask)initTask;
-            }
-
-               
-
+            await (UniTask)initTask;
         }
 
         [SerializeField]
@@ -85,6 +82,7 @@ namespace GameManager
         [SerializeField]
         private Canvas timeUpCanvas;
 
+
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
         /// </summary>
@@ -93,14 +91,24 @@ namespace GameManager
         {
             ObjectManager.GameManager = this;
             ObjectManager.PlayerManagers.Clear();
-            ObjectManager.PlayerManagers.Add(new PlayerManager(firstPlayerData));
-            ObjectManager.PlayerManagers.Add(new PlayerManager(secondPlayerData));
+            // 要素を増やすためにいったんnullを入れる
+            ObjectManager.PlayerManagers.Add(null);
+            ObjectManager.PlayerManagers.Add(null);
+            // 要素書き換え
+            ObjectManager.PlayerManagers[0] = new PlayerManager(firstPlayerData);
+            ObjectManager.PlayerManagers[1] = new PlayerManager(secondPlayerData);
 
+            // Playerの生成が終わるまで待つ
+            for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
+                await UniTask.WaitWhile(() => ObjectManager.PlayerManagers[i] == null);
+                
             ObjectManager.ItemManager = new ItemManager();
-            ObjectManager.FollowCamera = new FollowingCameraManager();
-            ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
+
+
+            ObjectManager.FollowCamera = new FollowingCameraManager(ObjectManager.PlayerManagers);
             // レシピを決める
             ObjectManager.Recipe = new DecideTheRecipe(foodThemeData);
+
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
             {
@@ -127,6 +135,16 @@ namespace GameManager
                             uiController.transform.GetChild(1).gameObject.SetActive(true);
                     }
                 ).AddTo(this.gameObject);
+
+            this.UpdateAsObservable()
+                .Where(_ => Input.GetKeyDown(KeyCode.Escape))
+                .Subscribe(_ => {
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#else
+                    Application.Quit();
+#endif
+                }).AddTo(this);
         }
        
         
@@ -227,6 +245,7 @@ namespace GameManager
         public static List<PlayerManager> PlayerManagers
         {
             get{return playerManagers;}
+            set{playerManagers = value;}
         }
 
         // インゲーム全体統括メソッド

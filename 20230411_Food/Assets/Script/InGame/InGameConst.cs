@@ -17,5 +17,5 @@ public class InGameConst
         "AMOUNT"
     };
 
-    public const float ITEMPOS_Y = 1.0f;
+    public const float ITEMPOS_Y = 0.7f;
 }
