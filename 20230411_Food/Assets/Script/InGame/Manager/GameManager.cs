@@ -105,8 +105,7 @@ namespace GameManager
             ObjectManager.ItemManager = new ItemManager();
 
 
-            ObjectManager.FollowCamera = new FollowingCameraManager();
-            ObjectManager.FollowCamera.SetFollowingPlayer(ObjectManager.PlayerManagers);
+            ObjectManager.FollowCamera = new FollowingCameraManager(ObjectManager.PlayerManagers);
             // レシピを決める
             ObjectManager.Recipe = new DecideTheRecipe(foodThemeData);
             // ポイントマネージャー作成

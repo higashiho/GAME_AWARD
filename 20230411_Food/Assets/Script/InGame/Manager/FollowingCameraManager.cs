@@ -15,7 +15,7 @@ namespace FollowCamera
 {
     public class FollowingCameraManager 
     {
-        private UniTask? loadTask = null;
+        private UniTask? loadTask;
 
         private List<PlayerManager> player;
         private GameObject followCamera;
@@ -27,7 +27,11 @@ namespace FollowCamera
 
         public UnityAction ReleaseHandleEvent{get; private set;}
 
-        
+        public FollowingCameraManager(List<PlayerManager> player)
+        {
+            loadTask = null;
+            this.player = player;
+        }
  
 
         /// <summary>
@@ -36,17 +40,18 @@ namespace FollowCamera
         /// <returns></returns>
         private async UniTask load()
         {
+            int count = GameManager.ObjectManager.PlayerManagers.Count;
+            //GameManager.ObjectManager.GameManager.debugText[0].text = count.ToString();
             var handle = Addressables.LoadAssetsAsync<GameObject>("FollowingCamera", null);
             
             await handle.Task;
-            int count = player.Count;
-            //followCameras = new GameObject[count];
             followCameras = new List<GameObject>(count);
             
             foreach(var item in handle.Result)
             {
                 followCameras.Add(MonoBehaviour.Instantiate(item));
             }
+            //GameManager.ObjectManager.GameManager.debugText[1].text = followCameras.Count.ToString();
 
             void releaseCameraHandle()
             {
@@ -56,15 +61,15 @@ namespace FollowCamera
             ReleaseHandleEvent = releaseCameraHandle;
         }
 
-        /// <summary>
-        /// 追従先を設定するメソッド
-        /// </summary>
-        /// <param name="player">追従するプレイヤー</param>
-        public void SetFollowingPlayer(List<PlayerManager> player)
-        {
-            this.player = player;
+        // /// <summary>
+        // /// 追従先を設定するメソッド
+        // /// </summary>
+        // /// <param name="player">追従するプレイヤー</param>
+        // public void SetFollowingPlayer(List<PlayerManager> player)
+        // {
+        //     this.player = player;
             
-        }
+        // }
 
         /// <summary>
         /// 追従カメラ管理クラス初期化メソッド
@@ -72,8 +77,10 @@ namespace FollowCamera
         /// </summary>
         public async void Init()
         {
+            
             if(loadTask == null)
             {
+
                 loadTask = load();
                 await (UniTask)loadTask;
 
@@ -93,7 +100,7 @@ namespace FollowCamera
                     player[i].RayController.Object.transform.position + 
                     setOffset(followCameras[i].transform.parent.eulerAngles.y);
 
-                    GameManager.ObjectManager.GameManager.debugText[i].text += followCameras[i].transform.position;
+                    
                 }
 
 
