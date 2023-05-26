@@ -38,7 +38,7 @@ namespace FollowCamera
         /// カメラプレファブをロードするメソッド
         /// </summary>
         /// <returns></returns>
-        private async UniTask load()
+        private async UniTask<bool> load()
         {
             int count = GameManager.ObjectManager.PlayerManagers.Count;
             //GameManager.ObjectManager.GameManager.debugText[0].text = count.ToString();
@@ -47,18 +47,29 @@ namespace FollowCamera
             await handle.Task;
             followCameras = new List<GameObject>(count);
             
-            foreach(var item in handle.Result)
+            for(int item = 0; item < handle.Result.Count; item++)
             {
-                followCameras.Add(MonoBehaviour.Instantiate(item));
+                await UniTask.WaitWhile(() => !GameManager.ObjectManager.PlayerManagers[item].Object);
+                followCameras.Add(MonoBehaviour.Instantiate(handle.Result[item],
+                    (Vector3)GameManager.ObjectManager.PlayerManagers[item].Object?.transform.position,
+                    handle.Result[item].transform.rotation,
+                    GameManager.ObjectManager.PlayerManagers[item].Object?.transform));
+
+                if(followCameras[item])
+                    followCameras[item].transform.position += setOffset(GameManager.ObjectManager.PlayerManagers[item].Object?.transform.eulerAngles.y);
+                else   
+                    return false;
             }
             //GameManager.ObjectManager.GameManager.debugText[1].text = followCameras.Count.ToString();
 
             void releaseCameraHandle()
             {
-                Addressables.Release(handle);
+                //Addressables.Release(handle);
             }
 
             ReleaseHandleEvent = releaseCameraHandle;
+
+            return true;
         }
 
         // /// <summary>
@@ -77,34 +88,27 @@ namespace FollowCamera
         /// </summary>
         public async void Init()
         {
-            
-            if(loadTask == null)
+           do{
+              Debug.Log("Camera Load");  
+           }while(!await load());
+
+            int count = GameManager.ObjectManager.PlayerManagers.Count;
+
+            for(int i = 0; i < count; i++)
             {
+                // viewPort設定
+                followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
+                
+                // // カメラをそれぞれ担当のプレイヤーの子にセット
+                // followCameras[i].transform.parent = GameManager.ObjectManager.PlayerManagers[i].Object.transform;
 
-                loadTask = load();
-                await (UniTask)loadTask;
-
-                int count = player.Count;
-
-                for(int i = 0; i < count; i++)
-                {
-                    // viewPort設定
-                    followCameras[i].GetComponent<Camera>().rect = new Rect(i * 0.5f, 0, (i + 1) * 0.5f, 1);
-                    
-                   
-                    // カメラをそれぞれ担当のプレイヤーの子にセット
-                    followCameras[i].transform.parent = player[i].RayController.Object.transform;
-
-                    // カメラの座標調整
-                    followCameras[i].transform.position = 
-                    player[i].RayController.Object.transform.position + 
-                    setOffset(followCameras[i].transform.parent.eulerAngles.y);
+                // // カメラの座標調整
+                // followCameras[i].transform.position = 
+                // GameManager.ObjectManager.PlayerManagers[i].Object.transform.position + 
+                // setOffset(followCameras[i].transform.parent.eulerAngles.y);
 
 
-                }
-
-
-            }  
+            }
         }
         
         /// <summary>
@@ -113,8 +117,9 @@ namespace FollowCamera
         /// </summary>
         /// <param name="targetVectorY">プレイヤーのベクトル</param>
         /// <returns>オフセット</returns>
-        private Vector3 setOffset(float targetVectorY)
+        private Vector3 setOffset(float? targetVectorY)
         {
+            if(targetVectorY == null) return Vector3.zero;
             var offset = new Vector3(0, 6f, 0);
             switch(targetVectorY)
             {

@@ -82,7 +82,6 @@ namespace GameManager
         [SerializeField]
         private Canvas timeUpCanvas;
 
-        public Text[] debugText;
 
         /// <summary>
         /// InGameの初期化はこのメソッド内で行う
@@ -91,8 +90,6 @@ namespace GameManager
         private async UniTask InitGame()
         {
             ObjectManager.GameManager = this;
-            ObjectManager.GameManager.debugText[0].text = "";
-            ObjectManager.GameManager.debugText[1].text = "";
             ObjectManager.PlayerManagers.Clear();
             // 要素を増やすためにいったんnullを入れる
             ObjectManager.PlayerManagers.Add(null);
