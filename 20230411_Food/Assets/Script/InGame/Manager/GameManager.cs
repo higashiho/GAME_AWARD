@@ -55,15 +55,9 @@ namespace GameManager
             // ロードなどの処理
 
             // ゲームシーン初期化処理
-            if(initTask == null)
-            {
-                initTask = InitGame();
+            initTask = InitGame();
 
-                await (UniTask)initTask;
-            }
-
-               
-
+            await (UniTask)initTask;
         }
 
         [SerializeField]
@@ -97,9 +91,15 @@ namespace GameManager
         private async UniTask InitGame()
         {
             ObjectManager.GameManager = this;
+            ObjectManager.GameManager.debugText[0].text = "";
+            ObjectManager.GameManager.debugText[1].text = "";
             ObjectManager.PlayerManagers.Clear();
-            ObjectManager.PlayerManagers.Add(new PlayerManager(firstPlayerData));
-            ObjectManager.PlayerManagers.Add(new PlayerManager(secondPlayerData));
+            // 要素を増やすためにいったんnullを入れる
+            ObjectManager.PlayerManagers.Add(null);
+            ObjectManager.PlayerManagers.Add(null);
+            // 要素書き換え
+            ObjectManager.PlayerManagers[0] = new PlayerManager(firstPlayerData);
+            ObjectManager.PlayerManagers[1] = new PlayerManager(secondPlayerData);
 
             // Playerの生成が終わるまで待つ
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
@@ -107,12 +107,10 @@ namespace GameManager
                 
             ObjectManager.ItemManager = new ItemManager();
 
-            //ObjectManager.GameManager.debugText[0].text += ObjectManager.PlayerManagers.Count;
 
             ObjectManager.FollowCamera = new FollowingCameraManager(ObjectManager.PlayerManagers);
             // レシピを決める
             ObjectManager.Recipe = new DecideTheRecipe(foodThemeData);
-            //ObjectManager.GameManager.debugText[0].text += ObjectManager.Recipe;
 
             // ポイントマネージャー作成
             for(int i = 0; i < ObjectManager.PlayerManagers.Count; i++)
@@ -250,6 +248,7 @@ namespace GameManager
         public static List<PlayerManager> PlayerManagers
         {
             get{return playerManagers;}
+            set{playerManagers = value;}
         }
 
         // インゲーム全体統括メソッド
