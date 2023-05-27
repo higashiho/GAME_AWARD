@@ -33,6 +33,7 @@ namespace Title
             {
                 LoadedAsset = await getData.LoadAsset("TitleTextDatas");
                 await UniTask.WaitWhile(() => LoadedAsset == null);
+
             }
 
             /// <summary>
@@ -42,6 +43,7 @@ namespace Title
             public void GetTextData()
             {
                 getData.ReadData(LoadedAsset, TextData);
+                getData.ReleaseHandle();
             }
     }
 }

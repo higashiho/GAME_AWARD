@@ -37,6 +37,11 @@ public class GetData
 
     }
 
+    public void ReleaseHandle()
+    {
+        Addressables.Release(csvDataHandle);
+    }
+
     /// <summary>
     /// CSVのデータを読むメソッド
     /// </summary>

@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using GameManager;
 using System;
+using Cysharp.Threading.Tasks;
 using FoodPoint;
 using Nomnom.RaycastVisualization;
 using UnityEngine.Events;
@@ -202,10 +203,13 @@ namespace Player
 
             // 1Pプレイヤー生成
             var tmpObj = (GameObject)DataHandle.Result;
+
+            await UniTask.WaitWhile(() => RayController == null);
+
             RayController.Object = Object = MonoBehaviour.Instantiate(tmpObj
             , InstancePos.MainPos
             , tmpObj.transform.rotation);
-
+            
             PlayerNumber = new PlayerNumber(tmpData.Number);
 
             PlayerMove = new PlayerMove(tmpData, 

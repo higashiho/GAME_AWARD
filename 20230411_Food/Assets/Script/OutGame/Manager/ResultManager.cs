@@ -49,6 +49,7 @@ namespace Result
         // Start is called before the first frame update
         void Start()
         {
+            Application.targetFrameRate = 60;
             // インスタンス化
             ObjectManager.Result = this;
             ObjectManager.Events = new EventsManager(this.gameObject);
@@ -56,10 +57,23 @@ namespace Result
 
             // 購読設定
             Move.SetSubscribe();
-
+            setSubscribe();
             
             // 初期サブジェクト代入
             ObjectManager.Events.SetResultPatterunSubject(EventsManager.ResultPatternEnum.START);
+        }
+
+        private void setSubscribe()
+        {
+            this.UpdateAsObservable()
+                .Where(_ => Input.GetKeyDown(KeyCode.Escape))
+                .Subscribe(_ => {
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#else
+                    Application.Quit();
+#endif
+                }).AddTo(this);
         }
 
         void OnDestroy()
@@ -286,8 +300,8 @@ namespace Result
 
             await gage.Increase(
                 ObjectManager.Result.FoodPointRate.Rate[2], 
-            FoodPoint.PointManager.FoodScoreValues[0,2], 
-            FoodPoint.PointManager.FoodScoreValues[1,2]);
+            FoodPoint.PointManager.FoodScoreValues[0,2] * 10, 
+            FoodPoint.PointManager.FoodScoreValues[1,2] * 10);
 
             
             // ゲージ音停止
@@ -324,8 +338,14 @@ namespace Result
                 ObjectManager.Result.ResultText[0].GetComponent<TextMeshProUGUI>().text = "2P Win !!!!!!!!!!!!!!";
             }
 
-            ObjectManager.Result.ResultText[0].SetActive(true);ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear);
-            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(4, LoopType.Restart);
+        
+            ObjectManager.Result.ResultText[0].transform.DOScale(Vector3.one, 2f).SetEase(Ease.Linear)
+            .OnStart(() => ObjectManager.Result.ResultText[0].SetActive(true))
+            .SetLink(ObjectManager.Result.ResultText[0]);
+            ObjectManager.Result.ResultText[0].transform.DOLocalRotate(new Vector3(0,0,360f), 0.5f, RotateMode.FastBeyond360).
+            SetEase(Ease.Linear).SetLoops(4, LoopType.Restart)
+            .SetLink(ObjectManager.Result.ResultText[0]);
+
 
   
 
@@ -378,7 +398,7 @@ namespace Result
             // ゲージ減算最大値     (割合を取る為10分の1)
             var gageAmount = ObjectManager.Result.GageImages[0].GetComponent<RectTransform>().sizeDelta.y * (rate * 0.1f);
             // 0.001秒に対して減算する量        (400%ずつ減算するため400で除算)
-            var gameDecrement = gageAmount / 300f;
+            var gameDecrement = gageAmount / 200f;
             
             // ゲージイメージパディング取得
             var playerGagePadding = playerGageMask.padding;

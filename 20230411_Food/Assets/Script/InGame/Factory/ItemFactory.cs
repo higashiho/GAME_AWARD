@@ -91,7 +91,7 @@ namespace Item
 
                 for(int i = 0; i < itemPos.Count; i++)
                 {
-                    MonoBehaviour.Instantiate(tmpPlate, itemPos[i].Pos - new Vector3(0, 0.25f, 0), Quaternion.identity);
+                    MonoBehaviour.Instantiate(tmpPlate, itemPos[i].Pos - new Vector3(0, 0.15f, 0), Quaternion.identity);
                 }
                     
                 // プレイヤーに食べ物を取得したときのイベントを登録
@@ -170,10 +170,7 @@ namespace Item
 
             void releaseIngredientsHandle()
             {
-                for(int i = 0; i < handle.Result.Count; i++)
-                {
-                    Addressables.Release(handle);
-                }
+                Addressables.Release(handle);
             }
 
             
@@ -205,7 +202,6 @@ namespace Item
             // ハンドル開放イベント追加
             ReleaseHandleEvent = releaseIngredientsHandle;
             ReleaseHandleEvent += relesePlateHandle;
-
         }
 
         /// <summary>

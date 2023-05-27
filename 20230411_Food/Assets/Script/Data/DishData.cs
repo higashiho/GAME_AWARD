@@ -37,6 +37,8 @@ namespace FoodPoint
             
             LoadedAsset = await getData.LoadAsset("DishPointDatas");
             await UniTask.WaitWhile(() => LoadedAsset == null);
+
+
         }
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace FoodPoint
         public void GetDishData()
         {
             getData.ReadData(LoadedAsset, DishPointData);
+            getData.ReleaseHandle();
         }
     }
 }
