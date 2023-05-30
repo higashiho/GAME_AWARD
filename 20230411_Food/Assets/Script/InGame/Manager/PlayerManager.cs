@@ -226,7 +226,6 @@ namespace Player
                 if(umburella == null) continue;
 
                 Umbrella[PlayerNumber.Index] = umburella;
-//                Debug.Log("in");
                 break;
             }
         }
@@ -453,7 +452,6 @@ namespace Player
         // 平行方向の移動方向
         private Vector3 playerMoveDirection = Vector3.zero;
 
-        private int planeScale = 10;
 
         // プレイヤーが踏み込める外側の座標・上
         private  float playerPositiveBorderPosZ;
@@ -630,16 +628,6 @@ namespace Player
 
                     if(Input.GetKey(tmpData.ControlleKey[0]))
                     {
-                        
-
-                        if(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.name != "Floor")
-                        {
-                            planeScale = 1;
-                        }
-                        else
-                        {
-                            planeScale = 10;
-                        }
 
                         checkFloorInsidePos(players);
 
@@ -653,16 +641,6 @@ namespace Player
 
                     else if(Input.GetKey(tmpData.ControlleKey[2]))
                     {
-
-                        if(ObjectManager.PlayerManagers[data.Number].RayHitFloorObject.name != "Floor")
-                        {
-                            planeScale = 1;
-                        }
-                        else
-                        {
-                            planeScale = 10;
-                        }
-
                         checkFloorInsidePos(players);
 
                         // 壁に沿って移動
@@ -773,26 +751,7 @@ namespace Player
 
 
 
-        private bool insideTable(GameObject tmpPlayer)
-        {
-            bool tmpBool = false;
-
-            for(int i = 0; i < tableOutSidePos.Length >> 1; i++)
-            {
-                if(tmpPlayer.transform.forward.z < tableOutSidePos[i].z &&
-                tmpPlayer.transform.forward.x < tableOutSidePos[i].x &&
-                tmpPlayer.transform.forward.x > tableOutSidePos[i + tableOutSidePos.Length >> 1].x &&
-                tmpPlayer.transform.forward.z > tableOutSidePos[i + tableOutSidePos.Length >> 1].z)
-                {
-
-                    return tmpBool = true;
-                    
-                }
-            }
-
-           
-            return tmpBool;
-        }
+        
 
         /// <summary>
         /// 床の外の辺の中心を求めている
