@@ -345,7 +345,7 @@ namespace Title
             ObjectManager.Events.KeyPressed
                 // キャンバスが表示されているときのみ判断
                 .Where(_ => canvas.gameObject.activeSelf)
-                .Where(x => (KeyCode)x == KeyCode.LeftShift || (KeyCode)x == KeyCode.RightShift)
+                .Where(x => (KeyCode)x == KeyCode.Space || (KeyCode)x == KeyCode.Return)
                 .Subscribe(_ => {
                     // カーソルが表示されていたら決定挙動
                     if(cursor.gameObject.activeSelf)
