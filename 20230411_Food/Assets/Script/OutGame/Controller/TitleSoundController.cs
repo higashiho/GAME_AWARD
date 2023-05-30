@@ -34,7 +34,7 @@ namespace Title
         // Start is called before the first frame update
         void Start()
         {
-            mainSource.PlayOneShot(AudioClipsList[(int)SoundPatternEnum.MAIN_BGM]);
+            //mainSource.PlayOneShot(AudioClipsList[(int)SoundPatternEnum.MAIN_BGM]);
         }
 
     }
