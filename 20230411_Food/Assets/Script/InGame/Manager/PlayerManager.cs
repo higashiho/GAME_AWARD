@@ -480,9 +480,6 @@ namespace Player
             new Vector3(0, 0, 0),
         };
 
-        // 机の外側の座標
-        private Vector3[] tableOutSidePos;
-        
 
         [Flags]
         private enum playerLocation
@@ -518,57 +515,6 @@ namespace Player
             moveSpeed = new PlayerMoveSpeed(tmpData.MoveSpeed);    
 
             rotate = new Rotate(tmpData.PlayerRotateSpeed);
-
-            GameObject table = GameObject.Find("table");
-            GameObject table1 = GameObject.Find("table (1)");
-            GameObject table2 = GameObject.Find("table (2)");
-            GameObject table3 = GameObject.Find("table (3)");
-            
-
-            Vector3 tmpPositivePos = new Vector3(table.transform.position.x + table.transform.localScale.x / 2,
-                    table.transform.position.y,
-                    table.transform.position.z + table.transform.localScale.z / 2);
-
-            Vector3 tmpPositivePos1 = new Vector3(table1.transform.position.x + table1.transform.localScale.x / 2,
-                    table1.transform.position.y,
-                    table1.transform.position.z + table1.transform.localScale.z / 2);
-
-            Vector3 tmpPositivePos2 = new Vector3(table2.transform.position.x + table2.transform.localScale.x / 2,
-                    table2.transform.position.y,
-                    table2.transform.position.z + table2.transform.localScale.z / 2);
-
-            Vector3 tmpPositivePos3 = new Vector3(table3.transform.position.x + table3.transform.localScale.x / 2,
-                    table3.transform.position.y,
-                    table3.transform.position.z + table3.transform.localScale.z / 2);
-
-            Vector3 tmpNegativePos = new Vector3(table.transform.position.x - table.transform.localScale.x / 2,
-                    table.transform.position.y,
-                    table.transform.position.z - table.transform.localScale.z / 2);
-
-            Vector3 tmpNegativePos1 = new Vector3(table1.transform.position.x - table1.transform.localScale.x / 2,
-                    table1.transform.position.y,
-                    table1.transform.position.z - table1.transform.localScale.z / 2);
-
-            Vector3 tmpNegativePos2 = new Vector3(table2.transform.position.x - table2.transform.localScale.x / 2,
-                    table2.transform.position.y,
-                    table2.transform.position.z - table2.transform.localScale.z / 2);
-
-            Vector3 tmpNegativePos3 = new Vector3(table3.transform.position.x - table3.transform.localScale.x / 2,
-                    table3.transform.position.y,
-                    table3.transform.position.z - table3.transform.localScale.z / 2);
-
-            Vector3[] tmpPos = {
-                tmpPositivePos,
-                tmpPositivePos1,
-                tmpPositivePos2,
-                tmpPositivePos3,
-                tmpNegativePos,
-                tmpNegativePos1,
-                tmpNegativePos2,
-                tmpNegativePos3,
-            };
-
-            tableOutSidePos = tmpPos;
         }
 
         public void InstanceAction(GameObject tmpPlayer)
@@ -1449,7 +1395,6 @@ namespace Player
         private bool judgeTopToRight(GameObject tmpPlayer)
         {
             // 上から右 0°から90°
-            // 今回はy軸しか触らないのでこれでいいが、ジンバルロックを回避するならクオータニオンを使用すること
             if(tmpPlayer.transform.localEulerAngles.y > 1
             && tmpPlayer.transform.localEulerAngles.y < 89)
             {
