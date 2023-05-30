@@ -123,6 +123,9 @@ namespace Title
         // Playerのデータ
         private TitlePlayerDataList playerDataList;
 
+        // UIを表示している状態フラグ
+        private bool[] dispUI = new bool[2];
+
         public InputManager(TitlePlayerDataList tmpData)
         {
             playerDataList = tmpData;
@@ -242,8 +245,10 @@ namespace Title
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
+                    {        
+                        dispUI[0] = true;                
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
-
+                    }
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示
@@ -278,8 +283,10 @@ namespace Title
 
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
+                    {        
+                        dispUI[1] = true;                
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
-
+                    }
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示
@@ -321,8 +328,10 @@ namespace Title
                     
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[0].Id).gameObject.activeSelf)
+                    {        
+                        dispUI[0] = true;                
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, false);
-
+                    }
                     // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行
@@ -354,8 +363,10 @@ namespace Title
                         PlayOneShot(sound.AudioClipsList[(int)TitleSoundController.SoundPatternEnum.SELECT_SE]);
                     // アシストUI非表示
                     if(ObjectManager.Ui.AssistCanvas.transform.GetChild(playerDataList.PlayerDatas[1].Id).gameObject.activeSelf)
+                    {        
+                        dispUI[1] = true;                
                         ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, false);
-                    // イベント実行フラグを立てる
+                    }                    // イベント実行フラグを立てる
                     ObjectManager.TitleScene.NowPlayeEvents = true;
                     // UI表示関数実行
                     await ObjectManager.TitleScene.Move.OpenRefrugerator(x);
@@ -386,6 +397,13 @@ namespace Title
                     var sound = ObjectManager.TitleScene.AudioController.GetComponent<TitleSoundController>();
                     sound.MainSource.
                         DOFade(1, 1).SetEase(Ease.Linear).SetLink(ObjectManager.TitleScene.AudioController);
+
+                    // UIを再表示
+                    if(dispUI[0])
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[0].Id, true);
+
+                    if(dispUI[1])
+                        ObjectManager.Ui.SetAssistPlayerUIActive(playerDataList.PlayerDatas[1].Id, true);
 
                     // イベント実行フラグを折る
                     ObjectManager.TitleScene.NowPlayeEvents = false;
