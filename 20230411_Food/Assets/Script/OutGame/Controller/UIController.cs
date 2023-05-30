@@ -39,6 +39,8 @@ namespace Title
         private RefrigeratorUIMove refrigeratorUIMove;
         private PlayerAssistUIMove assistUIMove;
         private TitlePlayerDataList playerDataList;
+        private TipUiMove tipUi;
+        public TipUiMove TipUi{get => tipUi;}
 
         // Start is called before the first frame update
         async void Start()
@@ -47,6 +49,7 @@ namespace Title
             refrigeratorUIMove = new RefrigeratorUIMove(RefrigeratorCanvas);
             ObjectManager.Ui = this;
             assistUIMove = new PlayerAssistUIMove(AssistCanvas);
+            tipUi = new TipUiMove(recipeBookChanvas);
 
 
             // インプットイベントがインスタンス化されるまで待つ
@@ -55,6 +58,7 @@ namespace Title
             playerDataList = ObjectManager.TitleScene.PlayerData;
             // イベント設定
             refrigeratorUIMove.InputUISubscribe();
+            tipUi.SetSubscribe();
 
             // ループ設定
             setRoop();
@@ -516,5 +520,67 @@ namespace Title
         }
     }
 
+
+    public class TipUiMove
+    {
+        private Canvas tipCanvas;
+        private HorizontalLayoutGroup tipLayoutGroup;
+        private int startLeft;
+
+        public TipUiMove(Canvas canvas)
+        {
+            tipCanvas = canvas;
+            tipLayoutGroup = tipCanvas.transform.GetChild(1).GetComponent<HorizontalLayoutGroup>();
+            startLeft = tipLayoutGroup.padding.left;
+        }
+
+
+        public void SetSubscribe()
+        {
+            ObjectManager.Events.KeyPressed
+                // カーソルが表示されているときのみ判断
+                .Where(_ => tipCanvas.transform.gameObject.activeSelf)
+                .Where(x => (KeyCode)x == KeyCode.Space)
+                .Subscribe(_ => {
+                    if(tipLayoutGroup.padding.left == startLeft)
+                        scrollMove();
+                });
+        }
+
+        /// <summary>
+        /// scrollリセット
+        /// </summary>
+        public void ScrollReset()
+        {   
+            tipLayoutGroup.padding.left = startLeft;
+            tipLayoutGroup.SetLayoutHorizontal();
+            tipLayoutGroup.SetLayoutVertical();
+        }
+        /// <summary>
+        /// スクロール挙動
+        /// </summary>
+        /// <returns></returns>
+        private async void scrollMove()
+        {
+            var scrollSpeed = 1920 / 10; 
+            while(!ObjectManager.TitleScene.Cts.IsCancellationRequested)
+            {
+                tipLayoutGroup.padding.left -= scrollSpeed;
+                await UniTask.Delay(1);
+                if(tipLayoutGroup.padding.left <= -1920)
+                {
+                    tipLayoutGroup.padding.left = -1920;
+                    break;
+                }
+                // 更新
+                tipLayoutGroup.SetLayoutHorizontal();
+                tipLayoutGroup.SetLayoutVertical();
+            }
+
+            // 更新
+            tipLayoutGroup.SetLayoutHorizontal();
+            tipLayoutGroup.SetLayoutVertical();
+        }
+    }
 }
 

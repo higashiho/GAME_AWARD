@@ -239,8 +239,12 @@ namespace Title
                 moveTime.Amount / 2
             ).SetEase(Ease.Linear)
             .OnComplete(() => 
+            {
+                // スクロールされていたらリセット
+                ObjectManager.Ui.TipUi.ScrollReset();
                 // UI表示
-                ObjectManager.Ui.SetRecipeBookChanvasActive(true)
+                ObjectManager.Ui.SetRecipeBookChanvasActive(true);
+            }
             ));
 
             
