@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Ingredients
+  m_EditorClassIdentifier: 
+  m_GroupName: Ingredients
+  m_Data:
+    m_SerializedData: []
+  m_GUID: f04199be09f3a1547b169eb51a6fe10b
+  m_SerializeEntries:
+  - m_GUID: c148768ae1a8a4645956aa0420ab4c7c
+    m_Address: Assets/Prefab/InGame/Food/DrumstickRaw.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Meat
+    - Ingredients
+  - m_GUID: 553af17d0f7e9254db93c1973bc117b4
+    m_Address: Assets/Prefab/InGame/Food/WholeBirdRaw.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Meat
+    - Ingredients
+  - m_GUID: 0600d470ba5d7634dba6f5779c58bc46
+    m_Address: Assets/Prefab/InGame/Food/Salami slice A.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Meat
+    - Ingredients
+  - m_GUID: 0fa33df476abd9b4c9b7eeb1e30258ea
+    m_Address: Assets/Prefab/InGame/Food/Tomato Half.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vegitable
+    - Ingredients
+  - m_GUID: 03b65c849daf58940860f51bf5156fa6
+    m_Address: Assets/Prefab/InGame/Food/Tomato Quarter.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vegitable
+    - Ingredients
+  - m_GUID: 5c646ab406c852145843d2babd6641ed
+    m_Address: Assets/Prefab/InGame/Food/Tomato.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Vegitable
+    - Ingredients
+  - m_GUID: 87dad528adfbd484fa5fe4db182c7dc3
+    m_Address: Assets/Prefab/InGame/Food/Salmon fillet.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Fish
+    - Ingredients
+  - m_GUID: caca480bf0f0fb24db2a849d084b8724
+    m_Address: Assets/Prefab/InGame/Food/Salmon skeleton.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Fish
+    - Ingredients
+  - m_GUID: 4b705523db26bf549b032db0d2bfbeb6
+    m_Address: Assets/Prefab/InGame/Food/Salmon.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Fish
+    - Ingredients
+  - m_GUID: f541c31d7acf87f43929056c7084e497
+    m_Address: Assets/Prefab/InGame/Food/Sauce1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ingredients
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5559e6d5bbb708346bcab5af4f62966e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 39f0fe9a0375ad34db53ed2b7ba366bd, type: 2}
+    - {fileID: 11400000, guid: 8a86777a7271c574f91a3813e075ff56, type: 2}

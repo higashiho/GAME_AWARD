@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bacba815aca236f4683c4cf9379eab37
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mainCamera: {instanceID: 0}
+  - fadePanel: {instanceID: 0}
+  - cameraData: {fileID: 11400000, guid: 924540591eafcc34da90b46a3672b745, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
